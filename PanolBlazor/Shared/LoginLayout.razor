@@ -1,0 +1,56 @@
+﻿@inherits LayoutComponentBase
+@inject HttpClient Http;
+@inject NavigationManager Navigation
+@inject PanolBlazor.Services.ILoginService LoginService
+@page "/login"
+
+<div class="row justify-content-center">
+    <div class="col-sm-4 container-fluid border rounded" style="background-color: #ffff">
+        <div style="padding: 15px">
+            <div>
+                <h3>Login</h3>
+            </div>
+            <hr />
+            <div>
+                <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" class="form-control" @bind="loginModel.username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" @bind="loginModel.password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private PanolBlazor.FormModel.LoginModel loginModel = new FormModel.LoginModel();
+
+    private async Task HandleSubmit()
+    {
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("POST"),
+            RequestUri = new Uri("http://localhost:8080/login"),
+            Content = new StringContent(
+                    @"{""username"": """ + loginModel.username + @""", ""password"": """ + loginModel.password + @"""}"
+                )
+        };
+
+        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+        var result = await Http.SendAsync(requestMessage);
+        IEnumerable<string> token = result.Headers.GetValues("Authorization");
+
+        await LoginService.Login(token.FirstOrDefault());
+        Navigation.NavigateTo("");
+    }
+}

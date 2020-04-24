@@ -1,0 +1,15 @@
+﻿@page "/solicitudes/recibidas"
+@layout SolicitudesLayout
+@using System.Net.Http
+@using System.Net.Http.Headers
+@inject HttpClient Http
+<h3>Recibidas</h3>
+
+<SolicitudesTableGeneric Listado="Solicitudes"></SolicitudesTableGeneric>
+
+@code {
+    private List<PanolBlazor.DataModel.SolicitudesModel> Solicitudes;
+
+    protected override async Task OnInitializedAsync() =>
+        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudesModel>>("http://localhost:8080/solicitud");
+}

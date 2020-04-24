@@ -1,0 +1,39 @@
+﻿@inherits LayoutComponentBase
+@inject PanolBlazor.Services.ILoginService LoginService
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+<div class="main">
+    <div class="top-row px-4">
+        <AuthorizeView>
+            <Authorized>
+                <div class="ml-md-auto">
+                    <button type="button" class="btn btn-dark" @onclick="HandlerLogout">
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> Salir
+                    </button>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        
+    </div>
+
+    <div class="content px-4" >
+        @Body
+    </div>
+</div>
+
+@code {
+    private async Task HandlerLogout()
+    {
+        await LoginService.Logout();
+        Navigation.NavigateTo("/login");
+    }
+}
