@@ -1,0 +1,31 @@
+﻿@page "/solicitudes/ver/{id}"
+@layout Layout.SolicitudesLayout
+@attribute [Authorize]
+
+@inject HttpClient Http
+
+@using System.Net.Http
+@using DataModel
+
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div>
+<h3>Solicitud @Solicitud.id</h3>
+
+@code {
+    [Parameter] public string Id { get; set; }
+    public SolicitudModel Solicitud = new SolicitudModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Id != null)
+        {
+            Console.WriteLine(Id);
+            Solicitud = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/" + Id);
+        }
+    }
+}

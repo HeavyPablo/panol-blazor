@@ -1,38 +1,17 @@
 ﻿@page "/solicitudes/entregadas"
+@attribute [Authorize]
 @layout Layout.SolicitudesLayout
-<h3>Entregadas</h3>
+@using System.Net.Http
+@inject HttpClient Http
 
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>qwe</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>qwe</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>qwe</td>
-        </tr>
-    </tbody>
-</table>
+<SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Entregadas"></SolicitudesTableGeneric>
 
 @code {
+    private List<PanolBlazor.DataModel.SolicitudModel> Solicitudes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(2000);
+        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud");
+    }
 }

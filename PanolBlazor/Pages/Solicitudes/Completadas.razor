@@ -1,7 +1,17 @@
 ﻿@page "/solicitudes/completadas"
+@attribute [Authorize]
 @layout Layout.SolicitudesLayout
-<h3>Completadas</h3>
+@using System.Net.Http
+@inject HttpClient Http
+
+<SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Completadas"></SolicitudesTableGeneric>
 
 @code {
+    private List<PanolBlazor.DataModel.SolicitudModel> Solicitudes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(2000);
+        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud");
+    }
 }

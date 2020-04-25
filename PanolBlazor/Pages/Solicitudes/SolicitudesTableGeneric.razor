@@ -1,4 +1,5 @@
 ﻿@using DataModel
+@inject NavigationManager Navigation
 
 @if (Solicitudes == null)
 {
@@ -16,7 +17,7 @@ else
     <div class="py-3 col-12">
         <div class="card">
             <div class="card-body">
-                <h4>Recibidas</h4>
+                <h4>@Titulo</h4>
                 <hr />
                 <div class="col-4">
                     <label for="perfilSelect"> Perfil</label>
@@ -60,7 +61,18 @@ else
                                 <td>@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
                                 <td>@Solicitud.fechaCreacion</td>
                                 <td>
-                                    <span class="oi oi-trash"></span>
+                                    <div class="btn-group col-12" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-secondary" @onclick="@(e => ViewSolicitud(Solicitud.id))">
+                                            <span class="oi oi-eye"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary">
+                                            <span class="oi oi-pencil"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary">
+                                            <span class="oi oi-trash"></span>
+                                        </button>
+                                    </div>
+                                    
                                 </td>
                             </tr>
                         }
@@ -75,4 +87,9 @@ else
 @code {
     [Parameter] public List<SolicitudModel> Solicitudes { get; set; }
     [Parameter] public string Titulo { get; set; }
+
+    private void ViewSolicitud(int id)
+    {
+        Navigation.NavigateTo("solicitudes/ver/" + id.ToString());
+    }
 }

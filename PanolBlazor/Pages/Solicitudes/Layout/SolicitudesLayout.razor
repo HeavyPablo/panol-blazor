@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @layout MainLayout
-<h3>Solicitudes</h3>
 
 <div class="col-12 py-4">
     <div class="row justify-content-between bg-dark rounded-lg navbar">
@@ -27,44 +26,47 @@
     </div>
 </div>
 
-<div class="col-12 py-4">
+<div class="col-12">
     @Body
 </div>
 
 @code {
 
-    private string Active1 = "active";
-    private string Active2, Active3, Active4 = "";
+    private string Active1, Active2, Active3, Active4 = "";
 
-    private void RefreshActive()
+    protected override void OnInitialized ()
     {
-        Active1 = "";
-        Active2 = "";
-        Active3 = "";
-        Active4 = "";
+        RefreshActive();
     }
 
     public void SolicitudesNavigate(SolicitudesActions action)
     {
-        RefreshActive();
-
-        switch (action)
-        {
-            case SolicitudesActions.recibidas:
-                Active1 = "active";
-                break;
-            case SolicitudesActions.entregadas:
-                Active2 = "active";
-                break;
-            case SolicitudesActions.en_espera:
-                Active3 = "active";
-                break;
-            case SolicitudesActions.completadas:
-                Active4 = "active";
-                break;
-        }
-
         Navigation.NavigateTo("solicitudes/" + action.ToString());
+        RefreshActive();
+    }
+
+    private void RefreshActive()
+    {
+        Active1 = Active2 = Active3 = Active4 = "";
+
+        var uri = Navigation.Uri;
+
+        if (uri.Contains(SolicitudesActions.recibidas.ToString()))
+        {
+            Active1 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.entregadas.ToString()))
+        {
+            Active2 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.en_espera.ToString()))
+        {
+            Active3 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.completadas.ToString()))
+        {
+            Active4 = "active";
+        }
     }
 
     public enum SolicitudesActions
