@@ -1,49 +1,78 @@
-﻿@typeparam TElement
+﻿@using DataModel
 
-@if (Listado == null)
+@if (Solicitudes == null)
 {
-    <p>Cargando...</p>
+    <div class="row justify-content-center">
+        <img src="images/loading.svg" alt="Cargando" />
+    </div>
+
 }
-else if (Listado.Count == 0)
+else if (Solicitudes.Count == 0)
 {
     <p>No hay solicitudes por ahora.</p>
 }
 else
 {
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>qwe</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>qwe</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>qwe</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4>Recibidas</h4>
+                <hr />
+                <div class="col-4">
+                    <label for="perfilSelect"> Perfil</label>
+                    <select class="form-control" id="perfilSelect">
+                        <option>Alumno</option>
+                        <option>Docente</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Código</th>
+                            <th scope="col">Solicitante</th>
+                            <th scope="col">Perfil Solicitante</th>
+                            <th scope="col">Panolero Responsable</th>
+                            <th scope="col">Fecha Ingreso</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Solicitud in Solicitudes)
+                        {
+                            <tr>
+                                <th scope="row">@Solicitud.id</th>
+                                @if (Solicitud.usuario.alumno != null)
+                                {
+                                    <td>@(Solicitud.usuario.alumno.nombre + " " + Solicitud.usuario.alumno.apellidoPaterno)</td>
+                                }
+                                @if (Solicitud.usuario.docente != null)
+                                {
+                                    <td>@(Solicitud.usuario.docente.nombre + " " + Solicitud.usuario.docente.apellidoPaterno)</td>
+                                }
+                                <td>@Solicitud.usuario.perfil</td>
+                                <td>@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
+                                <td>@Solicitud.fechaCreacion</td>
+                                <td>
+                                    <span class="oi oi-trash"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
 }
 
-
-
 @code {
-    [Parameter] public List<TElement> Listado { get; set; }
+    [Parameter] public List<SolicitudModel> Solicitudes { get; set; }
+    [Parameter] public string Titulo { get; set; }
 }

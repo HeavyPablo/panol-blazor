@@ -6,16 +6,16 @@
 <div class="col-12 py-4">
     <div class="row justify-content-between bg-dark rounded-lg navbar">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-secondary" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.recibidas))">
+            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.recibidas))">
                 <span class="oi oi-inbox" aria-hidden="true"></span> Recibidas
             </button>
-            <button type="button" class="btn btn-secondary" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.entregadas))">
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.entregadas))">
                 <span class="oi oi-share-boxed" aria-hidden="true"></span> Entregadas
             </button>
-            <button type="button" class="btn btn-secondary" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.en_espera))">
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.en_espera))">
                 <span class="oi oi-clock" aria-hidden="true"></span> En Espera
             </button>
-            <button type="button" class="btn btn-secondary" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.completadas))">
+            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.completadas))">
                 <span class="oi oi-task" aria-hidden="true"></span> Completadas
             </button>
         </div>
@@ -27,16 +27,43 @@
     </div>
 </div>
 
-<div class="col-12 py-4 card">
-    <div class="card-body">
-        @Body
-    </div>
+<div class="col-12 py-4">
+    @Body
 </div>
 
 @code {
 
+    private string Active1 = "active";
+    private string Active2, Active3, Active4 = "";
+
+    private void RefreshActive()
+    {
+        Active1 = "";
+        Active2 = "";
+        Active3 = "";
+        Active4 = "";
+    }
+
     public void SolicitudesNavigate(SolicitudesActions action)
     {
+        RefreshActive();
+
+        switch (action)
+        {
+            case SolicitudesActions.recibidas:
+                Active1 = "active";
+                break;
+            case SolicitudesActions.entregadas:
+                Active2 = "active";
+                break;
+            case SolicitudesActions.en_espera:
+                Active3 = "active";
+                break;
+            case SolicitudesActions.completadas:
+                Active4 = "active";
+                break;
+        }
+
         Navigation.NavigateTo("solicitudes/" + action.ToString());
     }
 

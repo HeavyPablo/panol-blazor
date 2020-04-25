@@ -3,13 +3,16 @@
 @using System.Net.Http
 @using System.Net.Http.Headers
 @inject HttpClient Http
-<h3>Recibidas</h3>
 
-<SolicitudesTableGeneric Listado="Solicitudes"></SolicitudesTableGeneric>
+    <SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Recibidas"></SolicitudesTableGeneric>
 
 @code {
-    private List<PanolBlazor.DataModel.SolicitudesModel> Solicitudes;
+    private List<PanolBlazor.DataModel.SolicitudModel> Solicitudes;
 
-    protected override async Task OnInitializedAsync() =>
-        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudesModel>>("http://localhost:8080/solicitud");
+    protected override async Task OnInitializedAsync ()
+    {
+        await Task.Delay(2000);
+        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud");
+    }
+
 }
