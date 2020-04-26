@@ -1,0 +1,10 @@
+﻿@page "/solicitudes/editar/{id}"
+@layout Layout.SolicitudesLayout
+
+@attribute [Authorize]
+
+<h3>Editar</h3>
+
+@code {
+    [Parameter] public string Id { get; set; }
+}

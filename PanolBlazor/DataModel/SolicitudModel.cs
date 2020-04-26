@@ -11,6 +11,7 @@ namespace PanolBlazor.DataModel
         public int id { get; set; }
         public string comentario { get; set; }
         public string tipoSolicitud { get; set; }
+        public string estado { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
         public UsuarioModel  usuario { get; set; }

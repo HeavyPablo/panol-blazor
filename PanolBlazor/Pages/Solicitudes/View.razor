@@ -3,6 +3,7 @@
 @attribute [Authorize]
 
 @inject HttpClient Http
+@inject NavigationManager Navigate
 
 @using System.Net.Http
 @using DataModel
@@ -10,11 +11,146 @@
     <div class="py-3 col-12">
         <div class="card">
             <div class="card-body">
+                <div class="col-12">
+                    <div class="row justify-content-between">
+                        <div class="d-flex">
+                            <div class="px-2">
+                                <h3>Solicitud @Solicitud.id</h3>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary" @onclick="@(e => NavigateToEdit(Solicitud.id))"><span class="oi oi-pencil"></span></button>
+                        </div>
+                        <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="py-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    ----Barra de Progreso----
+                </div>
+            </div>
+        </div>
+
+        <div class="row py-3">
+            <div class="pr-3 col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Información</h4>
+                        <div class="form-row">
+                            <div class="form-group d-flex col-6">
+                                <p>Estado</p>
+                                <div class="px-1">
+                                    <p class="badge badge-pill badge-warning">@Solicitud.estado</p>
+                                </div>
+                            </div>
+                            <div class="form-group d-flex col-6">
+                                <p>Tipo de solicitud</p>
+                                <div class="px-1">
+                                    <p class="badge badge-pill badge-info">@Solicitud.tipoSolicitud</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <label>Fecha de creación</label>
+                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaCreacion" />
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Ultima actialización</label>
+                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaActualizacion" />
+                            </div>
+                        </div>
+                        @if (Solicitud.usuario != null)
+                        {
+                            @if (Solicitud.usuario.perfil == "ALUMNO" && Solicitud.usuario.alumno != null)
+                            {
+                                <div class="form-group">
+                                    <label>Nombre solicitante</label>
+                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-6">
+                                        <label>Rut solicitante</label>
+                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.alumno.rut" />
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label>Perfil solicitante</label>
+                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                    </div>
+                                </div>
+                            }
+                            @if (Solicitud.usuario.perfil == "DOCENTE" && Solicitud.usuario.docente != null)
+                            {
+                                <div class="form-group">
+                                    <label>Nombre solicitante</label>
+                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-6">
+                                        <label>Rut solicitante</label>
+                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.docente.rut" />
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label>Perfil solicitante</label>
+                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                        @if (Solicitud.panolero != null)
+                        {
+                            <div class="form-group">
+                                <label>Nombre panolero responsable</label>
+                                <input type="text" class="form-control" disabled value="@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno + " " + Solicitud.panolero.apellidoMaterno)"/>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label>Comentarios</label>
+                            <textarea class="form-control" rows="3" disabled @bind="Solicitud.comentario"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pl-3 col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Productos</h4>
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Subcategoria</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Solicitud.productos != null)
+                                {
+                                    @foreach (ProductoModel Producto in Solicitud.productos)
+                                    {
+                                        <tr>
+                                            <th scope="row">@Producto.id</th>
+                                            <td>@Producto.nombre</td>
+                                            <td>@Producto.subcategoria.nombre</td>
+                                            <td>@Producto.subcategoria.categoria.nombre</td>
+                                            <td>@Producto.cantidad</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-<h3>Solicitud @Solicitud.id</h3>
+
 
 @code {
     [Parameter] public string Id { get; set; }
@@ -26,6 +162,12 @@
         {
             Console.WriteLine(Id);
             Solicitud = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/" + Id);
+
         }
+    }
+
+    private void NavigateToEdit(int Id)
+    {
+        Navigate.NavigateTo("solicitudes/editar/" + Id.ToString());
     }
 }

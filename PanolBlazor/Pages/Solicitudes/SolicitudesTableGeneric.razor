@@ -65,7 +65,7 @@ else
                                         <button type="button" class="btn btn-secondary" @onclick="@(e => ViewSolicitud(Solicitud.id))">
                                             <span class="oi oi-eye"></span>
                                         </button>
-                                        <button type="button" class="btn btn-secondary">
+                                        <button type="button" class="btn btn-secondary" @onclick="@(e => EditSolicitud(Solicitud.id))">
                                             <span class="oi oi-pencil"></span>
                                         </button>
                                         <button type="button" class="btn btn-secondary">
@@ -88,8 +88,13 @@ else
     [Parameter] public List<SolicitudModel> Solicitudes { get; set; }
     [Parameter] public string Titulo { get; set; }
 
-    private void ViewSolicitud(int id)
+    private void ViewSolicitud(int Id)
     {
-        Navigation.NavigateTo("solicitudes/ver/" + id.ToString());
+        Navigation.NavigateTo("solicitudes/ver/" + Id.ToString());
+    }
+
+    private void EditSolicitud(int Id)
+    {
+        Navigation.NavigateTo("solicitudes/editar/" + Id.ToString());
     }
 }
