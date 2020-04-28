@@ -17,7 +17,6 @@
                             <div class="px-2">
                                 <h3>Solicitud @Solicitud.id</h3>
                             </div>
-                            <button type="button" class="btn btn-outline-primary" @onclick="@(e => NavigateToEdit(Solicitud.id))"><span class="oi oi-pencil"></span></button>
                         </div>
                         <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
                     </div>
@@ -37,81 +36,105 @@
             <div class="pr-3 col-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Información</h4>
-                        <div class="form-row">
-                            <div class="form-group d-flex col-6">
-                                <p>Estado</p>
-                                <div class="px-1">
-                                    <p class="badge badge-pill badge-warning">@Solicitud.estado</p>
-                                </div>
-                            </div>
-                            <div class="form-group d-flex col-6">
-                                <p>Tipo de solicitud</p>
-                                <div class="px-1">
-                                    <p class="badge badge-pill badge-info">@Solicitud.tipoSolicitud</p>
-                                </div>
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Información</h4>
+                                <button type="button" class="btn @ChangeButton @IsActived" @onclick="EditInfo"><span class="oi @ChangeIcon"></span></button>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-6">
-                                <label>Fecha de creación</label>
-                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaCreacion" />
-                            </div>
-                            <div class="form-group col-6">
-                                <label>Ultima actialización</label>
-                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaActualizacion" />
+                        <div class="py-2">
+                            <div class="alert alert-warning @IsEditing text-center" role="alert">
+                                <strong>Modo de edición activado!</strong>
                             </div>
                         </div>
-                        @if (Solicitud.usuario != null)
-                        {
-                            @if (Solicitud.usuario.perfil == "ALUMNO" && Solicitud.usuario.alumno != null)
-                            {
-                                <div class="form-group">
-                                    <label>Nombre solicitante</label>
-                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
+                        <EditForm Model="Solicitud" OnValidSubmit="@(e =>EditSolicitud(Solicitud))">
+                            <div class="form-row">
+                                <div class="form-group d-flex col-6">
+                                    <p>Estado</p>
+                                    <div class="px-1">
+                                        <p class="badge badge-pill badge-warning">@Solicitud.estado</p>
+                                    </div>
                                 </div>
+                                <div class="form-group d-flex col-6">
+                                    <p>Tipo de solicitud</p>
+                                    <div class="px-1">
+                                        <p class="badge badge-pill badge-info">@Solicitud.tipoSolicitud</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label>Fecha de creación</label>
+                                    <input type="text" class="form-control" disabled @bind="Solicitud.fechaCreacion" />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>Ultima actualización</label>
+                                    <input type="text" class="form-control" disabled @bind="Solicitud.fechaActualizacion" />
+                                </div>
+                            </div>
+                            <hr />
+                            @if (Solicitud.usuario != null)
+                            {
+                                @if (Solicitud.usuario.perfil == "ALUMNO" && Solicitud.usuario.alumno != null)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-12 py-2">
+                                            <div class="row justify-content-between">
+                                                <label>Nombre solicitante</label>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing">Cambiar Alumno</button>
+                                            </div>
+                                        </div>                                         
+                                        <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
+                                    </div>
 
-                                <div class="form-row">
-                                    <div class="form-group col-6">
-                                        <label>Rut solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.alumno.rut" />
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label>Rut solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.alumno.rut" />
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label>Perfil solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                        </div>
                                     </div>
-                                    <div class="form-group col-6">
-                                        <label>Perfil solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                }
+                                @if (Solicitud.usuario.perfil == "DOCENTE" && Solicitud.usuario.docente != null)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-12 py-2">
+                                            <div class="row justify-content-between">
+                                                <label>Nombre solicitante</label>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing">Cambiar Docente</button>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
                                     </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label>Rut solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.docente.rut" />
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label>Perfil solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (Solicitud.panolero != null)
+                            {
+                                <hr />
+                                <div class="form-group">
+                                    <label>Nombre panolero responsable</label>
+                                    <input type="text" class="form-control" disabled value="@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno + " " + Solicitud.panolero.apellidoMaterno)" />
                                 </div>
                             }
-                            @if (Solicitud.usuario.perfil == "DOCENTE" && Solicitud.usuario.docente != null)
-                            {
-                                <div class="form-group">
-                                    <label>Nombre solicitante</label>
-                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-6">
-                                        <label>Rut solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.docente.rut" />
-                                    </div>
-                                    <div class="form-group col-6">
-                                        <label>Perfil solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
-                                    </div>
-                                </div>
-                            }
-                        }
-                        @if (Solicitud.panolero != null)
-                        {
                             <div class="form-group">
-                                <label>Nombre panolero responsable</label>
-                                <input type="text" class="form-control" disabled value="@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno + " " + Solicitud.panolero.apellidoMaterno)"/>
+                                <label>Comentarios</label>
+                                <textarea class="form-control" rows="3" disabled="@IsDisabled" @bind="Solicitud.comentario"></textarea>
                             </div>
-                        }
-                        <div class="form-group">
-                            <label>Comentarios</label>
-                            <textarea class="form-control" rows="3" disabled @bind="Solicitud.comentario"></textarea>
-                        </div>
+                        </EditForm>
                     </div>
                 </div>
             </div>
@@ -154,6 +177,11 @@
 
 @code {
     [Parameter] public string Id { get; set; }
+    public bool IsDisabled = true;
+    public string IsActived = "";
+    public string ChangeButton = "btn-outline-primary";
+    public string IsEditing = "d-none";
+    public string ChangeIcon = "oi-pencil";
     public SolicitudModel Solicitud = new SolicitudModel();
 
     protected override async Task OnInitializedAsync()
@@ -166,8 +194,43 @@
         }
     }
 
-    private void NavigateToEdit(int Id)
+    private async Task EditInfo()
     {
-        Navigate.NavigateTo("solicitudes/editar/" + Id.ToString());
+        if (IsDisabled)
+        {
+            IsActived = "active";
+            ChangeIcon = "oi-check";
+            ChangeButton = "btn-outline-success";
+            IsEditing = "d-block";
+            IsDisabled = false;
+        } else
+        {
+            ChangeIcon = "oi-pencil";
+            ChangeButton = "btn-outline-primary";
+            IsActived = "";
+            IsEditing = "d-none";
+            IsDisabled = true;
+
+            await EditSolicitud(Solicitud);
+        }
+    }
+
+    private async Task EditSolicitud(SolicitudModel solicitud)
+    {
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("POST"),
+            RequestUri = new Uri("http://localhost:8080/solicitud/" + solicitud.id.ToString()),
+            Content = new StringContent(
+                    solicitud.EditFormatJson(solicitud, solicitud.usuario.username, solicitud.panolero.rut, solicitud.productos)
+                )
+        };
+
+        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+        var result = await Http.SendAsync(requestMessage);
+
+        Console.WriteLine(result);
     }
 }
