@@ -27,7 +27,22 @@ namespace PanolBlazor.Helpers
 
         public async static ValueTask<bool> Confirm(this IJSRuntime js, string titulo, string mensaje, TipoMensajeSweetAlert tipoMensajeSweetAlert)
         {
-            return await js.InvokeAsync<bool>("CustomConfirm", titulo, mensaje, tipoMensajeSweetAlert.ToString());
+            return await js.InvokeAsync<bool>("methods.CustomConfirm", titulo, mensaje, tipoMensajeSweetAlert.ToString());
+        }
+
+        public static ValueTask ShowModal(this IJSRuntime js, string idModal)
+        {
+            return js.InvokeVoidAsync("methods.ShowModal", idModal);
+        }
+
+        public static ValueTask CloseModal(this IJSRuntime js, string idModal)
+        {
+            return js.InvokeVoidAsync("methods.CloseModal", idModal);
+        }
+
+        public static ValueTask RenderImagen(this IJSRuntime js, string IdImagenDom, string TipoImagen, string ImagenBase64)
+        {
+            return js.InvokeVoidAsync("methods.RenderImagen", IdImagenDom, TipoImagen, ImagenBase64);
         }
 
         public static ValueTask<object> SetInLocalStorage(this IJSRuntime js, string key, string content)

@@ -1,0 +1,154 @@
+﻿@inject IJSRuntime Js
+@inject HttpClient Http
+
+@using System.Net.Http
+@using DataModel 
+
+<div class="modal fade" id="AddProductosModal" tabindex="-1" aria-labelledby="AddProductosModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12">
+                    <div class="row">
+                        @if (ProductosSA != null && ProductosSA.Count > 0)
+                        {
+                            @foreach (var Producto in ProductosSA)
+                            {
+                                <div class="px-2">
+                                    <div class="card" style="width: 18rem;">
+                                        <img id="@Producto.id.ToString()" src="" class="card-img-top" style="height: 14rem;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@Producto.nombre</h5>
+                                            <p class="card-text">Disponibles: @(int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso))</p>
+                                            <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
+                                            @if ((int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso)) >= 1)
+                                            {
+                                                <button class="col-12 btn btn-primary" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
+                                            }
+                                            else
+                                            {
+                                                <button class="col-12 btn btn-secondary" disabled>Sin disponibilidad</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                Js.RenderImagen(Producto.id.ToString(), Producto.imagenProducto.tipo, Producto.imagenProducto.imagen);
+                            }
+                        }
+                    </div>
+                    <hr />
+                    <div class="py-3">
+                        <h4>Productos agregados</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Subcategoria</th>
+                                        <th scope="col">Categoria</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (ProductosSolicitud != null)
+                                    {
+                                        @foreach (ProductoModel Producto in ProductosSolicitud)
+                                        {
+                                            <tr>
+                                                <th scope="row">@Producto.id</th>
+                                                <td>@Producto.nombre</td>
+                                                <td>@Producto.subcategoria.nombre</td>
+                                                <td>@Producto.subcategoria.categoria.nombre</td>
+                                                <td>@Producto.cantidad</td>
+                                                <td>
+                                                    <button class="btn btn-danger" @onclick="@(e => RemoveProductoOfSolicitud(Producto))"><span class="oi oi-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" @onclick="SaveChangeProductosSolicitud">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<ProductoModel> ProductosSolicitud { get; set; }
+    [Parameter] public SolicitudModel Solicitud { get; set; }
+    [Parameter] public EventCallback<Boolean> OnRefresh { get; set; }
+    private List<ProductoModel> ProductosSA = new List<ProductoModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+    }
+
+    private void AddProductoToSolicitud(ProductoModel producto)
+    {
+
+        List<ProductoModel> productosRepetidos = ProductosSolicitud.FindAll(s => s.id.Equals(producto.id));
+
+        int cantidadEnSolicitud = productosRepetidos.Count;
+        int cantidad = int.Parse(producto.cantidad);
+        int cantidadEnUso = int.Parse(producto.cantidadEnUso);
+        int disponibles = cantidad - cantidadEnUso;
+
+        if (disponibles > 0 && disponibles > cantidadEnSolicitud)
+        {
+            ProductosSolicitud.Add(producto);
+        } else
+        {
+            Js.MostrarMensaje("Imposible!", "Al parecer ya no quedan productos disponibles.", TipoMensajeSweetAlert.warning);
+        }
+
+    }
+
+    private void RemoveProductoOfSolicitud(ProductoModel producto)
+    {
+        ProductosSolicitud.Remove(producto);
+    }
+
+    private async Task SaveChangeProductosSolicitud()
+    {
+
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se editará la solicitud.", TipoMensajeSweetAlert.question);
+
+        if (response)
+        {
+            Solicitud.productos = ProductosSolicitud;
+
+            var requestMessage = new HttpRequestMessage()
+            {
+                Method = new HttpMethod("POST"),
+                RequestUri = new Uri("http://localhost:8080/solicitud/" + Solicitud.id.ToString()),
+                Content = new StringContent(
+                        Solicitud.EditFormatJson(Solicitud, Solicitud.usuario.username, Solicitud.panolero.rut, Solicitud.productos)
+                    )
+            };
+
+            requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+            var result = await Http.SendAsync(requestMessage);
+            await OnRefresh.InvokeAsync(true);
+            await Js.MostrarMensaje("Editado!", "La solicitud se ha editado correctamente.", TipoMensajeSweetAlert.success);
+            await Js.CloseModal("AddProductosModal");
+        }
+    }
+}

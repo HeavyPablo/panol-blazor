@@ -12,8 +12,10 @@ namespace PanolBlazor.DataModel
         public string estado { get; set; }
         public string descripcion { get; set; }
         public string cantidad { get; set; }
+        public string cantidadEnUso { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
         public SubcategoriaModel subcategoria { get; set; }
+        public ImagenProductoModel imagenProducto { get; set; }
     }
 }

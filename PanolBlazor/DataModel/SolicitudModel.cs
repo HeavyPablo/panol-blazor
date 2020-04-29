@@ -21,19 +21,15 @@ namespace PanolBlazor.DataModel
         public string EditFormatJson(SolicitudModel Solicitud, string UsernameUsuario, string RutResponsable, List<ProductoModel> Productos)
         {
             string productos = "";
-            int length = Productos.Count();
-            ProductoModel ultimoProducto = Productos[length - 1];
 
             foreach (var producto in Productos)
             {
                 productos += "{" +
                                 @"""id"":""" + producto.id + @"""" +
-                            "}";
-                if (producto != ultimoProducto)
-                {
-                    productos += ",";
-                }
+                            "},";
             }
+
+            productos = productos.TrimEnd(',');
 
             string json =   "{" +
                                 @"""solicitud"": [" +

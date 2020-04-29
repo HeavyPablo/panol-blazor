@@ -1,12 +1,14 @@
-﻿@page "/solicitudes/ver/{id}"
+﻿@page "/solicitudes/{id}"
 @layout Layout.SolicitudesLayout
 @attribute [Authorize]
 
 @inject HttpClient Http
+@inject IJSRuntime Js;
 @inject NavigationManager Navigate
 
 @using System.Net.Http
 @using DataModel
+@using Modals
 
     <div class="py-3 col-12">
         <div class="card">
@@ -141,38 +143,49 @@
             <div class="pl-3 col-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Productos</h4>
-                        <table class="table">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Subcategoria</th>
-                                    <th scope="col">Categoria</th>
-                                    <th scope="col">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Solicitud.productos != null)
-                                {
-                                    @foreach (ProductoModel Producto in Solicitud.productos)
-                                    {
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Productos</h4>
+                                <button type="button" class="btn btn-outline-primary" @onclick="OpenModal"><span class="oi oi-plus"></span></button>
+                            </div>
+                        </div>
+                        <div class="py-3">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-dark">
                                         <tr>
-                                            <th scope="row">@Producto.id</th>
-                                            <td>@Producto.nombre</td>
-                                            <td>@Producto.subcategoria.nombre</td>
-                                            <td>@Producto.subcategoria.categoria.nombre</td>
-                                            <td>@Producto.cantidad</td>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Subcategoria</th>
+                                            <th scope="col">Categoria</th>
+                                            <th scope="col">Cantidad</th>
                                         </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
+                                    </thead>
+                                    <tbody>
+                                        @if (Solicitud.productos != null)
+                                        {
+                                            @foreach (ProductoModel Producto in Solicitud.productos)
+                                            {
+                                                <tr>
+                                                    <th scope="row">@Producto.id</th>
+                                                    <td>@Producto.nombre</td>
+                                                    <td>@Producto.subcategoria.nombre</td>
+                                                    <td>@Producto.subcategoria.categoria.nombre</td>
+                                                    <td>@Producto.cantidad</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+<PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Solicitud.productos" Solicitud="Solicitud" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
 
 
 @code {
@@ -188,10 +201,13 @@
     {
         if(Id != null)
         {
-            Console.WriteLine(Id);
             Solicitud = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/" + Id);
-
         }
+    }
+
+    private void OpenModal ()
+    {
+        Js.ShowModal("AddProductosModal");
     }
 
     private async Task EditInfo()
@@ -205,14 +221,30 @@
             IsDisabled = false;
         } else
         {
-            ChangeIcon = "oi-pencil";
-            ChangeButton = "btn-outline-primary";
-            IsActived = "";
-            IsEditing = "d-none";
-            IsDisabled = true;
+            var response = await ConfirmEditSolicitud();
 
-            await EditSolicitud(Solicitud);
+            if (response)
+            {
+                ChangeIcon = "oi-pencil";
+                ChangeButton = "btn-outline-primary";
+                IsActived = "";
+                IsEditing = "d-none";
+                IsDisabled = true;
+            }
         }
+    }
+
+    private async Task<bool> ConfirmEditSolicitud()
+    {
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se editará la solicitud.", TipoMensajeSweetAlert.question);
+
+        if (response)
+        {
+            await EditSolicitud(Solicitud);
+            await Js.MostrarMensaje("Editado!", "La solicitud se ha editado correctamente.", TipoMensajeSweetAlert.success);
+        }
+
+        return response;
     }
 
     private async Task EditSolicitud(SolicitudModel solicitud)
