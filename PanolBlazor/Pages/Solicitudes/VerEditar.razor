@@ -10,6 +10,14 @@
 @using DataModel
 @using Modals
 
+@if (Solicitud == null || Solicitud.id == 0)
+{
+    <div class="row justify-content-center">
+        <img src="images/loading.svg" alt="Cargando" />
+    </div>
+}
+else
+{
     <div class="py-3 col-12">
         <div class="card">
             <div class="card-body">
@@ -85,7 +93,7 @@
                                                 <label>Nombre solicitante</label>
                                                 <button type="button" class="btn btn-primary btn-sm @IsEditing">Cambiar Alumno</button>
                                             </div>
-                                        </div>                                         
+                                        </div>
                                         <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
                                     </div>
 
@@ -181,9 +189,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="py-3">
+
+                </div>
             </div>
         </div>
     </div>
+}
 
 <PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Solicitud.productos" Solicitud="Solicitud" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
 
@@ -199,13 +211,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if(Id != null)
+        if (Id != null)
         {
             Solicitud = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/" + Id);
         }
     }
 
-    private void OpenModal ()
+    private void OpenModal()
     {
         Js.ShowModal("AddProductosModal");
     }
@@ -219,7 +231,8 @@
             ChangeButton = "btn-outline-success";
             IsEditing = "d-block";
             IsDisabled = false;
-        } else
+        }
+        else
         {
             var response = await ConfirmEditSolicitud();
 
@@ -266,3 +279,4 @@
         Console.WriteLine(result);
     }
 }
+

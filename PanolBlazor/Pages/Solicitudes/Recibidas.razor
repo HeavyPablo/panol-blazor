@@ -4,7 +4,20 @@
 @using System.Net.Http
 @inject HttpClient Http
 
-<SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Recibidas"></SolicitudesTableGeneric>
+@if (Solicitudes == null)
+{
+    <div class="row justify-content-center">
+        <img src="images/loading.svg" alt="Cargando" />
+    </div>
+}
+else if (Solicitudes.Count == 0)
+{
+    <p>No hay solicitudes entregadas.</p>
+}
+else
+{
+    <SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Entregadas"></SolicitudesTableGeneric>
+}
 
 @code {
     private List<PanolBlazor.DataModel.SolicitudModel> Solicitudes;
@@ -12,7 +25,7 @@
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud");
+        Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud/estado/pendiente");
     }
 
 }
