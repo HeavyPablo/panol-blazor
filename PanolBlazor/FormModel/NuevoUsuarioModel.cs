@@ -21,7 +21,10 @@ namespace PanolBlazor.FormModel
         public string Telefono { get; set; }
         [Required(ErrorMessage = "Se necesita el Rut del usuario")] 
         public string rut { get; set; }
-        [Required (ErrorMessage = "Se requiere un perfil para el usuario")] 
-        public string TipoPerfil { get; set; }
+        //[Required (ErrorMessage = "Se requiere un perfil para el usuario")] 
+        //public string TipoPerfil { get; set; }
     }
+
+  
+
 }
