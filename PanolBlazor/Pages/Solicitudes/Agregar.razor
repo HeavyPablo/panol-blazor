@@ -1,12 +1,182 @@
 ﻿@page "/solicitudes/agregar"
-@attribute [Authorize]
 @layout Layout.SolicitudesLayout
-<h3>Agregar</h3>
+@attribute [Authorize]
 
+@inject HttpClient Http
+@inject IJSRuntime Js;
+@inject NavigationManager Navigate
 
+@using System.Net.Http
+@using DataModel
+@using Modals
 
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-12">
+                    <div class="row justify-content-between">
+                        <div class="d-flex">
+                            <div class="px-2">
+                                <h3>Crear Solicitud</h3>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="row py-3">
+            <div class="pr-3 col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Información</h4>
+                            </div>
+                        </div>
+                        <EditForm Model="Solicitud" OnValidSubmit="CreateSolicitud">
+                            <div class="form-group">
+                                <label>Tipo de Solicitud</label>
+                                <InputSelect class="form-control" @bind-Value="TipoSolicitud">
+                                    <option value="NORMAL">Normal</option>
+                                    <option value="ESPECIAL">Especial</option>
+                                </InputSelect>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <div class="col-12 py-2">
+                                    <div class="row justify-content-between">
+                                        <label>Nombre solicitante</label>
+                                        <button type="button" class="btn btn-primary btn-sm" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Usuario</button>
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" disabled @bind="NombreSolicitante" />
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label>Rut solicitante</label>
+                                    <input type="text" class="form-control" disabled @bind="RutSolicitante" />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>Perfil solicitante</label>
+                                    <input type="text" class="form-control" disabled @bind="PerfilSolicitante" />
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label>Nombre panolero responsable</label>
+                                <input type="text" class="form-control" disabled @bind="NombrePanolero" />
+                            </div>
+                            <div class="form-group">
+                                <label>Comentarios</label>
+                                <textarea class="form-control" rows="3" @bind="Solicitud.comentario"></textarea>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            <div class="pl-3 col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Productos</h4>
+                                <button type="button" class="btn btn-outline-primary" @onclick="@(e => OpenModal("AddProductosModal"))"><span class="oi oi-plus"></span></button>
+                            </div>
+                        </div>
+                        <div class="py-3">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Subcategoria</th>
+                                            <th scope="col">Categoria</th>
+                                            <th scope="col">Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Solicitud.productos != null)
+                                        {
+                                            @foreach (ProductoModel Producto in Solicitud.productos)
+                                            {
+                                                <tr>
+                                                    <th scope="row">@Producto.id</th>
+                                                    <td>@Producto.nombre</td>
+                                                    <td>@Producto.subcategoria.nombre</td>
+                                                    <td>@Producto.subcategoria.categoria.nombre</td>
+                                                    <td>@Producto.cantidad</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="py-3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Productos" Solicitud="Solicitud" OnRefresh="RefreshProductos"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
+<PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal Solicitante="Usuario" Solicitud="Solicitud" OnRefresh="RefreshSolicitante"></PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal>
 
 @code {
+    string TipoSolicitud = "NORMAL";
+    string NombreSolicitante = "";
+    string RutSolicitante = "";
+    string PerfilSolicitante = "";
+    string NombrePanolero = "";
+    public SolicitudModel Solicitud = new SolicitudModel();
+    public List<ProductoModel> Productos = new List<ProductoModel>();
+    public PanoleroModel Panolero = new PanoleroModel();
+    public UsuarioModel Usuario = new UsuarioModel();
+
+
+    protected override void OnInitialized()
+    {
+    }
+
+    private void OpenModal(string Tittle)
+    {
+        Js.ShowModal(Tittle);
+    }
+
+    private void RefreshProductos()
+    {
+        Solicitud.productos = Productos;
+    }
+
+    private void RefreshSolicitante()
+    {
+        Usuario = Solicitud.usuario;
+        Console.WriteLine(Solicitud.usuario.username);
+        if (Usuario.alumno != null)
+        {
+            NombreSolicitante = Usuario.alumno.nombre + " " + Usuario.alumno.apellidoPaterno + " " + Usuario.alumno.apellidoMaterno;
+            RutSolicitante = Usuario.alumno.rut;
+            PerfilSolicitante = Usuario.perfil;
+        }
+        if (Usuario.docente != null)
+        {
+            NombreSolicitante = Usuario.docente.nombre + " " + Usuario.docente.apellidoPaterno + " " + Usuario.docente.apellidoMaterno;
+            RutSolicitante = Usuario.docente.rut;
+            PerfilSolicitante = Usuario.perfil;
+        }
+    }
+
+    private void CreateSolicitud()
+    {
+
+    }
 
 }
+
+

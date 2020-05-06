@@ -77,7 +77,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -133,19 +133,22 @@
         {
             Solicitud.productos = ProductosSolicitud;
 
-            var requestMessage = new HttpRequestMessage()
+            if (Solicitud.id != 0)
             {
-                Method = new HttpMethod("POST"),
-                RequestUri = new Uri("http://localhost:8080/solicitud/" + Solicitud.id.ToString()),
-                Content = new StringContent(
-                        Solicitud.EditFormatJson(Solicitud, Solicitud.usuario.username, Solicitud.panolero.rut, Solicitud.productos)
-                    )
-            };
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/solicitud/" + Solicitud.id.ToString()),
+                    Content = new StringContent(
+                                        Solicitud.EditFormatJson(Solicitud, Solicitud.usuario.username, Solicitud.panolero.rut, Solicitud.productos)
+                                    )
+                };
 
-            requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
-            var result = await Http.SendAsync(requestMessage);
+                var result = await Http.SendAsync(requestMessage);
+            }
             await OnRefresh.InvokeAsync(true);
             await Js.MostrarMensaje("Editado!", "La solicitud se ha editado correctamente.", TipoMensajeSweetAlert.success);
             await Js.CloseModal("AddProductosModal");

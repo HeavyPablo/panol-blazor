@@ -1,0 +1,236 @@
+﻿@inject IJSRuntime Js
+@inject HttpClient Http
+
+@using FormModel
+
+@using System.Net.Http
+@using DataModel
+
+<div class="modal fade" id="ChangeUsuarioModal" tabindex="-1" aria-labelledby="ChangeUsuarioModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="FiltrosModel" OnValidSubmit="FilterUsuarios">
+                    <div class="col-12">
+                        <div class="row justify-content-between">
+                            <h3>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h3>
+                            <button type="submit" class="btn btn-primary" @onclick="FilterUsuarios"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between">
+                        <div class="form-group col-6">
+                            <label>Búsqueda</label>
+                            <input class="form-control" type="text" @bind="FiltrosModel.FiltroBusqueda" placeholder="@("Busqueda por nombre (ej." + @"""Roberto" + @"""), o por rut (ej. " + @"""12345678-9" + @""").")" />
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Perfil</label>
+                            <InputSelect class="form-control" @bind-Value="FiltrosModel.FiltroPerfil">
+                                <option value="">--Seleccione perfil--</option>
+                                <option value="ALUMNO">Alumno</option>
+                                <option value="DOCENTE">Docente</option>
+                            </InputSelect>
+                        </div>
+                    </div>
+                </EditForm>
+                <hr />
+                <h3>Usuarios</h3>
+                @if (Usuarios == null)
+                {
+                    <div class="row justify-content-center">
+                        <img src="images/loading.svg" alt="Cargando" />
+                    </div>
+                }
+                else if (Usuarios.Count == 0)
+                {
+                    <div>
+                        No se encontraron usuarios.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Rut</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Perfil</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (UsuarioModel Usuario in Usuarios)
+                                {
+                                    <tr>
+                                        <th scope="row">@Usuario.id</th>
+                                        @if (Usuario.alumno != null)
+                                        {
+                                            <td>@(Usuario.alumno.nombre + " " + Usuario.alumno.apellidoPaterno + " " + Usuario.alumno.apellidoMaterno)</td>
+                                            <td>@Usuario.alumno.rut</td>
+                                            <td>@Usuario.alumno.correoAlumno</td>
+                                            <td>@Usuario.perfil</td>
+                                            <td>@Usuario.alumno.estado</td>
+                                        }
+                                        @if (Usuario.docente != null)
+                                        {
+                                            <td>@(Usuario.docente.nombre + " " + Usuario.docente.apellidoPaterno + " " + Usuario.docente.apellidoMaterno)</td>
+                                            <td>@Usuario.docente.rut</td>
+                                            <td>@Usuario.docente.correoDocente</td>
+                                            <td>@Usuario.perfil</td>
+                                            <td>@Usuario.docente.estado</td>
+                                        }
+                                        <td>
+                                            <button class="btn btn-success" @onclick="@(e => SelectUsuarioSolicitante(Usuario))"><span class="oi oi-plus"></span></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public UsuarioModel Solicitante { get; set; }
+    [Parameter] public SolicitudModel Solicitud { get; set; }
+    [Parameter] public EventCallback<Boolean> OnRefresh { get; set; }
+
+    FiltrosChangeUsuarioModalModel FiltrosModel = new FiltrosChangeUsuarioModalModel();
+    List<UsuarioModel> Usuarios = new List<UsuarioModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        FiltrosModel = new FiltrosChangeUsuarioModalModel();
+        Usuarios = new List<UsuarioModel>();
+        var Alumnos = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario/perfil/alumno");
+        var Docentes = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario/perfil/docente");
+
+        foreach (UsuarioModel Docente in Docentes)
+        {
+            Usuarios.Add(Docente);
+        }
+
+        foreach (UsuarioModel Alumno in Alumnos)
+        {
+            Usuarios.Add(Alumno);
+        }
+    }
+
+    private async Task FilterUsuarios()
+    {
+        if ((FiltrosModel.FiltroPerfil == "" || FiltrosModel.FiltroPerfil == null) && FiltrosModel.FiltroBusqueda != "" && FiltrosModel.FiltroBusqueda != null)
+        {
+            List<UsuarioModel> UsuariosToFilter = new List<UsuarioModel>();
+            foreach (var Usuario in Usuarios)
+            {
+                string Nombre = "";
+                string Rut = "";
+                if (Usuario.alumno != null)
+                {
+                    Nombre = Usuario.alumno.nombre + " " + Usuario.alumno.apellidoPaterno + " " + Usuario.alumno.apellidoMaterno;
+                    Rut = Usuario.alumno.rut;
+                }
+                if (Usuario.docente != null)
+                {
+                    Nombre = Usuario.docente.nombre + " " + Usuario.docente.apellidoPaterno + " " + Usuario.docente.apellidoMaterno;
+                    Rut = Usuario.docente.rut;
+                }
+
+                if (Nombre.Contains(FiltrosModel.FiltroBusqueda) || Rut.Contains(FiltrosModel.FiltroBusqueda))
+                {
+                    UsuariosToFilter.Add(Usuario);
+                }
+
+                Usuarios = UsuariosToFilter;
+            }
+        }
+        if (FiltrosModel.FiltroPerfil != null && FiltrosModel.FiltroPerfil != "")
+        {
+            List<UsuarioModel> UsuariosToFilter = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario/perfil/" + FiltrosModel.FiltroPerfil);
+            Usuarios = new List<UsuarioModel>();
+
+            if (FiltrosModel.FiltroPerfil == "ALUMNO")
+            {
+                if (FiltrosModel.FiltroBusqueda != null && FiltrosModel.FiltroBusqueda != "")
+                {
+                    foreach (var Usuario in UsuariosToFilter)
+                    {
+                        string Nombre = Usuario.alumno.nombre + " " + Usuario.alumno.apellidoPaterno + " " + Usuario.alumno.apellidoMaterno;
+                        string Rut = Usuario.alumno.rut;
+
+                        if (Nombre.Contains(FiltrosModel.FiltroBusqueda) || Rut.Contains(FiltrosModel.FiltroBusqueda))
+                        {
+                            Usuarios.Add(Usuario);
+                        }
+                    }
+                } else
+                {
+                    foreach (var Usuario in UsuariosToFilter)
+                    {
+                        Usuarios.Add(Usuario);
+                    }
+                }
+
+            }
+
+            if (FiltrosModel.FiltroPerfil == "DOCENTE")
+            {
+                if (FiltrosModel.FiltroBusqueda != null && FiltrosModel.FiltroBusqueda != "")
+                {
+                    foreach (var Usuario in UsuariosToFilter)
+                    {
+                        string Nombre = Usuario.docente.nombre + " " + Usuario.docente.apellidoPaterno + " " + Usuario.docente.apellidoMaterno;
+                        string Rut = Usuario.docente.rut;
+
+                        if (Nombre.Contains(FiltrosModel.FiltroBusqueda) || Rut.Contains(FiltrosModel.FiltroBusqueda))
+                        {
+                            Usuarios.Add(Usuario);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var Usuario in UsuariosToFilter)
+                    {
+                        Usuarios.Add(Usuario);
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task SaveChangeSolicitanteSolicitud()
+    {
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se agregará el usuario a la solicitud.", TipoMensajeSweetAlert.question);
+
+        if (response)
+        {
+            Solicitud.usuario = Solicitante;
+            Console.WriteLine(Solicitante.username);
+            await OnRefresh.InvokeAsync(true);
+            await Js.MostrarMensaje("Añadido!", "Usuario agregado a la solicitud correctamente.", TipoMensajeSweetAlert.success);
+            await Js.CloseModal("ChangeUsuarioModal");
+        }
+    }
+
+    private async Task SelectUsuarioSolicitante(UsuarioModel Usuario)
+    {
+        Solicitante = Usuario;
+        await SaveChangeSolicitanteSolicitud();
+    }
+}
