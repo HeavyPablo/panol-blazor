@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject PanolBlazor.Services.ILoginService LoginService
 @inject NavigationManager Navigation
+@inject IJSRuntime Js
 
 <AuthorizeView>
     <Authorized>
@@ -16,9 +17,16 @@
         <AuthorizeView>
             <Authorized>
                 <div class="ml-md-auto">
-                    <button type="button" class="btn btn-dark" @onclick="HandlerLogout">
-                        <span class="oi oi-account-logout" aria-hidden="true"></span> Salir
-                    </button>
+                    <div class="row">
+                        <h5 class="px-2 m-0 border-right" style="vertical-align: text-bottom">@Username <img src="images/user.svg" alt="@Username" style="width: 40px" /></h5>
+                        <div class="px-3">
+                            <button type="button" class="btn btn-dark" @onclick="HandlerLogout">
+                                <span class="oi oi-account-logout" aria-hidden="true"></span> Salir
+                            </button>
+                        </div>
+                        
+                    </div>
+                    
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -31,9 +39,16 @@
 </div>
 
 @code {
+    string Username = "";
+
     private async Task HandlerLogout()
     {
         await LoginService.Logout();
         Navigation.NavigateTo("/login");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+         Username = await Js.GetFromLocalStorage("username");
     }
 }

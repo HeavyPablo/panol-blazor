@@ -140,8 +140,21 @@
     public UsuarioModel Usuario = new UsuarioModel();
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        string Username = await Js.GetFromLocalStorage("username");
+        var Responsable = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+
+        if (Responsable != null)
+        {
+            if (Responsable.panolero != null)
+            {
+                NombrePanolero = Responsable.panolero.nombre + " " + Responsable.panolero.apellidoPaterno + " " + Responsable.panolero.apellidoMaterno;
+            } else
+            {
+                NombrePanolero = Responsable.username;
+            }
+        }
     }
 
     private void OpenModal(string Tittle)
