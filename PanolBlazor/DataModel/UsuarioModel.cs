@@ -10,6 +10,8 @@ namespace PanolBlazor.DataModel
         public int id { get; set; }
         public string username { get; set; }
         public string perfil { get; set; }
+
+        public string estado { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
         public AlumnoModel alumno { get; set; }

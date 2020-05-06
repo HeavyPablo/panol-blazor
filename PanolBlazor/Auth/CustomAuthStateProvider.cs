@@ -58,6 +58,7 @@ namespace PanolBlazor.Auth
         {
             Http.DefaultRequestHeaders.Authorization = null;
             await js.RemoveItem(TOKENKEY);
+            await js.RemoveItem("username");
             NotifyAuthenticationStateChanged(Task.FromResult(Anonimo));
         }
 

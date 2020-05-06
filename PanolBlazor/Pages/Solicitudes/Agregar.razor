@@ -212,7 +212,6 @@
                 await Js.MostrarMensaje("Error!", "Verifíque que todos los datos esten correctos y vuelva a intentarlo.", TipoMensajeSweetAlert.error);
             } else
             {
-                Console.WriteLine(Solicitud.CreateFormatJson(Solicitud));
                 var response = await Js.Confirm("¿Estas seguro/a?", "Confirma para crear usuario.", TipoMensajeSweetAlert.question);
 
                 if (response)
