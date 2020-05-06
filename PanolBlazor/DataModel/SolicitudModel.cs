@@ -37,8 +37,38 @@ namespace PanolBlazor.DataModel
                                             @"""comentario"":""" + Solicitud.comentario + @"""," +
                                             @"""estado"":""" + Solicitud.estado + @"""," +
                                             @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
-                                            @"""solicituante"":""" + UsernameUsuario + @"""," +
+                                            @"""solicitante"":""" + UsernameUsuario + @"""," +
                                             @"""responsable"":""" + RutResponsable + @"""" +
+                                        "}" +
+                                    "]," +
+                                @"""productos"": [" +
+                                            productos +
+                                    "]" +
+                            "}";
+
+            return json;
+        }
+
+        public string CreateFormatJson(SolicitudModel Solicitud)
+        {
+            string productos = "";
+
+            foreach (var producto in Solicitud.productos)
+            {
+                productos += "{" +
+                                @"""id"":""" + producto.id + @"""" +
+                            "},";
+            }
+
+            productos = productos.TrimEnd(',');
+
+            string json = "{" +
+                                @"""solicitud"": [" +
+                                        "{" +
+                                            @"""comentario"":""" + Solicitud.comentario + @"""," +
+                                            @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
+                                            @"""solicitante"":""" + Solicitud.usuario.username + @"""," +
+                                            @"""responsable"":""" + Solicitud.panolero.rut + @"""" +
                                         "}" +
                                     "]," +
                                 @"""productos"": [" +
