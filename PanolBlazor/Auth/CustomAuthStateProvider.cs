@@ -37,20 +37,20 @@ namespace PanolBlazor.Auth
                 return Anonimo;
             }
 
-            return BuidAuthenticationState(token);
+            return await BuidAuthenticationState(token);
         }
 
-        private AuthenticationState BuidAuthenticationState(string token)
+        private async Task<AuthenticationState> BuidAuthenticationState(string token)
         {
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt")));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(await ParseClaimsFromJwt(token), "jwt")));
         }
 
         public async Task Login(string token)
         {
             await js.SetInLocalStorage(TOKENKEY, token);
-            var authState = BuidAuthenticationState(token);
+            var authState = await BuidAuthenticationState(token);
             NotifyAuthenticationStateChanged(Task.FromResult(authState));
         }
 
@@ -61,7 +61,7 @@ namespace PanolBlazor.Auth
             NotifyAuthenticationStateChanged(Task.FromResult(Anonimo));
         }
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        private async Task<IEnumerable<Claim>> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();
             var payload = jwt.Split('.')[1];
@@ -69,6 +69,7 @@ namespace PanolBlazor.Auth
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
             keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+            keyValuePairs.TryGetValue("sub", out object username);
 
             if (roles != null)
             {
@@ -87,6 +88,13 @@ namespace PanolBlazor.Auth
                 }
 
                 keyValuePairs.Remove(ClaimTypes.Role);
+            }
+
+            if (username != null)
+            {
+                claims.Add(new Claim("sub", username.ToString()));
+                await js.SetInLocalStorage("username", username.ToString());
+                keyValuePairs.Remove("sub");
             }
 
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
