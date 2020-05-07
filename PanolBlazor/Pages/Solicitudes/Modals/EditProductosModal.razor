@@ -2,7 +2,8 @@
 @inject HttpClient Http
 
 @using System.Net.Http
-@using DataModel 
+@using DataModel
+@using FormModel
 
 <div class="modal fade" id="AddProductosModal" tabindex="-1" aria-labelledby="AddProductosModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -14,6 +15,41 @@
                 </button>
             </div>
             <div class="modal-body">
+                <EditForm Model="FiltrosModel">
+                    <div class="col-12">
+                        <div class="row justify-content-between">
+                            <h3>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h3>
+                            <button type="submit" class="btn btn-primary" @onclick="FilterProductos"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between">
+                        <div class="form-group col-4">
+                            <label>Búsqueda</label>
+                            <input class="form-control" type="text" @bind="FiltrosModel.Nombre" placeholder="@("Busqueda por nombre (ej." + @"""Computador" + @""")")" />
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Subcategoria</label>
+                            <InputSelect class="form-control" @bind-Value="FiltrosModel.Subcategoria">
+                                <option class="text-muted" value="">--Seleccione subcategoria--</option>
+                                @foreach (SubcategoriaModel Subcategoria in Subcategorias)
+                                {
+                                    <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Categoria</label>
+                            <InputSelect class="form-control" @bind-Value="FiltrosModel.Categoria">
+                                <option class="text-muted" value="">--Seleccione categoria--</option>
+                                @foreach (CategoriaModel Categoria in Categorias)
+                                {
+                                    <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                </EditForm>
+                <hr />
                 <div class="col-12">
                     <div class="row">
                         @if (ProductosSA != null && ProductosSA.Count > 0)
@@ -21,8 +57,8 @@
                             @foreach (var Producto in ProductosSA)
                             {
                                 <div class="px-2">
-                                    <div class="card" style="width: 18rem;">
-                                        <img id="@Producto.id.ToString()" src="" class="card-img-top" style="height: 14rem;">
+                                    <div class="card" style="width: 15rem;">
+                                        <img id="@Producto.id.ToString()" src="" class="card-img-top" style="height: 10rem;">
                                         <div class="card-body">
                                             <h5 class="card-title">@Producto.nombre</h5>
                                             <p class="card-text">Disponibles: @(int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso))</p>
@@ -92,11 +128,17 @@
     [Parameter] public List<ProductoModel> ProductosSolicitud { get; set; }
     [Parameter] public SolicitudModel Solicitud { get; set; }
     [Parameter] public EventCallback<Boolean> OnRefresh { get; set; }
+
     private List<ProductoModel> ProductosSA = new List<ProductoModel>();
+    private List<CategoriaModel> Categorias = new List<CategoriaModel>();
+    private List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
+    private FiltrosProductoModel FiltrosModel = new FiltrosProductoModel();
 
     protected override async Task OnInitializedAsync()
     {
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+        Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
     }
 
     private void AddProductoToSolicitud(ProductoModel producto)
@@ -112,7 +154,8 @@
         if (disponibles > 0 && disponibles > cantidadEnSolicitud)
         {
             ProductosSolicitud.Add(producto);
-        } else
+        }
+        else
         {
             Js.MostrarMensaje("Imposible!", "Al parecer ya no quedan productos disponibles.", TipoMensajeSweetAlert.warning);
         }
@@ -122,6 +165,11 @@
     private void RemoveProductoOfSolicitud(ProductoModel producto)
     {
         ProductosSolicitud.Remove(producto);
+    }
+
+    private void FilterProductos()
+    {
+
     }
 
     private async Task SaveChangeProductosSolicitud()

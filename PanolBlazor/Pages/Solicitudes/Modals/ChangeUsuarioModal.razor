@@ -31,7 +31,7 @@
                         <div class="form-group col-6">
                             <label>Perfil</label>
                             <InputSelect class="form-control" @bind-Value="FiltrosModel.FiltroPerfil">
-                                <option value="">--Seleccione perfil--</option>
+                                <option class="text-muted" value="">--Seleccione perfil--</option>
                                 <option value="ALUMNO">Alumno</option>
                                 <option value="DOCENTE">Docente</option>
                             </InputSelect>
@@ -78,7 +78,7 @@
                                             <td>@Usuario.alumno.rut</td>
                                             <td>@Usuario.alumno.correoAlumno</td>
                                             <td>@Usuario.perfil</td>
-                                            <td>@Usuario.alumno.estado</td>
+                                            <td>@Usuario.estado</td>
                                         }
                                         @if (Usuario.docente != null)
                                         {
@@ -86,7 +86,7 @@
                                             <td>@Usuario.docente.rut</td>
                                             <td>@Usuario.docente.correoDocente</td>
                                             <td>@Usuario.perfil</td>
-                                            <td>@Usuario.docente.estado</td>
+                                            <td>@Usuario.estado</td>
                                         }
                                         <td>
                                             <button class="btn btn-success" @onclick="@(e => SelectUsuarioSolicitante(Usuario))"><span class="oi oi-plus"></span></button>
