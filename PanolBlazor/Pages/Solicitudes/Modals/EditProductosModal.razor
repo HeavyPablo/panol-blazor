@@ -15,6 +15,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                @* Aqui empieza el filtro *@
                 <EditForm Model="FiltrosModel">
                     <div class="col-12">
                         <div class="row justify-content-between">
@@ -150,6 +151,8 @@
     private List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
     private FiltrosProductoModel FiltrosModel = new FiltrosProductoModel();
 
+    // este metodo se ejecuta cuando se inicializa la pagina (antes de cargar el DOM) .. 
+    //normalmente se ejecuta 1 vez pero puede llamarlo las veces que quieras manualmente.
     protected override async Task OnInitializedAsync()
     {
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
@@ -159,6 +162,9 @@
         FiltrosModel = new FiltrosProductoModel();
     }
 
+    // Este metodo se ejecuta despues de cada vez que se actualiza el DOM.. 
+    // el parametro firstRender te sirve para que lo puedas ejecutar una unica vez.. en este caso no lo uso
+    // pero si lo quiere usar .. debes ponerlo dentro de un if ej. " if (firstRender) { ... } "
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (ProductosSA != null && ProductosSA.Count > 0)
@@ -196,15 +202,23 @@
         ProductosSolicitud.Remove(producto);
     }
 
+
+    // Basicamente lo unico que hago es actualizar (elimino los que no son) la tabla teniendo de baso todos los productos.
     private async Task FilterProductos()
     {
+        // Primero se deja nulo los productos (para que se vea el svg de loading)
         ProductosSA = null;
+        // capturo todos los productos de la bd.
         List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
 
+        // aplico primero el filtro de categoria .. si este campo no esta vacio.
         if (FiltrosModel.Categoria != null && FiltrosModel.Categoria != "")
         {
+            // el metodo .ToList() sirve si te da el error "Collection was modified; enumeration operation may not execute"
+            // si no te da el error .. no es necesario.
             foreach (ProductoModel producto in ProductosToFilter.ToList())
             {
+                // se borran los productos de la tabla qe no coincidan con la categoria
                 if (producto.subcategoria.categoria.id != int.Parse(FiltrosModel.Categoria))
                 {
                     ProductosToFilter.Remove(producto);
