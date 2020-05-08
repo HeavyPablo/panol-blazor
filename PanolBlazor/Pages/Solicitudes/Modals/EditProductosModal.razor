@@ -51,8 +51,25 @@
                 </EditForm>
                 <hr />
                 <div class="col-12">
-                    <div class="row">
-                        @if (ProductosSA != null && ProductosSA.Count > 0)
+                    <div class="row" style="min-height: 404px;">
+                        @if (ProductosSA == null)
+                        {
+                            <div class="col-12">
+                                <div class="row justify-content-center">
+                                    <img src="images/loading.svg" alt="Cargando" />
+                                </div>
+                            </div>
+
+                        }
+                        else if (ProductosSA.Count <= 0)
+                        {
+                            <div class="col-12">
+                                <div class="row justify-content-center">
+                                    <p class="text-muted">No se encontraron productos.</p>
+                                </div>
+                            </div>
+                        }
+                        else
                         {
                             @foreach (var Producto in ProductosSA)
                             {
@@ -74,7 +91,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                Js.RenderImagen(Producto.id.ToString(), Producto.imagenProducto.tipo, Producto.imagenProducto.imagen);
                             }
                         }
                     </div>
@@ -139,6 +155,19 @@
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
         Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
         Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+
+        FiltrosModel = new FiltrosProductoModel();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ProductosSA != null && ProductosSA.Count > 0)
+        {
+            foreach (ProductoModel producto in ProductosSA)
+            {
+                await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
+            }
+        }
     }
 
     private void AddProductoToSolicitud(ProductoModel producto)
@@ -167,9 +196,45 @@
         ProductosSolicitud.Remove(producto);
     }
 
-    private void FilterProductos()
+    private async Task FilterProductos()
     {
+        ProductosSA = null;
+        List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
 
+        if (FiltrosModel.Categoria != null && FiltrosModel.Categoria != "")
+        {
+            foreach (ProductoModel producto in ProductosToFilter.ToList())
+            {
+                if (producto.subcategoria.categoria.id != int.Parse(FiltrosModel.Categoria))
+                {
+                    ProductosToFilter.Remove(producto);
+                }
+            }
+        }
+
+        if (FiltrosModel.Subcategoria != null && FiltrosModel.Subcategoria != "")
+        {
+            foreach (ProductoModel producto in ProductosToFilter.ToList())
+            {
+                if (producto.subcategoria.id != int.Parse(FiltrosModel.Subcategoria))
+                {
+                    ProductosToFilter.Remove(producto);
+                }
+            }
+        }
+
+        if (FiltrosModel.Nombre != null && FiltrosModel.Nombre != "")
+        {
+            foreach(ProductoModel producto in ProductosToFilter.ToList())
+            {
+                if (!producto.nombre.Contains(FiltrosModel.Nombre))
+                {
+                    ProductosToFilter.Remove(producto);
+                }
+            }
+        }
+
+        ProductosSA = ProductosToFilter;
     }
 
     private async Task SaveChangeProductosSolicitud()

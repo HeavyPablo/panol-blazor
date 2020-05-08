@@ -25,6 +25,8 @@
         $('#' + idModal).modal('hide');
     },
     RenderImagen: function (idImagenDom, tipoImagen, imagenBase64) {
-        document.getElementById(idImagenDom).src = "data:" + tipoImagen + ";base64," + imagenBase64;
+        new Promise(() => {
+            document.getElementById(idImagenDom).src = "data:" + tipoImagen + ";base64," + imagenBase64;
+        });
     }
 }
