@@ -91,7 +91,7 @@ else
                                         <div class="col-12 py-2">
                                             <div class="row justify-content-between">
                                                 <label>Nombre solicitante</label>
-                                                <button type="button" class="btn btn-primary btn-sm @IsEditing">Cambiar Alumno</button>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Alumno</button>
                                             </div>
                                         </div>
                                         <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
@@ -114,7 +114,7 @@ else
                                         <div class="col-12 py-2">
                                             <div class="row justify-content-between">
                                                 <label>Nombre solicitante</label>
-                                                <button type="button" class="btn btn-primary btn-sm @IsEditing">Cambiar Docente</button>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Docente</button>
                                             </div>
                                         </div>
                                         <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
@@ -154,7 +154,7 @@ else
                         <div class="col-12">
                             <div class="row justify-content-between">
                                 <h4>Productos</h4>
-                                <button type="button" class="btn btn-outline-primary" @onclick="OpenModal"><span class="oi oi-plus"></span></button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="@(e => OpenModal("AddProductosModal"))"><span class="oi oi-plus"></span></button>
                             </div>
                         </div>
                         <div class="py-3">
@@ -198,7 +198,7 @@ else
 }
 
 <PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Solicitud.productos" Solicitud="Solicitud" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
-
+<PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal Solicitante="Solicitud.usuario" Solicitud="Solicitud" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal>
 
 @code {
     [Parameter] public string Id { get; set; }
@@ -217,9 +217,9 @@ else
         }
     }
 
-    private void OpenModal()
+    private void OpenModal(string Tittle)
     {
-        Js.ShowModal("AddProductosModal");
+        Js.ShowModal(Tittle);
     }
 
     private async Task EditInfo()

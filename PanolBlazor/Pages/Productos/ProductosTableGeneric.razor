@@ -1,0 +1,77 @@
+﻿@inject NavigationManager Navigation
+@inject IJSRuntime Js
+
+@using DataModel
+
+<div class="py-3 col-12">
+    <div class="card">
+        <div class="card-body">
+            <h4>@Titulo</h4>
+            <hr />
+            <div class="col-4">
+                <label for="perfilSelect"> Perfil</label>
+                <select class="form-control" id="perfilSelect">
+                    <option>Alumno</option>
+                    <option>Docente</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-3 col-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="col-12">
+                <div class="row">
+                    @foreach (ProductoModel Producto in Productos)
+                    {
+                        <div class="px-2">
+                            <div class="card" style="width: 15rem;">
+                                <img id="@Producto.id.ToString()" src="" class="card-img-top" style="height: 10rem;">
+                                <div class="card-body">
+                                    @if (Producto.estado == "nuevo")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
+                                    }
+                                    @if (Producto.estado == "usado")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-warning">@Producto.estado</span></h5>
+                                    }
+                                    @if (Producto.estado == "dañado")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
+                                    }
+                                    <p class="card-text">Cantidad: @Producto.cantidad</p>
+                                    <p class="card-text">Cantidad en uso: @Producto.cantidadEnUso</p>
+                                    <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<ProductoModel> Productos { get; set; }
+    [Parameter] public string Titulo { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Productos != null && Productos.Count > 0)
+        {
+            foreach (ProductoModel producto in Productos)
+            {
+                await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
+            }
+        }
+    }
+
+    private void ViewProducto(int id)
+    {
+        Navigation.NavigateTo("productos/" + id);
+    }
+}

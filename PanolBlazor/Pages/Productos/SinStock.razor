@@ -1,0 +1,29 @@
+﻿@page "/productos/sin_stock"
+@layout Layout.ProductosLayout
+@attribute [Authorize]
+@using DataModel
+@inject HttpClient Http
+
+@if (Productos == null)
+{
+    <div class="row justify-content-center">
+        <img src="images/loading.svg" alt="Cargando" />
+    </div>
+}
+else if (Productos.Count <= 0)
+{
+    <p class="text-muted">No hay productos sin stock.</p>
+}
+else
+{
+    <ProductosTableGeneric Productos="Productos" Titulo="Sin Stock"></ProductosTableGeneric>
+}
+
+@code {
+    private List<ProductoModel> Productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+    }
+}

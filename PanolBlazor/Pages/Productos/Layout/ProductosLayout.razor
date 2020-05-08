@@ -1,0 +1,78 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@layout MainLayout
+
+<div class="col-12 py-4">
+    <div class="row justify-content-between bg-dark rounded-lg navbar">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.en_uso))">
+                <span class="oi oi-inbox" aria-hidden="true"></span> En Uso
+            </button>
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.poco_stock))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Poco Stock
+            </button>
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.sin_stock))">
+                <span class="oi oi-clock" aria-hidden="true"></span> Sin Stock
+            </button>
+            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.todos))">
+                <span class="oi oi-task" aria-hidden="true"></span> Todos
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.agregar))">
+                <span class="oi oi-plus" aria-hidden="true"></span> Agregar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="col-12">
+    @Body
+</div>
+
+@code {
+
+    private string Active1, Active2, Active3, Active4 = "";
+
+    protected override void OnInitialized()
+    {
+        RefreshActive();
+    }
+
+    public void SolicitudesNavigate(SolicitudesActions action)
+    {
+        Navigation.NavigateTo("productos/" + action.ToString());
+        RefreshActive();
+    }
+
+    private void RefreshActive()
+    {
+        Active1 = Active2 = Active3 = Active4 = "";
+
+        var uri = Navigation.Uri;
+
+        if (uri.Contains(SolicitudesActions.en_uso.ToString()))
+        {
+            Active1 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.poco_stock.ToString()))
+        {
+            Active2 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.sin_stock.ToString()))
+        {
+            Active3 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.todos.ToString()))
+        {
+            Active4 = "active";
+        }
+    }
+
+    public enum SolicitudesActions
+    {
+        en_uso, poco_stock, sin_stock, todos, agregar
+    }
+}
+
+

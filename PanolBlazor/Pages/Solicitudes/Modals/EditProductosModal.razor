@@ -155,9 +155,16 @@
     //normalmente se ejecuta 1 vez pero puede llamarlo las veces que quieras manualmente.
     protected override async Task OnInitializedAsync()
     {
+        ProductosSA = null;
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
-        Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
-        Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+        if (Categorias == null || Categorias.Count <= 0)
+        {
+            Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+        }
+        if (Subcategorias == null || Subcategorias.Count <= 0)
+        {
+            Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+        }
 
         FiltrosModel = new FiltrosProductoModel();
     }
@@ -215,7 +222,7 @@
         if (FiltrosModel.Categoria != null && FiltrosModel.Categoria != "")
         {
             // el metodo .ToList() sirve si te da el error "Collection was modified; enumeration operation may not execute"
-            // si no te da el error .. no es necesario.
+            // si no te da el error no es necesario pero es mejor prevenir ajaj.
             foreach (ProductoModel producto in ProductosToFilter.ToList())
             {
                 // se borran los productos de la tabla qe no coincidan con la categoria
