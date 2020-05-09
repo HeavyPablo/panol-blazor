@@ -76,7 +76,7 @@
                             {
                                 <div class="px-2">
                                     <div class="card" style="width: 15rem;">
-                                        <img id="@Producto.id.ToString()" src="" class="card-img-top" style="height: 10rem;">
+                                        <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
                                         <div class="card-body">
                                             <h5 class="card-title">@Producto.nombre</h5>
                                             <p class="card-text">Disponibles: @(int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso))</p>

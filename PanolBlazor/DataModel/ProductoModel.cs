@@ -17,5 +17,19 @@ namespace PanolBlazor.DataModel
         public string fechaActualizacion { get; set; }
         public SubcategoriaModel subcategoria { get; set; }
         public ImagenProductoModel imagenProducto { get; set; }
+
+        public string EditFormatJson (ProductoModel Producto)
+        {
+            string json = "{" +
+                                @"""nombre"":""" + Producto.nombre + @"""," +
+                                @"""descripcion"":""" + Producto.descripcion + @"""," +
+                                @"""cantidad"":""" + Producto.cantidad + @"""," +
+                                @"""cantidadEnUso"":""" + Producto.cantidadEnUso + @"""," +
+                                @"""subcategoria"":""" + Producto.subcategoria.id.ToString() + @"""," +
+                                @"""estado"":""" + Producto.estado + @"""" +
+                            "}";
+
+            return json;
+        }
     }
 }

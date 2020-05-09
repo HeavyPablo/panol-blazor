@@ -1,0 +1,219 @@
+﻿@page "/productos/{id}"
+@layout Layout.ProductosLayout
+@attribute [Authorize]
+
+@inject HttpClient Http
+@inject IJSRuntime Js;
+@inject NavigationManager Navigate
+
+@using DataModel
+
+@if (Producto == null || Subcategorias == null || Categorias == null)
+{
+    <div class="col-12">
+        <div class="row justify-content-center">
+            <img src="images/loading.svg" alt="Cargando" />
+        </div>
+    </div>
+}
+else if (Producto.id <= 0 || Subcategorias.Count <= 0 || Categorias.Count <= 0)
+{
+    <div class="col-12">
+        <div class="row justify-content-center">
+            <p class="text-muted">No se encontraron productos.</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-12">
+                    <div class="row justify-content-between">
+                        <div class="d-flex">
+                            <div class="px-2">
+                                <h3 class="text-muted">@Producto.nombre | @Producto.id</h3>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-3 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-4 border-right px-3">
+                            <img id="@Producto.id.ToString()" src="" class="img-thumbnail" style="width:100%; height:auto">
+                            <div class="py-2 float-right">
+                                <a class="text-decoration-none text-muted"><span class="oi oi-data-transfer-upload"></span> Cambiar imagen</a>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="col-12">
+                                <div class="row justify-content-between">
+                                    <h4>Información</h4>
+                                    <button type="button" class="btn @ChangeButton @IsActived" @onclick="EditInfo"><span class="oi @ChangeIcon"></span></button>
+                                </div>
+                            </div>
+                            <EditForm Model="Producto">
+                                <div class="form-group">
+                                    <label>Nombre</label>
+                                    <input type="text" class="form-control" disabled="@IsDisabled" @bind-value="Producto.nombre" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-6 px-2">
+                                        <label>Cantidad</label>
+                                        <input type="number" class="form-control" disabled="@IsDisabled" @bind="CantidadProducto" />
+                                    </div>
+
+                                    <div class="form-group col-6 px-2">
+                                        <label>Cantidad en uso</label>
+                                        <input type="number" class="form-control" disabled="@IsDisabled" @bind="CantidadEnUso" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-6 px-2">
+                                        <label>Subcategoría</label>
+                                        <InputSelect class="form-control" @bind-Value="Producto.subcategoria.id" disabled="@IsDisabled">
+                                            @foreach (SubcategoriaModel Subcategoria in Subcategorias)
+                                                {
+                                                <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
+                                                }
+                                        </InputSelect>
+                                    </div>
+                                    <div class="form-group col-6 px-2">
+                                        <label>Categoría</label>
+                                        <InputSelect class="form-control" @bind-Value="Producto.subcategoria.categoria.id" disabled="@IsDisabled">
+                                            @foreach (CategoriaModel Categoria in Categorias)
+                                                {
+                                                <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
+                                                }
+                                        </InputSelect>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-8 px-2">
+                                        <label>Descripción</label>
+                                        <textarea class="form-control" rows="4" disabled="@IsDisabled">@Producto.descripcion</textarea>
+                                    </div>
+                                    <div class="col-4 px-2">
+                                        <div class="form-group">
+                                            <label>Fecha de creación</label>
+                                            <input type="text" class="form-control" disabled @bind="Producto.fechaCreacion" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Ultima actualización</label>
+                                            <input type="text" class="form-control" disabled @bind="Producto.fechaActualizacion" />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </EditForm>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private ProductoModel Producto;
+    private ProductoModel ProductoToEdit;
+    private List<SubcategoriaModel> Subcategorias;
+    private List<CategoriaModel> Categorias;
+
+    private int CantidadProducto = 0;
+    private int CantidadEnUso = 0;
+    private bool IsDisabled = true;
+    public string IsActived = "";
+    public string ChangeIcon = "oi-pencil";
+    public string ChangeButton = "btn-outline-primary";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            Producto = await Http.GetJsonAsync<ProductoModel>("http://localhost:8080/producto/" + Id);
+            CantidadProducto = int.Parse(Producto.cantidad);
+            CantidadEnUso = int.Parse(Producto.cantidadEnUso);
+            Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+            Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Producto != null && Producto.id > 0)
+        {
+            await Js.RenderImagen(Producto.id.ToString(), Producto.imagenProducto.tipo, Producto.imagenProducto.imagen);
+        }
+    }
+
+    private async Task EditInfo()
+    {
+        if (IsDisabled)
+        {
+            IsActived = "active";
+            ChangeIcon = "oi-check";
+            ChangeButton = "btn-outline-success";
+            IsDisabled = false;
+        } else
+        {
+            var response = await ConfirmEditProducto();
+
+            if (response)
+            {
+                ChangeIcon = "oi-pencil";
+                ChangeButton = "btn-outline-primary";
+                IsActived = "";
+                IsDisabled = true;
+            }
+        }
+    }
+
+    private async Task<bool> ConfirmEditProducto()
+    {
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se editará el producto.", TipoMensajeSweetAlert.question);
+
+        if (response)
+        {
+            await EditProducto(Producto);
+            await Js.MostrarMensaje("Editado!", "El producto se ha editado correctamente.", TipoMensajeSweetAlert.success);
+        }
+
+        return response;
+    }
+
+    private async Task EditProducto(ProductoModel producto)
+    {
+        string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
+        MultipartFormDataContent form = new MultipartFormDataContent(boundary);
+
+        form.Add(new StringContent(producto.EditFormatJson(producto)), "body");
+
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("POST"),
+            RequestUri = new Uri("http://localhost:8080/solicitud/" + producto.id.ToString()),
+            Content =  form
+        };
+
+        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
+        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+        var result = await Http.SendAsync(requestMessage);
+    }
+}
