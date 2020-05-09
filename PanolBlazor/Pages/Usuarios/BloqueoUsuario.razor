@@ -3,11 +3,192 @@
 @layout Layout.AdmUsuarioLayout
 @using System.Net.Http
 @inject HttpClient Http
+@using DataModel
 
 <h3>Bloqueo de Usuario</h3>
 
+<div class="col-12 py-4">
+    <br />
+    <h4>Busqueda de Usuario</h4>
+    <br />
+    <div class="row justify-content-between bg-dark rounded-lg navbar">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => RefreshEstado("ALUMNO"))">
+                <span class="oi oi-inbox" aria-hidden="true"></span> Alumnos
+            </button>
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => RefreshEstado("DIRECTOR"))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Director
+            </button>
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => RefreshEstado("COORDINADOR"))">
+                <span class="oi oi-clock" aria-hidden="true"></span> Cordinador
+            </button>
+            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => RefreshEstado("PANOLERO"))">
+                <span class="oi oi-task" aria-hidden="true"></span> Pañoleros
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            @*<button type="button" class="btn btn-secondary @Active5" @onclick="@(e => RefreshEstado("activo"))">
+                <span class="oi oi-task" aria-hidden="true"></span> Activos
+            </button>
+            <button type="button" class="btn btn-secondary @Active6" @onclick="@(e => RefreshEstado("bloqueado"))">
+                <span class="oi oi-task" aria-hidden="true"></span> Bloqueados
+            </button>*@
+        </div>
+    </div>
+</div>
 
+
+@if (UsuarioPerfil != null)
+{
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Fecha de Actualización</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var Usuario in UsuarioPerfil)
+            {
+            <tr>
+                <th scope="row">@Usuario.id</th>
+                <td>@Usuario.username</td>
+                @if (Usuario.perfil == "DIRECTOR")
+                {
+                    <td>@Usuario.director.nombre</td>
+                }
+                else if (Usuario.perfil == "DOCENTE")
+                {
+                    <td>@Usuario.docente.nombre</td>
+                }
+                else if (Usuario.perfil == "COORDINADOR")
+                {
+                    <td>@Usuario.coordinador.nombre</td>
+                }
+                else if (Usuario.perfil == "ALUMNO")
+                {
+                    <td>@Usuario.alumno.nombre</td>
+                }
+                else if (Usuario.perfil == "PANOLERO")
+                {
+                    <td>@Usuario.panolero.nombre</td>
+                }
+                <td>@Usuario.estado</td>
+                <td>@Usuario.fechaActualizacion</td>
+                <td>
+                    @if (@Usuario.estado == "activo")
+                    {
+                        <button class="btn btn-danger" @onclick="@(e =>  CambioEstado(Usuario.username,"bloqueado",Usuario.perfil))"><span class="oi oi-ban"> Bloquear</span></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger" @onclick="@(e =>  CambioEstado(Usuario.username,"activo",Usuario.perfil))"><span class="oi oi-star"> Desbloquear</span></button>
+                    }
+
+                </td>
+            </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="row justify-content-center">
+        <img src="images/loading.svg" alt="Cargando" />
+    </div>
+}
 
 @code {
+    //[Parameter] public List<UsuarioModel> UsuarioPerfilSol { get; set; }
+    private List<PanolBlazor.DataModel.UsuarioModel> UsuarioPerfil;
 
+    //string caso = "@Usuario.director.nombre";
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    // RefreshActive();
+    //}
+
+    //public void SolicitudesNavigate(SolicitudesActions action)
+    //{
+    //    RefreshEstado();
+    //    RefreshActive();
+    //}
+
+    protected async Task RefreshEstado(String perfil)
+    {
+        if (perfil == "ALUMNO" || perfil == "DOCENTE" || perfil == "PANOLERO" || perfil == "COORDINADOR" || perfil == "DIRECTOR")
+        {
+            await Task.Delay(2000);
+            UsuarioPerfil = await Http.GetJsonAsync<List<PanolBlazor.DataModel.UsuarioModel>>("http://localhost:8080/usuario/perfil/" + perfil);
+            Console.WriteLine(UsuarioPerfil);
+        }
+        else {
+            await Task.Delay(2000);
+            UsuarioPerfil = await Http.GetJsonAsync<List<PanolBlazor.DataModel.UsuarioModel>>("http://localhost:8080/usuario/estado/" + perfil);
+        }
+    }
+
+
+    private async Task CambioEstado(string usuario, string estado, string perfil)
+    {
+
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("POST"),
+            RequestUri = new Uri("http://localhost:8080/usuario/ActEst/" + usuario.ToString()),
+            Content = new StringContent(
+                    @"{""username"": """ + usuario + @""",
+                    ""estado"": """ + estado + @"""}"
+                )
+        };
+
+        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+        var result = await Http.SendAsync(requestMessage);
+        //await OnInitializedAsync();// buscar forma de hacer más eficiente este proceso
+        await RefreshEstado(perfil);
+        Console.WriteLine(result);
+    }
+
+    // cambio de busqueda
+    private string Active1, Active2, Active3, Active4, Active5, Active6 = "";
+
+
+
+    //private void RefreshActive()
+    //{
+    //    Active1 = Active2 = Active3 = Active4 = "";
+
+    //    //var uri = Navigation.Uri;
+
+    //    if (uri.Contains(SolicitudesActions.Docentes.ToString()))
+    //    {
+    //        Active1 = "active";
+    //    }
+    //    if (uri.Contains(SolicitudesActions.Bloqueo.ToString()))
+    //    {
+    //        Active2 = "active";
+    //    }
+    //    if (uri.Contains(SolicitudesActions.Editar.ToString()))
+    //    {
+    //        Active3 = "active";
+    //    }
+    //    if (uri.Contains(SolicitudesActions.CargaMasivaUsuarios.ToString()))
+    //    {
+    //        Active4 = "active";
+    //    }
+    //}
+
+    public enum SolicitudesActions
+    {
+        Alumnos, Docentes, Cordinadores, Directores,
+    }
 }
