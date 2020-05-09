@@ -704,14 +704,14 @@
 
 
 
-
+            await OnRefresh.InvokeAsync(true);
 
 
             await Js.MostrarMensaje("Guardado!", "Se ha modificado correctamente el usuario.", TipoMensajeSweetAlert.success);
-            
-            await OnRefresh.InvokeAsync(true);
-            
 
+
+
+            await Js.CloseModal("EditUsuarioModal");
 
 
         }

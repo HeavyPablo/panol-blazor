@@ -1,9 +1,49 @@
 ﻿@page "/"
 @attribute [Authorize]
+@inject HttpClient Http
+
+@inject IJSRuntime Js
+@using System.Net.Http
+@using DataModel
+
 <h3>Home</h3>
 
 <h2> Bienvenido  </h2>
-<h2>  </h2>
+<br />
+
+
+    @if (@IngresoUsuarioModel != null)
+    {
+        @if (@IngresoUsuarioModel.perfil == "PANOLERO")
+        {
+
+            <h2> IngresoUsuarioModel.panolero.nombre IngresoUsuarioModel.panolero.apellidoPaterno </h2>
+            <br />
+            <h3> Cargo: IngresoUsuarioModel.perfil</h3>
+        }
+        else if (@IngresoUsuarioModel.perfil == "COORDINADOR")
+        {
+            <h2> @IngresoUsuarioModel.coordinador.nombre  @IngresoUsuarioModel.coordinador.apellidoPaterno</h2>
+            <br />
+            <h3> Cargo: @IngresoUsuarioModel.perfil</h3>
+        }
+        else if (@IngresoUsuarioModel.perfil == "DIRECTOR")
+        {
+            <h2> @IngresoUsuarioModel.director.nombre  @IngresoUsuarioModel.director.apellidoPaterno</h2>
+            <br />
+            <h3> Cargo: @IngresoUsuarioModel.perfil</h3>
+        }
+    }
+
 @code {
+    private PanolBlazor.DataModel.UsuarioModel IngresoUsuarioModel;
+    private string Username;
+    protected override async Task OnInitializedAsync()
+    {
+        Username = await Js.GetFromLocalStorage("username");
+        await Task.Delay(2000);
+        IngresoUsuarioModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+
+    }
 
 }

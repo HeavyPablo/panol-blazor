@@ -11,7 +11,7 @@
 <h3>Agregar a un Usuario</h3>
 
 <div>
-    <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleSubmit">
+    <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         @*<ValidationSummary />*@
         <div class="form-group">
@@ -36,7 +36,7 @@
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
+            <input type="text" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
             <ValidationMessage For="@(() => NuevoUsuarioModel.Email)" />
         </div>
 
@@ -82,7 +82,7 @@
         @if (@SelectedOpc == "ALUMNO")
         {
             <div class="form-group">
-                <label for="escSelect">Perfil</label>
+                <label for="escSelect">Carrera</label>
                 <select class="form-control" id="escSelect" @bind="@SelectedCar">
 
                     <option value="">--Eliga una carrera--</option>
@@ -101,7 +101,7 @@
         else if (@SelectedOpc == "DOCENTE" || @SelectedOpc == "COORDINADOR" || @SelectedOpc == "DIRECTOR")
         {
             <div class="form-group">
-                <label for="carSelect">Perfil</label>
+                <label for="carSelect">Escuela</label>
                 <select class="form-control" id="carSelect" @bind="@SelectedEsc">
 
                     <option value="">--Eliga una escuela--</option>
@@ -238,7 +238,7 @@
 
     // Proceso de guardado
 
-    private async Task HandleSubmit()
+    private async Task HandleValidSubmit()
     {
         var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se agregara a este usuario.", TipoMensajeSweetAlert.question);
 
@@ -370,9 +370,10 @@
 
 
 
-
+            
             await Js.MostrarMensaje("Guardado!", "Se ha creado correctamente el usuario.", TipoMensajeSweetAlert.success);
-
+            //recordar modificar esto
+            Navigation.NavigateTo("/usuarios/");
         }
     }
 }
