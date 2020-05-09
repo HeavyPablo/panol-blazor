@@ -61,7 +61,7 @@ else
                                     <button type="button" class="btn @ChangeButton @IsActived" @onclick="EditInfo"><span class="oi @ChangeIcon"></span></button>
                                 </div>
                             </div>
-                            <EditForm Model="Producto">
+                            <EditForm Model="Producto" OnValidSubmit="@(e => EditProducto(Producto))">
                                 <div class="form-group">
                                     <label>Nombre</label>
                                     <input type="text" class="form-control" disabled="@IsDisabled" @bind-value="Producto.nombre" />
@@ -103,7 +103,7 @@ else
                                 <div class="form-row">
                                     <div class="form-group col-8 px-2">
                                         <label>Descripción</label>
-                                        <textarea class="form-control" rows="4" disabled="@IsDisabled">@Producto.descripcion</textarea>
+                                        <textarea class="form-control" rows="4" disabled="@IsDisabled" @bind="Producto.descripcion"></textarea>
                                     </div>
                                     <div class="col-4 px-2">
                                         <div class="form-group">
@@ -199,21 +199,24 @@ else
 
     private async Task EditProducto(ProductoModel producto)
     {
-        string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
+        string body = producto.EditFormatJson(producto);
+        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(body);
+        System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+
+        StreamContent content = new StreamContent(stream);
+        content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
+        content.Headers.ContentDisposition.Name = "\"body\"";
+        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+
+        string boundary = "EdicionProducto";
         MultipartFormDataContent form = new MultipartFormDataContent(boundary);
+        form.Headers.Remove("Content-Type");
+        form.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-        form.Add(new StringContent(producto.EditFormatJson(producto)), "body");
+        form.Add(content);
 
-        var requestMessage = new HttpRequestMessage()
-        {
-            Method = new HttpMethod("POST"),
-            RequestUri = new Uri("http://localhost:8080/solicitud/" + producto.id.ToString()),
-            Content =  form
-        };
 
-        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
-        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
-        var result = await Http.SendAsync(requestMessage);
+        var result = await Http.PostAsync(new Uri("http://localhost:8080/producto/" + producto.id.ToString()), form);
     }
 }
