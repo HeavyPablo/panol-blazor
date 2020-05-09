@@ -4,12 +4,18 @@
 @inject PanolBlazor.Services.ILoginService LoginService
 @page "/login"
 
+
 <div class="row justify-content-center">
     <div class="col-sm-4 container-fluid border rounded" style="background-color: #ffff">
         <div style="padding: 15px">
+            @*<div>
+                    <h3>Login</h3>
+                </div>*@
             <div>
-                <h3>Login</h3>
+                <img class="card-img-top" src="/images/OR_Logotipo_DuocUC.jpg" alt="card image cap">
+                <h1 class="h3 mb-3 font-weight-normal">Administración del Pañol</h1>
             </div>
+
             <hr />
             <div>
                 <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
@@ -23,7 +29,7 @@
                         <label>Password</label>
                         <input type="password" class="form-control" @bind="loginModel.password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Ingresar</button>
                 </EditForm>
             </div>
         </div>
