@@ -80,6 +80,6 @@ namespace PanolBlazor.Helpers
 
     public enum TipoChart
     {
-        XYChartFillsAxis, StockChart, lineGraph, DateBasedData, VariableHeight3dPieChart
+        XYChartFillsAxis, StockChart, lineGraph, DateBasedData, VariableHeight3dPieChart, ColumnWithRotatedSeries, VariableRadiusNestedDonutChart
     }
 }

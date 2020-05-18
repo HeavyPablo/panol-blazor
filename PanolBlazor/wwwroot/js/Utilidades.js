@@ -45,16 +45,27 @@
             indices[0] = { fechaCreacion: "", cantidad: 0 };
 
             for (var i = 0; i < data.length; i++) {
-                if (!indices.find(e => e.fechaCreacion == data[i].fechaCreacion)) {
-                    indices.push({ fechaCreacion: data[i].fechaCreacion, cantidad: 0 });
-                    for (var j = 0; j < data.length; j++) {
-                        if (data[j].fechaCreacion == data[i].fechaCreacion) {
-                            var index = indices.findIndex(e => e.fechaCreacion == data[i].fechaCreacion);
-                            indices[index].cantidad += 1;
+                if ("productos" in data[i]) {
+                    if (!indices.find(e => e.fechaCreacion == data[i].fechaCreacion)) {
+                        indices.push({ fechaCreacion: data[i].fechaCreacion, cantidad: 0 });
+                        for (var j = 0; j < data.length; j++) {
+                            if (data[j].fechaCreacion == data[i].fechaCreacion) {
+                                var index = indices.findIndex(e => e.fechaCreacion == data[i].fechaCreacion);
+                                indices[index].cantidad += parseInt(data[j].productos);
+                            }
+                        }
+                    }
+                } else {
+                    if (!indices.find(e => e.fechaCreacion == data[i].fechaCreacion)) {
+                        indices.push({ fechaCreacion: data[i].fechaCreacion, cantidad: 0 });
+                        for (var j = 0; j < data.length; j++) {
+                            if (data[j].fechaCreacion == data[i].fechaCreacion) {
+                                var index = indices.findIndex(e => e.fechaCreacion == data[i].fechaCreacion);
+                                indices[index].cantidad += 1;
+                            }
                         }
                     }
                 }
-                date = null;
             }
             
             indices.splice(0, 1);
@@ -140,7 +151,6 @@
             }
 
             indices.splice(0, 1);
-
             chart.data = indices;
 
             chart.innerRadius = am4core.percent(40);
@@ -154,6 +164,136 @@
             series.dataFields.category = "perfil";
             series.slices.template.cornerRadius = 5;
             series.colors.step = 3;
+        }
+
+        if (tipo == "ColumnWithRotatedSeries") {
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create(idChart, am4charts.XYChart);
+
+            var data = JSON.parse(dataJson);
+            var indices = new Array();
+            indices[0] = { perfil: "DOCENTE", cantidad: 0 };
+            indices[1] = { perfil: "ALUMNO", cantidad: 0 };
+
+            for (var i = 0; i < data.length; i++) {
+                if (indices.find(e => e.perfil == data[i].perfil)) {
+                    if (data[i].estado == "moroso") {
+                        for (var j = 0; j < data.length; j++) {
+                            if (data[i].perfil == data[j].perfil) {
+                                var index = indices.findIndex(e => e.perfil == data[i].perfil);
+                                indices[index].cantidad += 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add data
+            chart.data = indices;
+
+            // Create axes
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "perfil";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+            categoryAxis.renderer.labels.template.horizontalCenter = "right";
+            categoryAxis.renderer.labels.template.verticalCenter = "middle";
+            categoryAxis.renderer.labels.template.rotation = 270;
+            categoryAxis.tooltip.disabled = true;
+            categoryAxis.renderer.minHeight = 110;
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.renderer.minWidth = 50;
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.sequencedInterpolation = true;
+            series.dataFields.valueY = "cantidad";
+            series.dataFields.categoryX = "perfil";
+            series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+            series.columns.template.strokeWidth = 0;
+
+            series.tooltip.pointerOrientation = "vertical";
+
+            series.columns.template.column.cornerRadiusTopLeft = 10;
+            series.columns.template.column.cornerRadiusTopRight = 10;
+            series.columns.template.column.fillOpacity = 0.8;
+
+            // on hover, make corner radiuses bigger
+            var hoverState = series.columns.template.column.states.create("hover");
+            hoverState.properties.cornerRadiusTopLeft = 0;
+            hoverState.properties.cornerRadiusTopRight = 0;
+            hoverState.properties.fillOpacity = 1;
+
+            series.columns.template.adapter.add("fill", function (fill, target) {
+                return chart.colors.getIndex(target.dataItem.index);
+            });
+
+            // Cursor
+            chart.cursor = new am4charts.XYCursor();
+        }
+
+        if (tipo == "VariableRadiusNestedDonutChart") {
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create(idChart, am4charts.PieChart);
+            chart.startAngle = 160;
+            chart.endAngle = 380;
+
+            // Let's cut a hole in our Pie chart the size of 40% the radius
+            chart.innerRadius = am4core.percent(40);
+
+            var data = JSON.parse(dataJson);
+            var indices = new Array();
+            indices[0] = { categoria: "", cantidad: 0 };
+
+            for (var i = 0; i < data.length; i++) {
+                if (!indices.find(e => e.categoria == data[i].categoria)) {
+                    indices.push({ "categoria": data[i].categoria, "cantidad": 0 })
+                    for (var j = 0; j < data.length; j++) {
+                        if (data[i].categoria == data[j].categoria) {
+                            var index = indices.findIndex(e => e.categoria == data[i].categoria);
+                            indices[index].cantidad += 1;
+                        }
+                    }
+                }
+            }
+
+            indices.splice(0, 1);
+            chart.data = indices;
+
+            // Add data
+            chart.data = indices;
+
+            // Add second series
+            var pieSeries = chart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.value = "cantidad";
+            pieSeries.dataFields.category = "categoria";
+            pieSeries.slices.template.stroke = new am4core.InterfaceColorSet().getFor("background");
+            pieSeries.slices.template.strokeWidth = 1;
+            pieSeries.slices.template.strokeOpacity = 1;
+            pieSeries.slices.template.states.getKey("hover").properties.shiftRadius = 0.05;
+            pieSeries.slices.template.states.getKey("hover").properties.scale = 1;
+
+            pieSeries.labels.template.disabled = true;
+            pieSeries.ticks.template.disabled = true;
+
+            chart.legend = new am4charts.Legend();
+
+            var label = chart.seriesContainer.createChild(am4core.Label);
+            label.textAlign = "middle";
+            label.horizontalCenter = "middle";
+            label.verticalCenter = "middle";
+            label.adapter.add("text", function (text, target) {
+                return "[font-size:18px]total[/]:\n[bold font-size:30px]" + pieSeries.dataItem.values.value.sum + "[/]";
+            })
+
         }
     }
 }

@@ -55,7 +55,6 @@ namespace PanolBlazor.DataModel
         public string CreateFormatJson(SolicitudModel Solicitud)
         {
             string productos = "";
-
             foreach (var producto in Solicitud.productos)
             {
                 productos += "{" +
@@ -66,19 +65,18 @@ namespace PanolBlazor.DataModel
             productos = productos.TrimEnd(',');
 
             string json = "{" +
-                                @"""solicitud"": [" +
-                                        "{" +
-                                            @"""comentario"":""" + Solicitud.comentario + @"""," +
-                                            @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
-                                            @"""solicitante"":""" + Solicitud.usuario.username + @"""," +
-                                            @"""responsable"":""" + Solicitud.panolero.rut + @"""" +
-                                        "}" +
-                                    "]," +
-                                @"""productos"": [" +
-                                            productos +
-                                    "]" +
-                            "}";
-
+                    @"""solicitud"": [" +
+                            "{" +
+                                @"""comentario"":""" + Solicitud.comentario + @"""," +
+                                @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
+                                @"""solicitante"":""" + Solicitud.usuario.username + @"""," +
+                                @"""responsable"":""" + Solicitud.panolero.rut + @"""" +
+                            "}" +
+                        "]," +
+                    @"""productos"": [" +
+                                productos +
+                        "]" +
+                "}";
             return json;
         }
     }

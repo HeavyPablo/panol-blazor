@@ -25,7 +25,230 @@
         </div>
     </div>
 
-    if (Usuarios != null)
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link @ActiveSubNav1" @onclick="@(e => ChangeFocusHome(SubNavFocus.solicitudes))">Solicitudes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @ActiveSubNav2" @onclick="@(e => ChangeFocusHome(SubNavFocus.productos))">Productos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @ActiveSubNav3" @onclick="@(e => ChangeFocusHome(SubNavFocus.usuarios))">Usuarios</a>
+        </li>
+    </ul>
+
+    if ((Solicitudes == null || Usuarios == null) || (ActiveSubNav1 == "" && ActiveSubNav2 == "" && ActiveSubNav3 == ""))
+    {
+        <div class="col-12">
+            <div class="row justify-content-center">
+                <img src="images/loading.svg" alt="Cargando" />
+            </div>
+        </div>
+    }
+
+    // Solicitudes
+    if (Solicitudes != null && ActiveSubNav1 == "active")
+    {
+        <div class="row">
+            <div class="py-3 col-6">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Últimas solicitudes ingresadas</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" style="font-size: 90%">Id</th>
+                                        <th scope="col" style="font-size: 90%">Solicitante</th>
+                                        <th scope="col" style="font-size: 90%">Perfil</th>
+                                        <th scope="col" style="font-size: 90%">Productos</th>
+                                        <th scope="col" style="font-size: 90%">Fecha de creacion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (SolicitudModel solicitud in Solicitudes.Take(3))
+                                    {
+                                        <tr>
+                                            <th scope="row" style="font-size: 90%">@solicitud.id</th>
+                                            <td style="font-size: 90%">@solicitud.usuario.username</td>
+                                            <td style="font-size: 90%">@solicitud.usuario.perfil</td>
+                                            <td style="font-size: 90%">@solicitud.productos.Count()</td>
+                                            <td style="font-size: 90%">@solicitud.fechaCreacion</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <a href="/solicitudes/recibidas" class="text-decoration-none"><span class="oi oi-ellipses" style="font-size:150%"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="py-3 col-6 h-100">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Acciones rápidas para solicitudes</div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-agregar-solicitud.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="/solicitudes/agregar" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
+                                                Agregar
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Agregar nueva solicitud al sistema.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-recibir.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="/solicitudes/entregadas" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
+                                                Recibir
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Recibir productos por parte del alumno/docente.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-reportes.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
+                                                Reportes
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reportes de tipo solicitues.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-3">
+            <div class="shadow card">
+                <div class="card-header font-weight-bold" style="color: #343A40">
+                    Histórico Solicitudes Creadas
+                </div>
+                <div class="card-body">
+                    <div id="chartSolicitudes" style="width: 100%; height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+    // Productos
+    if (Productos != null && ActiveSubNav2 == "active")
+    {
+        <div class="row">
+            <div class="py-3 col-6">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Ultimos productos agregados</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" style="font-size: 90%">Id</th>
+                                        <th scope="col" style="font-size: 90%">Nombre de producto</th>
+                                        <th scope="col" style="font-size: 90%">Subcategoria</th>
+                                        <th scope="col" style="font-size: 90%">Fecha de creacion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (ProductoModel producto in Productos.Take(3))
+                                    {
+                                        <tr>
+                                            <th scope="row" style="font-size: 90%">@producto.id</th>
+                                            <td style="font-size: 90%">@producto.nombre</td>
+                                            <td style="font-size: 90%">@producto.subcategoria.nombre</td>
+                                            <td style="font-size: 90%">@producto.fechaCreacion</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <a href="/productos/todos" class="text-decoration-none"><span class="oi oi-ellipses" style="font-size:150%"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-3 col-6 h-100">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Acciones rápidas para productos</div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-agregar-producto.png)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="/productos/agregar" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                                Agregar
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Agregar nuevo producto al sistema.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-reportes.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                                Reportes
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reportes de tipo productos.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="py-3 col-7">
+                <div class="shadow card">
+                    <div class="card-header font-weight-bold" style="color: #343A40">
+                        Histórico productos solicitados
+                    </div>
+                    <div class="card-body">
+                        <div id="chartProductosSolicitados" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-3 col-5">
+                <div class="shadow card">
+                    <div class="card-header font-weight-bold" style="color: #343A40">
+                        Cantidad de productos por categoría
+                    </div>
+                    <div class="card-body">
+                        <div id="chartProductosCantidad" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    // Usuarios
+    if (Usuarios != null && ActiveSubNav3 == "active")
     {
         <div class="row">
             <div class="py-3 col-6">
@@ -36,28 +259,30 @@
                             <table class="table table-striped">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Nombre de usuario</th>
-                                        <th scope="col">Perfil</th>
-                                        <th scope="col">Fecha de creacion</th>
+                                        <th scope="col" style="font-size: 90%">Id</th>
+                                        <th scope="col" style="font-size: 90%">Nombre de usuario</th>
+                                        <th scope="col" style="font-size: 90%">Perfil</th>
+                                        <th scope="col" style="font-size: 90%">Fecha de creacion</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (UsuarioModel usuario in Usuarios.Take(5))
+                                    @foreach (UsuarioModel usuario in Usuarios.Take(3))
                                     {
                                         <tr>
-                                            <th scope="row">@usuario.id</th>
-                                            <td>@usuario.username</td>
-                                            <td>@usuario.perfil</td>
-                                            <td>@usuario.fechaCreacion</td>
+                                            <th scope="row" style="font-size: 90%">@usuario.id</th>
+                                            <td style="font-size: 90%">@usuario.username</td>
+                                            <td style="font-size: 90%">@usuario.perfil</td>
+                                            <td style="font-size: 90%">@usuario.fechaCreacion</td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="col-12">
-                            <a href="/usuarios" class="text-decoration-none font-weight-bold text-center float-right">Ver más</a>
+                            <div class="row justify-content-center">
+                                <a href="/usuarios" class="text-decoration-none"><span class="oi oi-ellipses" style="font-size:150%"></span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -65,36 +290,38 @@
 
             <div class="py-3 col-6 h-100">
                 <div class="shadow card mb-3">
-                    <div class="card-header font-weight-bold" style="color: #343A40">Acciones rápidas</div>
+                    <div class="card-header font-weight-bold" style="color: #343A40">Acciones rápidas para usuarios</div>
                     <div class="card-body">
                         <div class="col-12">
                             <div class="row justify-content-center">
                                 <div class="w-100 py-1">
-                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-agregar.png)">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-agregar-usuario.png)">
                                         <div class="col-6 position-static bg-dark">
-                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
                                                 Agregar
                                                 <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Agregar nuevo usuario al sistema.</p>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="w-100 py-1">
                                     <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-bloquear.jpg)">
                                         <div class="col-6 position-static bg-dark">
-                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
                                                 Bloquear
                                                 <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Bloquear cuenta de usuario.</p>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="w-100 py-1">
                                     <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-reportes.jpg)">
                                         <div class="col-6 position-static bg-dark">
-                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100">
                                                 Reportes
-                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reportes de tipo usuario.</p>
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reportes de tipo usuarios.</p>
                                             </a>
                                         </div>
                                     </div>
@@ -102,56 +329,77 @@
 
                             </div>
                         </div>
-                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="py-3 col-8">
+                <div class="shadow card">
+                    <div class="card-header font-weight-bold" style="color: #343A40">
+                        Comparativa Usuarios
+                    </div>
+                    <div class="card-body">
+                        <div id="chartUsuarios" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-3 col-4">
+                <div class="shadow card">
+                    <div class="card-header font-weight-bold" style="color: #343A40">
+                        Usuarios Morosos
+                    </div>
+                    <div class="card-body">
+                        <div id="chartUsuariosMorosos" style="width: 100%; height: 500px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     }
-
-    <div class="py-3">
-        <div class="shadow card">
-            <div class="card-header font-weight-bold" style="color: #343A40">
-                Histórico Solicitudes Creadas
-            </div>
-            <div class="card-body">
-                <div id="chartSolicitudes" style="width: 100%; height: 500px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="py-3">
-        <div class="shadow card">
-            <div class="card-header font-weight-bold" style="color: #343A40">
-                Comparativa Usuarios
-            </div>
-            <div class="card-body">
-                <div id="chartUsuarios" style="width: 100%; height: 500px;"></div>
-            </div>
-        </div>
-    </div>
-
 }
 
 @code {
     private PanolBlazor.DataModel.UsuarioModel IngresoUsuarioModel;
     private List<SolicitudModel> Solicitudes;
     private List<UsuarioModel> Usuarios;
+    private List<ProductoModel> Productos;
     private string Username;
+    private string ActiveSubNav1, ActiveSubNav2, ActiveSubNav3 = "";
+
     protected override async Task OnInitializedAsync()
     {
         Username = await Js.GetFromLocalStorage("username");
         Solicitudes = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
         IngresoUsuarioModel = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
         Usuarios = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario");
+        Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        ActiveSubNav1 = "active";
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
         {
-            await Js.GenerateChart("chartSolicitudes", TipoChart.DateBasedData, DataToChartSolicitudes(Solicitudes));
-            await Js.GenerateChart("chartUsuarios", TipoChart.VariableHeight3dPieChart, DataToChartUsuarios(Usuarios));
+            if (ActiveSubNav1 == "active")
+            {
+                Solicitudes = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
+                await Js.GenerateChart("chartSolicitudes", TipoChart.DateBasedData, DataToChartSolicitudes(Solicitudes));
+            }
+            if (ActiveSubNav2 == "active")
+            {
+                Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+                Solicitudes = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
+                await Js.GenerateChart("chartProductosCantidad", TipoChart.VariableRadiusNestedDonutChart, DataToChartProductos(Productos));
+                await Js.GenerateChart("chartProductosSolicitados", TipoChart.DateBasedData, DataToChartProductosSolicitados(Solicitudes));
+            }
+            if (ActiveSubNav3 == "active")
+            {
+                Usuarios = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario");
+                await Js.GenerateChart("chartUsuarios", TipoChart.VariableHeight3dPieChart, DataToChartUsuarios(Usuarios));
+                await Js.GenerateChart("chartUsuariosMorosos", TipoChart.ColumnWithRotatedSeries, DataToChartUsuarios(Usuarios));
+            }
         }
     }
 
@@ -180,4 +428,66 @@
         return "[" + fragmentJson + "]";
     }
 
+    private string DataToChartProductos(List<ProductoModel> productosToParseChart)
+    {
+        string fragmentJson = "";
+        foreach (ProductoModel producto in productosToParseChart)
+        {
+            fragmentJson += @"{""cantidad"": """ + producto.cantidad + @""", ""categoria"":""" + producto.subcategoria.categoria.nombre + @"""},";
+        }
+        fragmentJson = fragmentJson.TrimEnd(',');
+        Console.WriteLine(fragmentJson);
+        return "[" + fragmentJson + "]";
+    }
+
+    private string DataToChartProductosSolicitados(List<SolicitudModel> solicitudesToParseChart)
+    {
+        string fragmentJson = "";
+        foreach (SolicitudModel soli in solicitudesToParseChart)
+        {
+            fragmentJson += @"{""fechaCreacion"": """ + soli.fechaCreacion.Remove(soli.fechaCreacion.IndexOf(' ')) + @""", ""productos"":""" + soli.productos.Count + @"""},";
+        }
+        fragmentJson = fragmentJson.TrimEnd(',');
+        Console.WriteLine(fragmentJson);
+        return "[" + fragmentJson + "]";
+    }
+
+    private async Task ChangeFocusHome(SubNavFocus subNav)
+    {
+        switch (subNav)
+        {
+            case SubNavFocus.solicitudes:
+                if (ActiveSubNav1 != "active")
+                {
+                    ActiveSubNav3 = "";
+                    ActiveSubNav2 = "";
+                    await Task.Delay(800);
+                    ActiveSubNav1 = "active";
+                }
+                break;
+            case SubNavFocus.productos:
+                if (ActiveSubNav2 != "active")
+                {
+                    ActiveSubNav3 = "";
+                    ActiveSubNav1 = "";
+                    await Task.Delay(800);
+                    ActiveSubNav2 = "active";
+                }
+                break;
+            case SubNavFocus.usuarios:
+                if (ActiveSubNav3 != "active")
+                {
+                    ActiveSubNav2 = "";
+                    ActiveSubNav1 = "";
+                    await Task.Delay(800);
+                    ActiveSubNav3 = "active";
+                }
+                break;
+        }
+    }
+
+    private enum SubNavFocus
+    {
+        solicitudes, productos, usuarios
+    }
 }
