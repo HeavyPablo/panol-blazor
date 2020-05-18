@@ -6,44 +6,178 @@
 @using System.Net.Http
 @using DataModel
 
-<h3>Home</h3>
+@if (@IngresoUsuarioModel != null)
+{
+    <div class="row justify-content-center">
+        <div class="col-12">
+            @if (@IngresoUsuarioModel.perfil == "PANOLERO")
+            {
+                <h3 id="welcome" class="linea"><span>Bienvenido panolero @IngresoUsuarioModel.panolero.nombre @IngresoUsuarioModel.panolero.apellidoPaterno</span></h3>
+            }
+            else if (@IngresoUsuarioModel.perfil == "COORDINADOR")
+            {
+                <h3 id="welcome" class="linea"><span>Bienvenido coordinador/a @IngresoUsuarioModel.coordinador.nombre  @IngresoUsuarioModel.coordinador.apellidoPaterno</span></h3>
+            }
+            else if (@IngresoUsuarioModel.perfil == "DIRECTOR")
+            {
+                <h3 id="welcome" class="linea"><span>Bienvenido jefe/a de carrera @IngresoUsuarioModel.director.nombre  @IngresoUsuarioModel.director.apellidoPaterno</span></h3>
+            }
+        </div>
+    </div>
 
-<h2> Bienvenido  </h2>
-<br />
-
-
-    @if (@IngresoUsuarioModel != null)
+    if (Usuarios != null)
     {
-        @if (@IngresoUsuarioModel.perfil == "PANOLERO")
-        {
+        <div class="row">
+            <div class="py-3 col-6">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Ultimos usuarios agregados</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Nombre de usuario</th>
+                                        <th scope="col">Perfil</th>
+                                        <th scope="col">Fecha de creacion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (UsuarioModel usuario in Usuarios.Take(5))
+                                    {
+                                        <tr>
+                                            <th scope="row">@usuario.id</th>
+                                            <td>@usuario.username</td>
+                                            <td>@usuario.perfil</td>
+                                            <td>@usuario.fechaCreacion</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="col-12">
+                            <a href="/usuarios" class="text-decoration-none font-weight-bold text-center float-right">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <h2> IngresoUsuarioModel.panolero.nombre IngresoUsuarioModel.panolero.apellidoPaterno </h2>
-            <br />
-            <h3> Cargo: IngresoUsuarioModel.perfil</h3>
-        }
-        else if (@IngresoUsuarioModel.perfil == "COORDINADOR")
-        {
-            <h2> @IngresoUsuarioModel.coordinador.nombre  @IngresoUsuarioModel.coordinador.apellidoPaterno</h2>
-            <br />
-            <h3> Cargo: @IngresoUsuarioModel.perfil</h3>
-        }
-        else if (@IngresoUsuarioModel.perfil == "DIRECTOR")
-        {
-            <h2> @IngresoUsuarioModel.director.nombre  @IngresoUsuarioModel.director.apellidoPaterno</h2>
-            <br />
-            <h3> Cargo: @IngresoUsuarioModel.perfil</h3>
-        }
+            <div class="py-3 col-6 h-100">
+                <div class="shadow card mb-3">
+                    <div class="card-header font-weight-bold" style="color: #343A40">Acciones rápidas</div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-agregar.png)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                                Agregar
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Agregar nuevo usuario al sistema.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-bloquear.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                                Bloquear
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Bloquear cuenta de usuario.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-100 py-1">
+                                    <div class="row no-gutters position-relative bg-image" style="background-image: url(images/images-core/home-acciones-rapidas-reportes.jpg)">
+                                        <div class="col-6 position-static bg-dark">
+                                            <a href="#" class="stretched-link text-decoration-none btn p-4 btn-dark rounded-0 w-100 h-100">
+                                                Reportes
+                                                <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reportes de tipo usuario.</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     }
+
+    <div class="py-3">
+        <div class="shadow card">
+            <div class="card-header font-weight-bold" style="color: #343A40">
+                Histórico Solicitudes Creadas
+            </div>
+            <div class="card-body">
+                <div id="chartSolicitudes" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-3">
+        <div class="shadow card">
+            <div class="card-header font-weight-bold" style="color: #343A40">
+                Comparativa Usuarios
+            </div>
+            <div class="card-body">
+                <div id="chartUsuarios" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+
+}
 
 @code {
     private PanolBlazor.DataModel.UsuarioModel IngresoUsuarioModel;
+    private List<SolicitudModel> Solicitudes;
+    private List<UsuarioModel> Usuarios;
     private string Username;
     protected override async Task OnInitializedAsync()
     {
         Username = await Js.GetFromLocalStorage("username");
-        await Task.Delay(2000);
-        IngresoUsuarioModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+        Solicitudes = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
+        IngresoUsuarioModel = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+        Usuarios = await Http.GetJsonAsync<List<UsuarioModel>>("http://localhost:8080/usuario");
+    }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await Js.GenerateChart("chartSolicitudes", TipoChart.DateBasedData, DataToChartSolicitudes(Solicitudes));
+            await Js.GenerateChart("chartUsuarios", TipoChart.VariableHeight3dPieChart, DataToChartUsuarios(Usuarios));
+        }
+    }
+
+
+    private string DataToChartSolicitudes(List<SolicitudModel> solicitudesToParseChart)
+    {
+        string fragmentJson = "";
+        foreach (SolicitudModel soli in solicitudesToParseChart)
+        {
+            fragmentJson += @"{""fechaCreacion"": """ + soli.fechaCreacion.Remove(soli.fechaCreacion.IndexOf(' ')) + @""", ""id"":""" + soli.id + @"""},";
+        }
+        fragmentJson = fragmentJson.TrimEnd(',');
+        Console.WriteLine(fragmentJson);
+        return "[" + fragmentJson + "]";
+    }
+
+    private string DataToChartUsuarios(List<UsuarioModel> usuariosToParseChart)
+    {
+        string fragmentJson = "";
+        foreach (UsuarioModel user in usuariosToParseChart)
+        {
+            fragmentJson += @"{""perfil"": """ + user.perfil + @""", ""id"":""" + user.id + @"""},";
+        }
+        fragmentJson = fragmentJson.TrimEnd(',');
+        Console.WriteLine(fragmentJson);
+        return "[" + fragmentJson + "]";
     }
 
 }

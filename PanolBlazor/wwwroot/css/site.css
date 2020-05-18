@@ -182,3 +182,43 @@ app {
         display: block;
     }
 }
+
+#welcome {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+    h3.linea {
+        position: relative;
+        z-index: 1;
+    }
+
+        h3.linea:before {
+            border-top: 2px solid #CBCBCB;
+            content: "";
+            margin: 0 auto;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 95%;
+            z-index: -1;
+        }
+
+        h3.linea span {
+            background: #fff;
+            color: #737373;
+            padding: 0 15px;
+        }
+
+.bg-image {
+    transition: all 0.2s ease;
+    background-size: cover;
+    background-position: initial;
+}
+
+    .bg-image:hover, .bg-image:focus {
+        background-position: right;
+    }
