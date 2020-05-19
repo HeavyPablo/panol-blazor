@@ -1,7 +1,6 @@
 ﻿@page "/"
 @attribute [Authorize]
 @inject HttpClient Http
-
 @inject IJSRuntime Js
 @using System.Net.Http
 @using DataModel
@@ -63,6 +62,7 @@
                                         <th scope="col" style="font-size: 90%">Perfil</th>
                                         <th scope="col" style="font-size: 90%">Productos</th>
                                         <th scope="col" style="font-size: 90%">Fecha de creacion</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,7 +73,8 @@
                                             <td style="font-size: 90%">@solicitud.usuario.username</td>
                                             <td style="font-size: 90%">@solicitud.usuario.perfil</td>
                                             <td style="font-size: 90%">@solicitud.productos.Count()</td>
-                                            <td style="font-size: 90%">@solicitud.fechaCreacion</td>
+                                            <td style="font-size: 90%"><span class="badge badge-pill @(ChangeClassFromDate(solicitud.fechaCreacion)) font-weight-normal" style="font-size:100%">@(TransformDate(solicitud.fechaCreacion))</span></td>
+                                            <td><a href="/solicitudes/@(solicitud.id)" class="text-decoration-none oi oi-eye text-dark" style="font-size: 140%"></a></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -162,6 +163,7 @@
                                         <th scope="col" style="font-size: 90%">Nombre de producto</th>
                                         <th scope="col" style="font-size: 90%">Subcategoria</th>
                                         <th scope="col" style="font-size: 90%">Fecha de creacion</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -171,7 +173,8 @@
                                             <th scope="row" style="font-size: 90%">@producto.id</th>
                                             <td style="font-size: 90%">@producto.nombre</td>
                                             <td style="font-size: 90%">@producto.subcategoria.nombre</td>
-                                            <td style="font-size: 90%">@producto.fechaCreacion</td>
+                                            <td style="font-size: 90%"><span class="badge badge-pill badge-info font-weight-normal" style="font-size: 100%">@(TransformDate(producto.fechaCreacion))</span></td>
+                                            <td><a href="/productos/@(producto.id)" class="text-decoration-none oi oi-eye text-dark" style="font-size: 140%"></a></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -263,6 +266,7 @@
                                         <th scope="col" style="font-size: 90%">Nombre de usuario</th>
                                         <th scope="col" style="font-size: 90%">Perfil</th>
                                         <th scope="col" style="font-size: 90%">Fecha de creacion</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -272,7 +276,8 @@
                                             <th scope="row" style="font-size: 90%">@usuario.id</th>
                                             <td style="font-size: 90%">@usuario.username</td>
                                             <td style="font-size: 90%">@usuario.perfil</td>
-                                            <td style="font-size: 90%">@usuario.fechaCreacion</td>
+                                            <td style="font-size: 90%"><span class="badge badge-pill badge-info font-weight-normal" style="font-size: 100%">@(TransformDate(usuario.fechaCreacion))</span></td>
+                                            <td><a href="/usuarios/@(usuario.id)" class="text-decoration-none oi oi-eye text-dark" style="font-size: 140%"></a></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -484,6 +489,66 @@
                 }
                 break;
         }
+    }
+
+    private string ChangeClassFromDate(string creationDate)
+    {
+        DateTime dateInput = DateTime.ParseExact(creationDate, "yyyy-MM-dd HH:mm:ss", null);
+        var dateDiferential = (DateTime.Now.AddHours(-4) - dateInput);
+        string classOutput = "badge-info text-light";
+
+        if (dateDiferential.Days == 0)
+        {
+            classOutput = "badge-warning text-black-50";
+        }
+
+        return classOutput;
+    }
+
+    private string TransformDate(string creationDate)
+    {
+        DateTime dateInput = DateTime.ParseExact(creationDate, "yyyy-MM-dd HH:mm:ss", null);
+        var dateDiferential = (DateTime.Now.AddHours(-4) - dateInput);
+        string dateOutput = "";
+
+        if (dateDiferential.Days > 1)
+        {
+            dateOutput = dateInput.ToString("dd/MM/yyyy");
+            dateOutput.Replace(' ', '/');
+            return dateOutput;
+        }
+
+        if (dateDiferential.Days == 1)
+        {
+            dateOutput = "ayer";
+            return dateOutput;
+        }
+
+        if (dateDiferential.Hours == 1)
+        {
+            dateOutput = "hace " + dateDiferential.Hours + " hora";
+            return dateOutput;
+        }
+
+        if (dateDiferential.Hours <= 23 && dateDiferential.Hours > 1)
+        {
+            dateOutput = "hace " + dateDiferential.Hours + " hrs.";
+            return dateOutput;
+        }
+
+        if (dateDiferential.Minutes <= 59 && dateDiferential.Minutes >= 5)
+        {
+            dateOutput = "hace " + dateDiferential.Minutes + " min.";
+            return dateOutput;
+        }
+
+        if (dateDiferential.Minutes < 5)
+        {
+            dateOutput = "recién";
+            return dateOutput;
+        }
+
+        return "No se pudo calcular!";
     }
 
     private enum SubNavFocus

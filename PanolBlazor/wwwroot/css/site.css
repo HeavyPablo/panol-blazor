@@ -183,6 +183,7 @@ app {
     }
 }
 
+/* Texto de bienvenida - home */
 #welcome {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -213,6 +214,7 @@ app {
             padding: 0 15px;
         }
 
+/* Background image - home (acciones rapidas) */
 .bg-image {
     transition: all 0.2s ease;
     background-size: cover;
@@ -221,4 +223,87 @@ app {
 
     .bg-image:hover, .bg-image:focus {
         background-position: right;
+    }
+
+
+/* Progress bar - ver solicitud */
+.progressbar-wrapper {
+    background: #fff;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+
+.progressbar li {
+    list-style-type: none;
+    width: 20%;
+    float: left;
+    font-size: 12px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: green;
+        font-weight: bold;
+    }
+
+        .progressbar li.active:before {
+            border-color: #55b776;
+            background: green;
+        }
+
+        .progressbar li.active + li:after {
+            background-color: #55b776;
+        }
+
+        .progressbar li.active:before {
+            background: #55b776;
+            background-size: 60%;
+        }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+.progressbar {
+    counter-reset: step;
+}
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
     }
