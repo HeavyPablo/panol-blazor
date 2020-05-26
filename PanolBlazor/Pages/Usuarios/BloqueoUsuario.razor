@@ -16,13 +16,16 @@
             <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => RefreshEstado("ALUMNO"))">
                 <span class="oi oi-inbox" aria-hidden="true"></span> Alumnos
             </button>
-            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => RefreshEstado("DIRECTOR"))">
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => RefreshEstado("DOCENTE"))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Docentes
+            </button>
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => RefreshEstado("DIRECTOR"))">
                 <span class="oi oi-share-boxed" aria-hidden="true"></span> Director
             </button>
-            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => RefreshEstado("COORDINADOR"))">
+            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => RefreshEstado("COORDINADOR"))">
                 <span class="oi oi-clock" aria-hidden="true"></span> Cordinador
             </button>
-            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => RefreshEstado("PANOLERO"))">
+            <button type="button" class="btn btn-secondary @Active5" @onclick="@(e => RefreshEstado("PANOLERO"))">
                 <span class="oi oi-task" aria-hidden="true"></span> Pañoleros
             </button>
         </div>
@@ -48,6 +51,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Estado</th>
                 <th scope="col">Fecha de Actualización</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -88,6 +92,17 @@
                     else
                     {
                         <button class="btn btn-danger" @onclick="@(e =>  CambioEstado(Usuario.username,"activo",Usuario.perfil))"><span class="oi oi-star"> Desbloquear</span></button>
+                    }
+
+                </td>
+                <td>
+                    @if (@Usuario.estado == "activo")
+                    {
+                        <button class="btn btn-danger" @onclick="@(e =>  CambioEstado(Usuario.username,"de baja",Usuario.perfil))"><span class="oi oi-ban"> Dar de baja</span></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger" @onclick="@(e =>  CambioEstado(Usuario.username,"activo",Usuario.perfil))"><span class="oi oi-star"> Reintegrar</span></button>
                     }
 
                 </td>
@@ -184,6 +199,6 @@
 
     public enum SolicitudesActions
     {
-        Alumnos, Docentes, Cordinadores, Directores,
+        Alumnos, Docentes, Directores, Cordinadores, Pañoleros
     }
 }

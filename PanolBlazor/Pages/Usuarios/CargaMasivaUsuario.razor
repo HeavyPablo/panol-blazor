@@ -4,8 +4,37 @@
 @using System.Net.Http
 @inject HttpClient Http
 
+
+
 <h3>CargaMasivaUsuario</h3>
+
+<div class="form-group">
+    <input type="file" id="dataFile" name="upload" />
+</div>
+
+<div class="form-group">
+    <input type="submit" @bind="@SelectedArc" class="btn btn-default" />
+</div>
+
 
 @code {
 
+
+    // direccion del archivo
+    string selectedArc;
+
+    string SelectedArc
+    {
+        get => selectedArc;
+        set
+        {
+            selectedArc = value;
+
+        }
+    }
+
+    //proceso de lectura excel
+   
+
+   
 }

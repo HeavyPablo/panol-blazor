@@ -1,128 +1,139 @@
-﻿@page "/usuarios/agregar"
-@attribute [Authorize]
-@layout Layout.AdmUsuarioLayout
-@using System.Net.Http
-@inject HttpClient Http
-
+﻿
 @inject IJSRuntime Js
-@inject NavigationManager Navigation
+@inject HttpClient Http
+@using System.Net.Http
+@using DataModel
+@using FormModel
 
 
-<h3>Agregar a un Usuario</h3>
+<div class="modal fade" id="AgregUsuarioModal" tabindex="-1" aria-labelledby="AgregUsuarioModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar nuevo usuario</h5>
+                <button type="button" class="close"  @onclick="@(e =>  OpenModalCerrar())" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
 
-<div>
-    <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        @*<ValidationSummary />*@
-        <div class="form-group">
-            <label for="username">Nombre de Usuario</label>
-            <input type="text" id="username" class="form-control" @bind="NuevoUsuarioModel.Username" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.Username)" />
-        </div>
-        <div class="form-group">
-            <label for="name">Nombre</label>
-            <input type="text" id="name" class="form-control" @bind="NuevoUsuarioModel.Nombre" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.Nombre)" />
-        </div>
-        <div class="form-group">
-            <label for="ApPaterno">Apellido Paterno</label>
-            <input type="text" id="ApPaterno" class="form-control" @bind="NuevoUsuarioModel.ApPaterno" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.ApPaterno)" />
-        </div>
-        <div class="form-group">
-            <label for="ApMaterno">Apellido Materno</label>
-            <input type="text" id="ApMaterno" class="form-control" @bind="NuevoUsuarioModel.ApMaterno" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.ApMaterno)" />
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.Email)" />
-        </div>
+                   
+                        <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            @*<ValidationSummary />*@
+                            <div class="form-group">
+                                <label for="username">Nombre de Usuario</label>
+                                <input type="text" id="username" class="form-control" @bind="NuevoUsuarioModel.Username" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.Username)" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" id="name" class="form-control" @bind="NuevoUsuarioModel.Nombre" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.Nombre)" />
+                            </div>
+                            <div class="form-group">
+                                <label for="ApPaterno">Apellido Paterno</label>
+                                <input type="text" id="ApPaterno" class="form-control" @bind="NuevoUsuarioModel.ApPaterno" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.ApPaterno)" />
+                            </div>
+                            <div class="form-group">
+                                <label for="ApMaterno">Apellido Materno</label>
+                                <input type="text" id="ApMaterno" class="form-control" @bind="NuevoUsuarioModel.ApMaterno" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.ApMaterno)" />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="text" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.Email)" />
+                            </div>
 
-        <div class="form-group">
-            <label for="phone">Teléfono</label>
-            <input type="text" id="phone" class="form-control" @bind="NuevoUsuarioModel.Telefono" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.Telefono)" />
-        </div>
+                            <div class="form-group">
+                                <label for="phone">Teléfono</label>
+                                <input type="text" id="phone" class="form-control" @bind="NuevoUsuarioModel.Telefono" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.Telefono)" />
+                            </div>
 
-        <div class="form-group">
-            <label for="rut">Rut</label>
-            <input type="text" id="rut" class="form-control" @bind="NuevoUsuarioModel.rut" />
-            <ValidationMessage For="@(() => NuevoUsuarioModel.rut)" />
-        </div>
-        @*<div class="form-group">
-            <label for="perfilSelect">Perfil</label>
-            <select class="form-control opcion" id="perfilSelect" @bind="NuevoUsuarioModel.TipoPerfil">
-                <option value="">Seleccione un tipo de perfil</option>
-                <option value="ALUMNO">ALUMNO</option>
-                <option value="DOCENTE">DOCENTE</option>
-                <option value="COORDINADOR">COORDINADOR</option>
-                <option value="DIRECTOR">DIRECTOR</option>
-                <option value="PANOLERO">PANOLERO</option>
-            </select>
-            <ValidationMessage For="@(() => NuevoUsuarioModel.TipoPerfil)" />
+                            <div class="form-group">
+                                <label for="rut">Rut</label>
+                                <input type="text" id="rut" class="form-control" @bind="NuevoUsuarioModel.rut" />
+                                <ValidationMessage For="@(() => NuevoUsuarioModel.rut)" />
+                            </div>
+                          
+                            <div class="form-group">
+                                <label for="perfilSelect">Perfil</label>
+                                <select class="form-control" id="perfilSelect" @bind="@SelectedOpc">
+
+                                    <option value="">--Eliga una opcion de perfil--</option>
+                                    @foreach (var perfil in PerfilList)
+                                    {
+                                        <option value="@perfil.Code"> @perfil.Name </option>
+                                    }
+                                    }
+
+                                </select>
+
+                            </div>
+                            @if (@SelectedOpc == "ALUMNO")
+                            {
+                                <div class="form-group">
+                                    <label for="escSelect">Carrera</label>
+                                    <select class="form-control" id="escSelect" @bind="@SelectedCar">
+
+                                        <option value="">--Eliga una carrera--</option>
+                                        @foreach (var carrera in CarList)
+                                        {
+                                            <option value="@carrera.Code"> @carrera.Name </option>
+                                        }
+                                        }
+
+                                    </select>
+
+                                </div>
 
 
-        </div>*@
-        <div class="form-group">
-            <label for="perfilSelect">Perfil</label>
-            <select class="form-control" id="perfilSelect" @bind="@SelectedOpc">
+                            }
+                            else if (@SelectedOpc == "DOCENTE" || @SelectedOpc == "COORDINADOR" || @SelectedOpc == "DIRECTOR")
+                            {
+                                <div class="form-group">
+                                    <label for="carSelect">Escuela</label>
+                                    <select class="form-control" id="carSelect" @bind="@SelectedEsc">
 
-                <option value="">--Eliga una opcion de perfil--</option>
-                @foreach (var perfil in PerfilList)
-                {
-                    <option value="@perfil.Code"> @perfil.Name </option>
-                }
-                }
+                                        <option value="">--Eliga una escuela--</option>
+                                        @foreach (var escuela in EscList)
+                                        {
+                                            <option value="@escuela.Code"> @escuela.Name </option>
+                                        }
+                                        }
 
-            </select>
+                                    </select>
 
-        </div>
-        @if (@SelectedOpc == "ALUMNO")
-        {
-            <div class="form-group">
-                <label for="escSelect">Carrera</label>
-                <select class="form-control" id="escSelect" @bind="@SelectedCar">
+                                </div>
 
-                    <option value="">--Eliga una carrera--</option>
-                    @foreach (var carrera in CarList)
-                    {
-                        <option value="@carrera.Code"> @carrera.Name </option>
-                    }
-                    }
+                            }
+                        <div class="justify-content-center">
+                            <button type="submit" class="btn btn-success" value="Save">Guardar Usuario</button>
+                            <button type="reset" class="btn btn-success borrar">Borrar Datos</button>
+                        </div>
+                            
+                        </EditForm>
 
-                </select>
+                    
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"  @onclick="@(e =>  OpenModalCerrar())" data-dismiss="modal">Salir</button>
 
             </div>
-
-
-        }
-        else if (@SelectedOpc == "DOCENTE" || @SelectedOpc == "COORDINADOR" || @SelectedOpc == "DIRECTOR")
-        {
-            <div class="form-group">
-                <label for="carSelect">Escuela</label>
-                <select class="form-control" id="carSelect" @bind="@SelectedEsc">
-
-                    <option value="">--Eliga una escuela--</option>
-                    @foreach (var escuela in EscList)
-                    {
-                        <option value="@escuela.Code"> @escuela.Name </option>
-                    }
-                    }
-
-                </select>
-
-            </div>
-
-        }
-
-        <button type="submit" class="btn btn-success" value="Save">Guardar Usuario</button>
-        <button type="reset" class="btn btn-success borrar">Borrar Datos</button>
-    </EditForm>
+        </div>
+    </div>
 </div>
 
+
 @code {
+    //falta validaciones en el Agregar ==> verificar Rut, email , ver si el usuario se puede repetir.
+
+
     private PanolBlazor.FormModel.NuevoUsuarioModel NuevoUsuarioModel = new FormModel.NuevoUsuarioModel();
 
     // Seleccionar opciones de perfil
@@ -244,7 +255,8 @@
 
         if (response)
         {
-            if (SelectedOpc == "PANOLERO") {
+            if (SelectedOpc == "PANOLERO")
+            {
 
                 var requestMessage = new HttpRequestMessage()
                 {
@@ -266,9 +278,15 @@
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
+                NuevoUsuarioModel = new NuevoUsuarioModel();
+                SelectedOpc = "";
+
+                StateHasChanged();
+
                 Console.WriteLine(result);
             }
-            else if (SelectedOpc == "ALUMNO") {
+            else if (SelectedOpc == "ALUMNO")
+            {
 
                 var requestMessage = new HttpRequestMessage()
                 {
@@ -291,9 +309,14 @@
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
+                NuevoUsuarioModel = new NuevoUsuarioModel();
+                SelectedOpc = "";
+                SelectedCar = "";
+                StateHasChanged();
                 Console.WriteLine(result);
             }
-            else if (SelectedOpc == "DOCENTE") {
+            else if (SelectedOpc == "DOCENTE")
+            {
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
@@ -315,9 +338,15 @@
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
+                NuevoUsuarioModel = new NuevoUsuarioModel();
+                SelectedOpc = "";
+                SelectedEsc = "";
+                StateHasChanged();
+
                 Console.WriteLine(result);
             }
-            else if (SelectedOpc == "COORDINADOR") {
+            else if (SelectedOpc == "COORDINADOR")
+            {
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
@@ -339,9 +368,15 @@
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
+                NuevoUsuarioModel = new NuevoUsuarioModel();
+                SelectedOpc = "";
+                SelectedEsc = "";
+                StateHasChanged();
+
                 Console.WriteLine(result);
             }
-            else if (SelectedOpc == "DIRECTOR") {
+            else if (SelectedOpc == "DIRECTOR")
+            {
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
@@ -363,6 +398,11 @@
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
+                NuevoUsuarioModel = new NuevoUsuarioModel();
+                SelectedOpc = "";
+                SelectedEsc = "";
+                StateHasChanged();
+
                 Console.WriteLine(result);
             };
 
@@ -370,13 +410,27 @@
 
 
 
-            
+
             await Js.MostrarMensaje("Guardado!", "Se ha creado correctamente el usuario.", TipoMensajeSweetAlert.success);
-            //recordar modificar esto
-            Navigation.NavigateTo("/usuarios/");
+
+            //await Js.CloseModal("AgregUsuarioModal");
+
         }
+
+
     }
+
+    //cerrar modal
+
+    private void OpenModalCerrar()
+    {
+        NuevoUsuarioModel = new NuevoUsuarioModel();
+        SelectedOpc = "";
+        SelectedCar = "";
+        StateHasChanged();
+        Js.CloseModal("AgregUsuarioModal");
+
+    }
+
+
 }
-
-
-

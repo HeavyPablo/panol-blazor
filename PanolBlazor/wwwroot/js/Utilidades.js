@@ -21,8 +21,14 @@
     ShowModal: function (idModal) {
         $('#' + idModal).modal('show');
     },
+    ShowModalStatic: function (idModal) {
+        $('#' + idModal).modal({ backdrop: 'static' });
+    },
     CloseModal: function (idModal) {
         $('#' + idModal).modal('hide');
+    },
+    CloseModalDispose: function (idModal) {
+        $('#' + idModal).modal('dispose');
     },
     RenderImagen: function (idImagenDom, tipoImagen, imagenBase64) {
         new Promise(() => {

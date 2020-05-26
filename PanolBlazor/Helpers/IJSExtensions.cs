@@ -37,9 +37,19 @@ namespace PanolBlazor.Helpers
             return js.InvokeVoidAsync("methods.ShowModal", idModal);
         }
 
+        public static ValueTask ShowModalStatic(this IJSRuntime js, string idModal)//para poder cerrar el modal solo con los botones
+        {
+            return js.InvokeVoidAsync("methods.ShowModalStatic", idModal);
+        }
+
         public static ValueTask CloseModal(this IJSRuntime js, string idModal)
         {
             return js.InvokeVoidAsync("methods.CloseModal", idModal);
+        }
+
+        public static ValueTask CloseModalDispose(this IJSRuntime js, string idModal)
+        {
+            return js.InvokeVoidAsync("methods.CloseModalDispose", idModal);
         }
 
         // --- Metodo para renderizar imagenes ---
