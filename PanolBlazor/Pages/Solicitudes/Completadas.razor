@@ -16,7 +16,7 @@ else if (Solicitudes.Count == 0)
 }
 else
 {
-    <SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Entregadas"></SolicitudesTableGeneric>
+    <SolicitudesTableGeneric Solicitudes="Solicitudes" Titulo="Completadas"></SolicitudesTableGeneric>
 }
 
 @code {
@@ -24,7 +24,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1000);
         Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud/estado/completada");
     }
 }

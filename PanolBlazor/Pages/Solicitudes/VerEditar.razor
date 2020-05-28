@@ -194,9 +194,24 @@ else
                     </div>
                 </div>
             </div>
-            <div class="py-3">
-
-            </div>
+            @if (Solicitud.estado == "pendiente")
+            {
+                <div class="py-3">
+                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Entregar productos</button>
+                </div>
+            }
+            @if (Solicitud.estado == "entregada")
+            {
+                <div class="py-3">
+                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Recibir productos</button>
+                </div>
+            }
+            @if (Solicitud.estado == "esperando")
+            {
+                <div class="py-3">
+                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Aprobar solicitud</button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -258,6 +273,12 @@ else
 
         if (response)
         {
+            if (Solicitud.panolero == null)
+            {
+                string Username = await Js.GetFromLocalStorage("username");
+                UsuarioModel Responsable = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+                Solicitud.panolero = Responsable.panolero;
+            }
             await EditSolicitud(Solicitud);
             await Js.MostrarMensaje("Editado!", "La solicitud se ha editado correctamente.", TipoMensajeSweetAlert.success);
         }
@@ -282,6 +303,50 @@ else
         var result = await Http.SendAsync(requestMessage);
 
         Console.WriteLine(result);
+    }
+
+    private async Task HandlerProductosTransaction(SolicitudModel solicitud)
+    {
+        string oldEstado = solicitud.estado.ToLower();
+        string titulo = "";
+        string mensaje = "";
+
+        if (solicitud.panolero == null)
+        {
+            string Username = await Js.GetFromLocalStorage("username");
+            UsuarioModel Responsable = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
+            if (Responsable.panolero != null)
+            {
+                solicitud.panolero = Responsable.panolero;
+            } else
+            {
+                solicitud.panolero = new PanoleroModel();
+            }
+        }
+
+        switch(oldEstado)
+        {
+            case "pendiente":
+                solicitud.estado = "entregada";
+                titulo = "Productos entregados!";
+                mensaje = "Se han entregado los productos satisfactoriamente al usuario solicitante.";
+                break;
+            case "entregada":
+                solicitud.estado = "completada";
+                titulo = "Productos recibidos!";
+                mensaje = "Se han recibido los productos correctamente. Asegúrese de notificar el estado del/los producto/s.";
+                break;
+            case "esperando":
+                solicitud.estado = "pendiente";
+                titulo = "Solicitud aceptada!";
+                mensaje = "Se ha aceptado la solicitud correctamente.";
+                break;
+            default:
+                break;
+        }
+
+        await EditSolicitud(solicitud);
+        await Js.MostrarMensaje(titulo, mensaje, TipoMensajeSweetAlert.success);
     }
 }
 

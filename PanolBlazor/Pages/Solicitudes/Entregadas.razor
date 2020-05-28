@@ -22,7 +22,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1000);
         Solicitudes = await Http.GetJsonAsync<List<PanolBlazor.DataModel.SolicitudModel>>("http://localhost:8080/solicitud/estado/entregada");
     }
 }

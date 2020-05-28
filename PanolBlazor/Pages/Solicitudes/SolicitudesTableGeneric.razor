@@ -11,7 +11,7 @@
             <EditForm Model="FiltrosModel">
                 <div class="col-12">
                     <div class="row justify-content-between">
-                        <h4>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h4>
+                        <h4>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="ClearFilter" style="vertical-align: text-bottom"></span></a></h4>
                         <button type="submit" class="btn btn-primary" @onclick="FilterSolicitudes"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
                     </div>
                 </div>
@@ -81,7 +81,13 @@ else
                                         <td>@(Solicitud.usuario.docente.nombre + " " + Solicitud.usuario.docente.apellidoPaterno)</td>
                                     }
                                     <td>@Solicitud.usuario.perfil</td>
-                                    <td>@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
+                                    @if (Solicitud.panolero != null)
+                                    {
+                                        <td>@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
+                                    } else
+                                    {
+                                        <td><span class="badge badge-pill badge-secondary" style="font-size:90%">SIN ASIGNAR</span></td>
+                                    }
                                     <td><span class="badge badge-pill @(ChangeClassFromDate(Solicitud.fechaCreacion)) font-weight-normal" style="font-size: 95%">@(TransformDate(Solicitud.fechaCreacion))</span></td>
                                     <td>
                                         <div class="btn-group col-12" role="group" aria-label="Basic example">
@@ -106,15 +112,17 @@ else
 @code {
     [Parameter] public List<SolicitudModel> Solicitudes { get; set; }
     [Parameter] public string Titulo { get; set; }
+    List<SolicitudModel> SeedSolicitudes;
 
     private FiltrosSolicitudesModel FiltrosModel = new FiltrosSolicitudesModel();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        Solicitudes = null;
-        Solicitudes = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
-
-        FiltrosModel = new FiltrosSolicitudesModel();
+        if (SeedSolicitudes == null)
+        {
+            SeedSolicitudes = Solicitudes;
+            Console.WriteLine(SeedSolicitudes.Count());
+        }
     }
 
     private void ViewSolicitud(int Id)
@@ -122,10 +130,34 @@ else
         Navigation.NavigateTo("solicitudes/" + Id.ToString());
     }
 
+    private void ClearFilter()
+    {
+        Solicitudes = null;
+        Solicitudes = SeedSolicitudes;
+
+        FiltrosModel = new FiltrosSolicitudesModel();
+    }
+
     private async Task FilterSolicitudes()
     {
         Solicitudes = null;
-        List<SolicitudModel> SolicitudesToFilter = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud");
+        List<SolicitudModel> SolicitudesToFilter = new List<SolicitudModel>();
+        if (SeedSolicitudes[0].estado.Equals("entregada"))
+        {
+            SolicitudesToFilter = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud/estado/entregada");
+        }
+        if (SeedSolicitudes[0].estado.Equals("pendiente"))
+        {
+            SolicitudesToFilter = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud/estado/pendiente");
+        }
+        if (SeedSolicitudes[0].estado.Equals("esperando"))
+        {
+            SolicitudesToFilter = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud/estado/esperando");
+        }
+        if (SeedSolicitudes[0].estado.Equals("completada"))
+        {
+            SolicitudesToFilter = await Http.GetJsonAsync<List<SolicitudModel>>("http://localhost:8080/solicitud/estado/completada");
+        }
 
         if (FiltrosModel.perfilSolicitante != null && FiltrosModel.perfilSolicitante != "")
         {
