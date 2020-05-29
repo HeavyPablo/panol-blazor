@@ -18,203 +18,231 @@
 }
 else
 {
-<div class="py-3 col-12">
-    <div class="py-3">
-        <div class="row justify-content-center">
-            <div class="progressbar-wrapper">
-                <ul class="progressbar">
-                    <li class="active">Step 1</li>
-                    <li>Step 2</li>
-                    <li>Step 3</li>
-                    <li>Step 4</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <div id="infoSolicitud" class="py-3 col-12">
+        <div class="py-3">
+            <div class="row justify-content-center">
+                <div class="progressbar-wrapper">
+                    <ul class="progressbar" style="margin-left: 26%">
+                        @if (Solicitud.estado == "pendiente" || Solicitud.estado == "esperando")
+                        {
+                            <li class="active">Crear Solicitud</li>
+                            <li class="">Entregar Productos</li>
+                            <li class="">Recibir Productos Devuelta</li>
+                        }
+                        else if (Solicitud.estado == "entregada")
+                        {
+                            <li class="">Crear Solicitud</li>
+                            <li class="active">Entregar Productos</li>
+                            <li class="">Recibir Productos Devuelta</li>
+                        }
+                        else
+                        {
+                            <li class="">Crear Solicitud</li>
+                            <li class="">Entregar Productos</li>
+                            <li class="active">Recibir Productos Devuelta</li>
+                        }
 
-    <div class="shadow card">
-        <div class="card-body">
-            <div class="col-12">
-                <div class="row justify-content-between">
-                    <div class="d-flex">
-                        <div class="px-2">
-                            <h3>Solicitud @Solicitud.id</h3>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row py-3">
-        <div class="pr-3 col-6">
-            <div class="shadow card">
-                <div class="card-body">
-                    <div class="col-12">
-                        <div class="row justify-content-between">
-                            <h4>Información</h4>
-                            <button type="button" class="btn @ChangeButton @IsActived" @onclick="EditInfo"><span class="oi @ChangeIcon"></span></button>
-                        </div>
-                    </div>
-                    <div class="py-2">
-                        <div class="alert alert-warning @IsEditing text-center" role="alert">
-                            <strong>Modo de edición activado!</strong>
-                        </div>
-                    </div>
-                    <EditForm Model="Solicitud" OnValidSubmit="@(e =>EditSolicitud(Solicitud))">
-                        <div class="form-row">
-                            <div class="form-group d-flex col-6">
-                                <p>Estado</p>
-                                <div class="px-1">
-                                    <p class="badge badge-pill badge-warning">@Solicitud.estado</p>
-                                </div>
+        <div class="shadow card">
+            <div class="card-body">
+                <div class="col-12">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="px-3">
+                                <h3>Solicitud @Solicitud.id</h3>
                             </div>
-                            <div class="form-group d-flex col-6">
-                                <p>Tipo de solicitud</p>
-                                <div class="px-1">
-                                    <p class="badge badge-pill badge-info">@Solicitud.tipoSolicitud</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-6">
-                                <label>Fecha de creación</label>
-                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaCreacion" />
-                            </div>
-                            <div class="form-group col-6">
-                                <label>Ultima actualización</label>
-                                <input type="text" class="form-control" disabled @bind="Solicitud.fechaActualizacion" />
-                            </div>
-                        </div>
-                        <hr />
-                        @if (Solicitud.usuario != null)
-                        {
-                            @if (Solicitud.usuario.perfil == "ALUMNO" && Solicitud.usuario.alumno != null)
+                            @if (IsDisabled)
                             {
-                                <div class="form-group">
-                                    <div class="col-12 py-2">
-                                        <div class="row justify-content-between">
-                                            <label>Nombre solicitante</label>
-                                            <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Alumno</button>
-                                        </div>
-                                    </div>
-                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-6">
-                                        <label>Rut solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.alumno.rut" />
-                                    </div>
-                                    <div class="form-group col-6">
-                                        <label>Perfil solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
-                                    </div>
+                                <div class="border-left">
+                                    <a class="text-decoration-none text-muted px-3" @onclick="@(e => generatePdf("infoSolicitud"))">
+                                        <span class="oi oi-data-transfer-download px-1"></span> Descargar PDF
+                                    </a>
                                 </div>
                             }
-                            @if (Solicitud.usuario.perfil == "DOCENTE" && Solicitud.usuario.docente != null)
-                            {
-                                <div class="form-group">
-                                    <div class="col-12 py-2">
-                                        <div class="row justify-content-between">
-                                            <label>Nombre solicitante</label>
-                                            <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Docente</button>
-                                        </div>
-                                    </div>
-                                    <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
-                                </div>
+                        </div>
+                        <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                <div class="form-row">
-                                    <div class="form-group col-6">
-                                        <label>Rut solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.docente.rut" />
+        <div  class="row py-3">
+            <div id="Solicitud" class="pr-3 col-6">
+                <div id="infoCard" class="shadow card" style="background-color: @bgInfoCard">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Información</h4>
+                                @if (Solicitud.estado == "pendiente" || Solicitud.estado == "esperando")
+                                {
+                                    <div class="d-flex">
+                                        <a class="text-danger @IsEditing px-3" style="font-size: 170%"><span class="oi oi-x" @onclick="@(e => EditInfo(true))"></span></a>
+                                        <a class="@ChangeText" style="font-size: 170%"><span class="oi @ChangeIcon" @onclick="@(e => EditInfo(false))"></span></a>
                                     </div>
-                                    <div class="form-group col-6">
-                                        <label>Perfil solicitante</label>
-                                        <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                }
+
+                            </div>
+                        </div>
+                        <EditForm Model="Solicitud" OnValidSubmit="@(e =>EditSolicitud(Solicitud))">
+                            <div class="form-row">
+                                <div class="form-group d-flex col-6">
+                                    <p>Estado</p>
+                                    <div class="px-1">
+                                        <p class="badge badge-pill badge-warning">@Solicitud.estado</p>
                                     </div>
                                 </div>
-                            }
-                        }
-                        @if (Solicitud.panolero != null)
-                        {
+                                <div class="form-group d-flex col-6">
+                                    <p>Tipo de solicitud</p>
+                                    <div class="px-1">
+                                        <p class="badge badge-pill badge-info">@Solicitud.tipoSolicitud</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label>Fecha de creación</label>
+                                    <input type="text" class="form-control" disabled @bind="Solicitud.fechaCreacion" />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>Ultima actualización</label>
+                                    <input type="text" class="form-control" disabled @bind="Solicitud.fechaActualizacion" />
+                                </div>
+                            </div>
                             <hr />
+                            @if (Solicitud.usuario != null)
+                            {
+                                @if (Solicitud.usuario.perfil == "ALUMNO" && Solicitud.usuario.alumno != null)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-12 py-2">
+                                            <div class="row justify-content-between">
+                                                <label>Nombre solicitante</label>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Alumno</button>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control" disabled value="@(Solicitud.usuario.alumno.nombre +  " " + Solicitud.usuario.alumno.apellidoPaterno + " " + Solicitud.usuario.alumno.apellidoMaterno )" />
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label>Rut solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.alumno.rut" />
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label>Perfil solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                        </div>
+                                    </div>
+                                }
+                                @if (Solicitud.usuario.perfil == "DOCENTE" && Solicitud.usuario.docente != null)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-12 py-2">
+                                            <div class="row justify-content-between">
+                                                <label>Nombre solicitante</label>
+                                                <button type="button" class="btn btn-primary btn-sm @IsEditing" @onclick="@(e => OpenModal("ChangeUsuarioModal"))">Cambiar Docente</button>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control" disabled value="@(Solicitud.usuario.docente.nombre +  " " + Solicitud.usuario.docente.apellidoPaterno + " " + Solicitud.usuario.docente.apellidoMaterno )" />
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label>Rut solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.docente.rut" />
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label>Perfil solicitante</label>
+                                            <input type="text" class="form-control" disabled @bind="Solicitud.usuario.perfil" />
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (Solicitud.panolero != null)
+                            {
+                                <hr />
+                                <div class="form-group">
+                                    <label>Nombre panolero responsable</label>
+                                    <input type="text" class="form-control" disabled value="@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno + " " + Solicitud.panolero.apellidoMaterno)" />
+                                </div>
+                            }
                             <div class="form-group">
-                                <label>Nombre panolero responsable</label>
-                                <input type="text" class="form-control" disabled value="@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno + " " + Solicitud.panolero.apellidoMaterno)" />
+                                <label>Comentarios</label>
+                                <textarea class="form-control" rows="3" disabled="@IsDisabled" @bind="Solicitud.comentario"></textarea>
                             </div>
-                        }
-                        <div class="form-group">
-                            <label>Comentarios</label>
-                            <textarea class="form-control" rows="3" disabled="@IsDisabled" @bind="Solicitud.comentario"></textarea>
-                        </div>
-                    </EditForm>
+                        </EditForm>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="pl-3 col-6">
-            <div class="shadow card">
-                <div class="card-body">
-                    <div class="col-12">
-                        <div class="row justify-content-between">
-                            <h4>Productos</h4>
-                            <button type="button" class="btn btn-outline-primary" @onclick="@(e => OpenModal("AddProductosModal"))"><span class="oi oi-plus"></span></button>
+            <div class="pl-3 col-6">
+                <div id="ProductCard" class="shadow card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row justify-content-between">
+                                <h4>Productos</h4>
+                                @if (Solicitud.estado == "pendiente" || Solicitud.estado == "esperando")
+                                {
+                                    <a class="text-warning" style="font-size: 170%"><span class="oi oi-pencil" @onclick="@(e => OpenModal("AddProductosModal"))"></span></a>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <div class="py-3">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Subcategoria</th>
-                                        <th scope="col">Categoria</th>
-                                        <th scope="col">Cantidad</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Solicitud.productos != null)
-                                    {
-                                        @foreach (ProductoModel Producto in Solicitud.productos)
+                        <div class="py-3">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Subcategoria</th>
+                                            <th scope="col">Categoria</th>
+                                            <th scope="col">Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Solicitud.productos != null)
                                         {
-                                            <tr>
-                                                <th scope="row">@Producto.id</th>
-                                                <td>@Producto.nombre</td>
-                                                <td>@Producto.subcategoria.nombre</td>
-                                                <td>@Producto.subcategoria.categoria.nombre</td>
-                                                <td>@Producto.cantidad</td>
-                                            </tr>
+                                            @foreach (ProductoModel Producto in Solicitud.productos)
+                                            {
+                                                <tr>
+                                                    <th scope="row">@Producto.id</th>
+                                                    <td>@Producto.nombre</td>
+                                                    <td>@Producto.subcategoria.nombre</td>
+                                                    <td>@Producto.subcategoria.categoria.nombre</td>
+                                                    <td>@Producto.cantidad</td>
+                                                </tr>
+                                            }
                                         }
-                                    }
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+                @if (Solicitud.estado == "pendiente")
+                {
+                    <div class="py-3">
+                        <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Entregar productos</button>
+                    </div>
+                }
+                @if (Solicitud.estado == "entregada")
+                {
+                    <div class="py-3">
+                        <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Recibir productos</button>
+                    </div>
+                }
+                @if (Solicitud.estado == "esperando")
+                {
+                    <div class="py-3">
+                        <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Aprobar solicitud</button>
+                    </div>
+                }
             </div>
-            @if (Solicitud.estado == "pendiente")
-            {
-                <div class="py-3">
-                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Entregar productos</button>
-                </div>
-            }
-            @if (Solicitud.estado == "entregada")
-            {
-                <div class="py-3">
-                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Recibir productos</button>
-                </div>
-            }
-            @if (Solicitud.estado == "esperando")
-            {
-                <div class="py-3">
-                    <button class="btn btn-success btn-lg btn-block" @onclick="@(e => HandlerProductosTransaction(Solicitud))"><span class="oi oi-check"></span> Aprobar solicitud</button>
-                </div>
-            }
         </div>
     </div>
-</div>
 }
 
 <PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Solicitud.productos" Solicitud="Solicitud" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
@@ -224,9 +252,10 @@ else
     [Parameter] public string Id { get; set; }
     public bool IsDisabled = true;
     public string IsActived = "";
-    public string ChangeButton = "btn-outline-primary";
+    public string ChangeText = "text-warning";
     public string IsEditing = "d-none";
     public string ChangeIcon = "oi-pencil";
+    public string bgInfoCard = "";
     public SolicitudModel Solicitud = new SolicitudModel();
 
     protected override async Task OnInitializedAsync()
@@ -242,26 +271,40 @@ else
         Js.ShowModal(Tittle);
     }
 
-    private async Task EditInfo()
+    private async Task EditInfo(bool exit)
     {
         if (IsDisabled)
         {
             IsActived = "active";
             ChangeIcon = "oi-check";
-            ChangeButton = "btn-outline-success";
+            ChangeText = "text-success";
             IsEditing = "d-block";
+            bgInfoCard = "rgb(255, 193, 7, 0.05)";
             IsDisabled = false;
         }
         else
         {
+            if (exit)
+            {
+                ChangeIcon = "oi-pencil";
+                ChangeText = "text-warning";
+                IsActived = "";
+                IsEditing = "d-none";
+                bgInfoCard = "";
+                IsDisabled = true;
+
+                return;
+            }
+
             var response = await ConfirmEditSolicitud();
 
             if (response)
             {
                 ChangeIcon = "oi-pencil";
-                ChangeButton = "btn-outline-primary";
+                ChangeText = "text-warning";
                 IsActived = "";
                 IsEditing = "d-none";
+                bgInfoCard = "";
                 IsDisabled = true;
             }
         }
@@ -318,13 +361,14 @@ else
             if (Responsable.panolero != null)
             {
                 solicitud.panolero = Responsable.panolero;
-            } else
+            }
+            else
             {
                 solicitud.panolero = new PanoleroModel();
             }
         }
 
-        switch(oldEstado)
+        switch (oldEstado)
         {
             case "pendiente":
                 solicitud.estado = "entregada";
@@ -347,6 +391,11 @@ else
 
         await EditSolicitud(solicitud);
         await Js.MostrarMensaje(titulo, mensaje, TipoMensajeSweetAlert.success);
+    }
+
+    private async Task generatePdf(string id)
+    {
+        await Js.SaveAs(id);
     }
 }
 

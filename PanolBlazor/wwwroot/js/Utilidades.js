@@ -76,7 +76,6 @@
             
             indices.splice(0, 1);
             indices.sort();
-            console.log(indices);
             // Add data
             chart.data = indices;
 
@@ -301,5 +300,14 @@
             })
 
         }
+    },
+    SaveAsFile: function (id) {
+        var div = window.document.getElementById(id);
+        html2canvas(div).then(function (canvas) {
+            var img = canvas.toDataURL('image/png');
+            var doc = new jsPDF();
+            doc.addImage(img, 'JPEG', 1, 2, 207, 145);
+            doc.save('test.pdf');
+        });
     }
 }

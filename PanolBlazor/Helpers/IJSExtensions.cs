@@ -1,6 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -80,6 +81,11 @@ namespace PanolBlazor.Helpers
         public static ValueTask GenerateChart(this IJSRuntime js, string idChart, TipoChart tipoChart, string data)
         {
             return js.InvokeVoidAsync("methods.GenerateChart", idChart, tipoChart.ToString(), data);
+        }
+
+        public static ValueTask SaveAs(this IJSRuntime js, string id)
+        {
+            return js.InvokeVoidAsync("methods.SaveAsFile", id);
         }
     }
 

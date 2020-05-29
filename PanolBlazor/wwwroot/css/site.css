@@ -307,3 +307,7 @@ app {
         content: counter(step);
         counter-increment: step;
     }
+
+#infoCard {
+    transition: all 0.2s ease;
+}
