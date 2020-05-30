@@ -1,0 +1,105 @@
+﻿@using BlazorInputFile
+@inject IJSRuntime jsRuntime
+
+    <div class="col-12 p-0">
+        <div class="dropzone @dropClass rounded" style="height: 300px">
+            <InputFile id="fileInput" title=""
+                       OnChange="HandleFileInputChange"
+                       accept="image/png,image/gif,image/jpeg"
+                       @ondragenter="HandleDragEnter"
+                       @ondragleave="HandleDragLeave" />
+            <div>
+                <p class="text-center">Subir Imagen</p>
+                <small class="text-muted text-center">(suelte aquí la imagen o haga "click")</small>
+            </div>
+        </div>
+        @if ((fileTypeError || fileSizeError))
+        {
+            <ul class="validation-errors mb-0">
+                @if (fileTypeError)
+                {
+                    <li class="validation-message">Solo se permiten imagenes.</li>
+                }
+                @if (fileSizeError)
+                {
+                    <li class="validation-message">El tamaño maximo permitido es de @MaxFileSizeMB MB.</li>
+                }
+            </ul>
+        }
+        @if (selectedFiles != null && selectedFiles.Count > 0)
+        {
+            <div class="col-12">
+                <ul>
+                    @foreach (var file in selectedFiles)
+                    {
+                        <li>
+                            @file.Name
+                            <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                    @onclick="@(e => RemoveFile(file))">
+                                <small class="align-text-bottom"><span class="oi oi-x"></span></small>
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+@code 
+{
+    const int MaxFileSizeMB = 5;
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; // 5MB
+    private string dropClass = "";
+    private bool fileSizeError = false;
+    private bool fileTypeError = false;
+
+    [Parameter] public List<IFileListEntry> selectedFiles { get; set; }
+
+    private void HandleDragEnter()
+    {
+        dropClass = "dropzone-drag";
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+    }
+
+    private void HandleFileInputChange(IFileListEntry[] files)
+    {
+        dropClass = "";
+        fileSizeError = false;
+        fileTypeError = false;
+        List<string> acceptedFileTypes = new List<string>() { "image/png", "image/jpeg", "image/gif" };
+        if (files != null)
+        {
+            foreach (var file in files)
+            {
+                bool error = false;
+                if (file.Size > MaxFileSize)
+                {
+                    error = true;
+                    fileSizeError = true;
+                }
+
+                if (!acceptedFileTypes.Contains(file.Type))
+                {
+                    error = true;
+                    fileTypeError = true;
+                }
+
+                //keep the good files
+                if (!error)
+                {
+                    selectedFiles.Clear();
+                    selectedFiles.Add(file);
+                }
+            }
+        }
+    }
+
+    private void RemoveFile(IFileListEntry file)
+    {
+        selectedFiles.Remove(file);
+    }
+}

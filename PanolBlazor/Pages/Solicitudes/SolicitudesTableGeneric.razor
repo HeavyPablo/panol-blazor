@@ -94,7 +94,7 @@ else
                                             <button type="button" class="btn btn-secondary" @onclick="@(e => ViewSolicitud(Solicitud.id))">
                                                 <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
                                             </button>
-                                            <button type="button" class="btn btn-secondary">
+                                            <button type="button" class="btn btn-secondary" @onclick=@(e => DeleteSolicitud(Solicitud))>
                                                 <span class="oi oi-trash"></span>
                                             </button>
                                         </div>
@@ -121,7 +121,6 @@ else
         if (SeedSolicitudes == null)
         {
             SeedSolicitudes = Solicitudes;
-            Console.WriteLine(SeedSolicitudes.Count());
         }
     }
 
@@ -140,6 +139,11 @@ else
 
     private async Task FilterSolicitudes()
     {
+        if (SeedSolicitudes == null || SeedSolicitudes.Count == 0)
+        {
+            return;
+        }
+
         Solicitudes = null;
         List<SolicitudModel> SolicitudesToFilter = new List<SolicitudModel>();
         if (SeedSolicitudes[0].estado.Equals("entregada"))
@@ -255,5 +259,37 @@ else
         }
 
         return "No se pudo calcular!";
+    }
+
+    private async Task DeleteSolicitud(SolicitudModel solicitud)
+    {
+        var response = await Js.Confirm("¿Estás seguro?", "Si acepta, anulará la solicitud.", TipoMensajeSweetAlert.warning);
+
+        if (response)
+        {
+            var username = await Js.GetFromLocalStorage("username");
+            UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+
+            if (usuario.panolero != null)
+            {
+                solicitud.panolero = usuario.panolero;
+
+                SolicitudModel solicitudDeleted = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/borrar/" + solicitud.id);
+
+                if (solicitudDeleted != null)
+                {
+                    await Js.MostrarMensaje("Anulada!", "Se ha anulado la solicitud correctamente.", TipoMensajeSweetAlert.success);
+
+                    var index = Solicitudes.FindIndex(s => s.id == solicitud.id);
+                    Solicitudes.RemoveAt(index);
+                } else
+                {
+                    await Js.MostrarMensaje("Error", "A ocurrido un error al anular la solicitud.", TipoMensajeSweetAlert.error);
+                }
+            } else
+            {
+                await Js.MostrarMensaje("Sin Acceso", "Usted no tiene permisos para anular solicitudes.", TipoMensajeSweetAlert.error);
+            }
+        }
     }
 }

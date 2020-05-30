@@ -5,49 +5,9 @@
 @using DataModel
 @using FormModel
 
-<div class="py-3 col-12">
-    <div class="shadow card">
-        <div class="card-header font-weight-bold" style="color: #343A40">@(Titulo)</div>
-        <div class="card-body">
-            <EditForm Model="FiltrosModel">
-                <div class="col-12">
-                    <div class="row justify-content-between">
-                        <h4>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h4>
-                        <button type="submit" class="btn btn-primary" @onclick="FilterProductos"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
-                    </div>
-                </div>
-                <div class="row justify-content-between">
-                    <div class="form-group col-4">
-                        <label>Búsqueda</label>
-                        <input class="form-control" type="text" @bind="FiltrosModel.Nombre" placeholder="@("Busqueda por nombre (ej." + @"""Computador"")")" />
-                    </div>
-                    <div class="form-group col-4">
-                        <label>Subcategoria</label>
-                        <InputSelect class="form-control" @bind-Value="FiltrosModel.Subcategoria">
-                            <option class="text-muted" value="">--Seleccione subcategoria--</option>
-                            @foreach (SubcategoriaModel Subcategoria in Subcategorias)
-                            {
-                                <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
-                            }
-                        </InputSelect>
-                    </div>
-                    <div class="form-group col-4">
-                        <label>Categoria</label>
-                        <InputSelect class="form-control" @bind-Value="FiltrosModel.Categoria">
-                            <option class="text-muted" value="">--Seleccione categoria--</option>
-                            @foreach (CategoriaModel Categoria in Categorias)
-                            {
-                                <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
-                            }
-                        </InputSelect>
-                    </div>
-                </div>
-            </EditForm>
-        </div>
-    </div>
-</div>
 
-@if (Productos == null)
+
+@if (Subcategorias == null || Categorias == null)
 {
     <div class="col-12">
         <div class="row justify-content-center">
@@ -55,11 +15,11 @@
         </div>
     </div>
 }
-else if (Productos.Count <= 0)
+else if (Subcategorias.Count == 0 || Categorias.Count == 0)
 {
     <div class="col-12">
         <div class="row justify-content-center">
-            <p class="text-muted">No se encontraron productos.</p>
+            <p class="text-muted">Al parecer no hay ninguna categoria o subcategoria.</p>
         </div>
     </div>
 }
@@ -67,50 +27,94 @@ else
 {
     <div class="py-3 col-12">
         <div class="shadow card">
+            <div class="card-header font-weight-bold" style="color: #343A40">@(Titulo)</div>
             <div class="card-body">
-                <div class="col-12">
-                    <div class="row">
-                        @foreach (ProductoModel Producto in Productos)
-                        {
-                            <div class="px-2">
-                                <div class="card" style="width: 15rem;">
-                                    <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
-                                    <div class="card-body">
-                                        @if (Producto.estado == "nuevo")
-                                        {
-                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
-                                        }
-                                        @if (Producto.estado == "usado")
-                                        {
-                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-warning">@Producto.estado</span></h5>
-                                        }
-                                        @if (Producto.estado == "dañado")
-                                        {
-                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
-                                        }
-                                        <p class="card-text">Cantidad: @Producto.cantidad</p>
-                                        <p class="card-text">Cantidad en uso: @Producto.cantidadEnUso</p>
-                                        <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
-                                    </div>
-                                    <div class="row">
-                                        <div class="btn-group col-12" role="group">
-                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
-                                                <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0">
-                                                <span class="oi oi-trash"></span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                <EditForm Model="FiltrosModel">
+                    <div class="col-12">
+                        <div class="row justify-content-between">
+                            <h4>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h4>
+                            <button type="submit" class="btn btn-primary" @onclick="FilterProductos"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
+                        </div>
                     </div>
-                </div>
+                    <div class="row justify-content-between">
+                        <div class="form-group col-4">
+                            <label>Búsqueda</label>
+                            <input class="form-control" type="text" @bind="FiltrosModel.Nombre" placeholder="@("Busqueda por nombre (ej." + @"""Computador"")")" />
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Subcategoria</label>
+                            <InputSelect class="form-control" @bind-Value="FiltrosModel.Subcategoria">
+                                <option class="text-muted" value="">--Seleccione subcategoria--</option>
+                                @foreach (SubcategoriaModel Subcategoria in Subcategorias)
+                                    {
+                                    <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
+                                    }
+                                /**/
+                            </InputSelect>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Categoria</label>
+                            <InputSelect class="form-control" @bind-Value="FiltrosModel.Categoria">
+                                <option class="text-muted" value="">--Seleccione categoria--</option>
+                                @foreach (CategoriaModel Categoria in Categorias)
+                                    {
+                                    <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
+                                    }
+                                /**/
+                            </InputSelect>
+                        </div>
+                    </div>
+                </EditForm>
             </div>
         </div>
     </div>
 }
+
+<div class="py-3 col-12">
+    <div class="shadow card">
+        <div class="card-body">
+            <div class="col-12">
+                <div class="row">
+                    @foreach (ProductoModel Producto in Productos)
+                    {
+                        <div class="px-2">
+                            <div class="card" style="width: 15rem;">
+                                <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
+                                <div class="card-body">
+                                    @if (Producto.estado == "nuevo")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
+                                    }
+                                    @if (Producto.estado == "usado")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-warning">@Producto.estado</span></h5>
+                                    }
+                                    @if (Producto.estado == "dañado")
+                                    {
+                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
+                                    }
+                                    <p class="card-text">Cantidad: @Producto.cantidad</p>
+                                    <p class="card-text">Cantidad en uso: @Producto.cantidadEnUso</p>
+                                    <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
+                                </div>
+                                <div class="row">
+                                    <div class="btn-group col-12" role="group">
+                                        <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
+                                            <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto.id))">
+                                            <span class="oi oi-trash"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public List<ProductoModel> Productos { get; set; }
@@ -122,17 +126,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Productos = null;
-        Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
-        if (Categorias == null || Categorias.Count <= 0)
-        {
-            Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
-        }
-        if (Subcategorias == null || Subcategorias.Count <= 0)
-        {
-            Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
-        }
-
+        Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+        Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
         FiltrosModel = new FiltrosProductoModel();
     }
 
@@ -191,5 +186,11 @@ else
         }
 
         Productos = ProductosToFilter;
+    }
+
+
+    private async Task BorrarProducto(int id)
+    {
+        await Http.GetStringAsync("http://localhost:8080/producto/borrar/" + id);
     }
 }

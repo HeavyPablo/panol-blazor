@@ -31,5 +31,17 @@ namespace PanolBlazor.DataModel
 
             return json;
         }
+
+        public string CreateFormatJson(ProductoModel producto)
+        {
+            string json =   "{" +
+                                @"""nombre"":""" + producto.nombre + @"""," +
+                                @"""descripcion"":""" + producto.descripcion + @"""," +
+                                @"""cantidad"":""" + producto.cantidad + @"""," +
+                                @"""subcategoria"":""" + producto.subcategoria.id.ToString() + @"""" +
+                            "}";
+
+            return json;
+        }
     }
 }

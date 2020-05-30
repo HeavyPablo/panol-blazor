@@ -70,7 +70,7 @@
                             <tbody>
                                 @foreach (UsuarioModel Usuario in Usuarios)
                                 {
-                                    <tr>
+                                    <tr style="background-color: @((Usuario.estado == "bloqueado") ? "rgb(255, 193, 7, 0.1)" : string.Empty)">
                                         <th scope="row">@Usuario.id</th>
                                         @if (Usuario.alumno != null)
                                         {
@@ -89,7 +89,14 @@
                                             <td>@Usuario.estado</td>
                                         }
                                         <td>
-                                            <button class="btn btn-success" @onclick="@(e => SelectUsuarioSolicitante(Usuario))"><span class="oi oi-plus"></span></button>
+                                            @if (Usuario.estado != "bloqueado")
+                                            {
+                                                <button class="btn btn-success" @onclick="@(e => SelectUsuarioSolicitante(Usuario))"><span class="oi oi-plus"></span></button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-danger" disabled><span class="oi oi-ban"></span></button>
+                                            }
                                         </td>
                                     </tr>
                                 }

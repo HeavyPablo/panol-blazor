@@ -309,5 +309,22 @@
             doc.addImage(img, 'JPEG', 1, 2, 207, 145);
             doc.save('test.pdf');
         });
+    },
+    GenerateDropZone: function (id) {
+        $(document).ready(function () {
+            Dropzone.autoDiscover = false;
+            $(id).dropzone({
+                url: "hn_SimpeFileUploader.ashx",
+                addRemoveLinks: true,
+                success: function (file, response) {
+                    var imgName = response;
+                    file.previewElement.classList.add("dz-success");
+                    console.log("Successfully uploaded : " + imgName);
+                },
+                error: function (file, response) {
+                    file.previewElement.classList.add("dz-error");
+                }
+            });
+        });
     }
 }

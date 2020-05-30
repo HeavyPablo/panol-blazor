@@ -4,7 +4,7 @@
 @using DataModel
 @inject HttpClient Http
 
-@if (Productos == null)
+@if (Productos == null || loading)
 {
     <div class="row justify-content-center">
         <img src="images/loading.svg" alt="Cargando" />
@@ -21,9 +21,12 @@ else
 
 @code {
     private List<ProductoModel> Productos;
+    private bool loading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        loading = true;
         Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        loading = false;
     }
 }

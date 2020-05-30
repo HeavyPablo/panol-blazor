@@ -2,6 +2,152 @@
 @layout Layout.ProductosLayout
 @attribute [Authorize]
 
-@code {
+@inject HttpClient Http;
+@inject IJSRuntime Js;
 
+@using System.IO;
+@using DataModel;
+@using BlazorInputFile;
+
+<div class="py-3 col-12">
+    <div class="shadow card">
+        <div class="card-body">
+            <div class="col-12">
+                <div class="row justify-content-between">
+                    <div class="d-flex">
+                        <div class="px-2">
+                            <h3>Agregar Producto</h3>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-dark"><span class="oi oi-arrow-thick-left"></span> Atrás</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-3">
+        <div class="shadow card">
+            <div class="card-body">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-4 border-right px-3">
+                            <div class="py-2">
+                                <PanolBlazor.Pages.Productos.Dropzone.Dropzone selectedFiles="selectedFiles"></PanolBlazor.Pages.Productos.Dropzone.Dropzone>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="col-12">
+                                <div class="row justify-content-between">
+                                    <h4>Información</h4>
+                                </div>
+                            </div>
+                            <EditForm Model="@Producto" OnValidSubmit="@(e => validateProducto(Producto))">
+
+                                <div class="form-group">
+                                    <label>Nombre <span class="texte-muted">*</span></label>
+                                    <input type="text" class="form-control" @bind-value="Producto.nombre" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-6 px-2">
+                                        <label>Subcategoría <span class="texte-muted">*</span></label>
+                                        <InputSelect class="form-control" @bind-Value="subcategoriaSelected">
+                                            @foreach (SubcategoriaModel Subcategoria in Subcategorias)
+                                            {
+                                                <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+                                    <div class="form-group col-6 px-2">
+                                        <label>Cantidad <span class="texte-muted">*</span></label>
+                                        <input type="number" class="form-control" @bind="Producto.cantidad" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <textarea class="form-control" rows="4" @bind="Producto.descripcion"></textarea>
+                                </div>
+
+                                <div class="py-3">
+                                    <button class="btn btn-success btn-lg btn-block" type="submit"><span class="oi oi-check"></span> Guardar</button>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public ProductoModel Producto = new ProductoModel();
+    public List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
+    public List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
+    private string subcategoriaSelected = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+    }
+
+    private async Task validateProducto(ProductoModel producto)
+    {
+        if (producto.nombre == null || subcategoriaSelected == null || producto.cantidad == null)
+        {
+            await Js.MostrarMensaje("Faltan datos!", "Debe llenar todos los campos obligatorios.", TipoMensajeSweetAlert.error);
+            return;
+        }
+
+        if (selectedFiles.Count == 0)
+        {
+            await Js.MostrarMensaje("Falta imagen!", "Debe ingresar una imagen representativa del producto.", TipoMensajeSweetAlert.error);
+            return;
+        } else
+        {
+            producto.subcategoria = Subcategorias.Find(s => s.id == int.Parse(subcategoriaSelected));
+
+            IFileListEntry file = selectedFiles.FirstOrDefault();
+            Console.WriteLine(file.Name);
+            await AddProducto(file, producto.CreateFormatJson(producto));
+        }
+
+    }
+
+    private async Task<bool> AddProducto(IFileListEntry file, string producto)
+    {
+        try
+        {
+            var boundary = "Upload----" + DateTime.Now.Ticks.ToString();
+            Console.WriteLine(file.Data);
+            var fileContent = new StreamContent(file.Data)
+            {
+                Headers = {
+                   ContentLength = file.Size,
+                   ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
+                }
+            };
+
+            using (var content = new MultipartFormDataContent(boundary))
+            {
+                content.Add(fileContent, "file", file.Name);
+                content.Add(new StringContent(producto), "body");
+
+                var response = await Http.PostAsync("http://localhost:8080/producto", content);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    await Js.MostrarMensaje("Agregado!", "Se ha agregado el producto correctamente.", TipoMensajeSweetAlert.success);
+                    return true;
+                }
+                await Js.MostrarMensaje("Ups!", "Al parecer hay problemas internos para agregar productos.", TipoMensajeSweetAlert.error);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            await Js.MostrarMensaje("Ups!", "Ha ocurrido un error:" + ex, TipoMensajeSweetAlert.error);
+            return false;
+        }
+    }
 }
