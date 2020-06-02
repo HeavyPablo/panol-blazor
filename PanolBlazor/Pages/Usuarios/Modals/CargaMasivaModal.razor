@@ -1,0 +1,205 @@
+﻿
+@inject IJSRuntime Js
+@inject HttpClient Http
+@using System.Net.Http
+@using DataModel
+@using FormModel
+
+
+
+@using BlazorInputFile
+@inject IJSRuntime jsRuntime
+@inject IJSRuntime Js;
+
+
+
+<div class="modal fade" id="CargaMasivModal" tabindex="-1" aria-labelledby="CargaMasivModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Alumnos por Carga Masiva</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="col-12 p-0">
+                    <div class="dropzone @dropClass rounded" style="height: 300px">
+                        <InputFile id="fileInput" title=""
+                                   OnChange="HandleFileInputChange"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                   @ondragenter="HandleDragEnter"
+                                   @ondragleave="HandleDragLeave" />
+                        <div>
+                            <p class="text-center">Subir archivo Excel</p>
+                            <small class="text-muted text-center">(suelte aquí el archivo excel o haga "click")</small>
+                        </div>
+                    </div>
+                    @if ((fileTypeError || fileSizeError))
+                    {
+                        <ul class="validation-errors mb-0">
+                            @if (fileTypeError)
+                            {
+                                <li class="validation-message">Solo se permiten archivo excel del tipo xlsx. </li>
+                            }
+                            @if (fileSizeError)
+                            {
+                                <li class="validation-message">El tamaño maximo permitido es de @MaxFileSizeMB MB.</li>
+                            }
+                        </ul>
+                    }
+                    @if (selectedFiles != null && selectedFiles.Count > 0)
+                    {
+                        <div class="col-12">
+                            <ul>
+                                @foreach (var file in selectedFiles)
+                                {
+                                    <li>
+                                        @file.Name
+                                        <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                                @onclick="@(e => RemoveFile(file))">
+                                            <small class="align-text-bottom"><span class="oi oi-x"></span></small>
+                                        </button>
+                                        <div class="py-3">
+                                            <button class="btn btn-success btn-lg btn-block" type="submit" @onclick="@(e => validateArchivo())"><span class="oi oi-check"></span> Enviar</button>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+
+
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+    const int MaxFileSizeMB = 20;
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; // 5MB
+    private string dropClass = "";
+    private bool fileSizeError = false;
+    private bool fileTypeError = false;
+
+    public List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
+
+    private void HandleDragEnter()
+    {
+        dropClass = "dropzone-drag";
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+    }
+
+    private void HandleFileInputChange(IFileListEntry[] files)
+    {
+        dropClass = "";
+        fileSizeError = false;
+        fileTypeError = false;
+        List<string> acceptedFileTypes = new List<string>() { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
+        if (files != null)
+        {
+            foreach (var file in files)
+            {
+                bool error = false;
+                if (file.Size > MaxFileSize)
+                {
+                    error = true;
+                    fileSizeError = true;
+                }
+
+                if (!acceptedFileTypes.Contains(file.Type))
+                {
+                    Console.WriteLine(file.Type);
+                    error = true;
+                    fileTypeError = true;
+                }
+
+                //keep the good files
+                if (!error)
+                {
+                    selectedFiles.Clear();
+                    selectedFiles.Add(file);
+                }
+            }
+        }
+    }
+
+    private void RemoveFile(IFileListEntry file)
+    {
+        selectedFiles.Remove(file);
+    }
+
+
+    private async Task validateArchivo()
+    {
+
+
+        if (selectedFiles.Count == 0)
+        {
+            await Js.MostrarMensaje("Falta el archivo!", "Debe ingresar un  archivo excel con el modelo para ingresar alumnos.", TipoMensajeSweetAlert.error);
+            return;
+        }
+        else
+        {
+
+
+            IFileListEntry file = selectedFiles.FirstOrDefault();
+            Console.WriteLine(file.Name);
+            await AddArchivo(file);
+        }
+
+    }
+
+    private async Task<bool> AddArchivo(IFileListEntry file)
+    {
+        try
+        {
+            var boundary = "Upload----" + DateTime.Now.Ticks.ToString();
+            Console.WriteLine(file.Data);
+            var fileContent = new StreamContent(file.Data)
+            {
+                Headers = {
+               ContentLength = file.Size,
+               ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
+            }
+            };
+
+            using (var content = new MultipartFormDataContent(boundary))
+            {
+                content.Add(fileContent, "file", file.Name);
+
+
+                var response = await Http.PostAsync("http://localhost:8080/usuario/import-excel", content);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    await Js.MostrarMensaje("Agregado!", "Se ha agregado los usuarios alumnos correctamente.", TipoMensajeSweetAlert.success);
+                    RemoveFile(file);
+                    return true;
+                }
+                await Js.MostrarMensaje("Ups!", "Al parecer hay problemas internos para agregar el archivo.", TipoMensajeSweetAlert.error);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            await Js.MostrarMensaje("Ups!", "Ha ocurrido un error:" + ex, TipoMensajeSweetAlert.error);
+            return false;
+        }
+    }
+
+
+
+}

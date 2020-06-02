@@ -18,7 +18,7 @@
    
     <div class="row justify-content-between  rounded-lg navbar">
     <button class="btn btn-danger" @onclick="@(e =>  OpenModalAgregar())" ><span class="oi oi-plus"> Agregar Usuario</span></button>
-    
+    <button class="btn btn-danger" @onclick="@(e =>  OpenModalCargaMasiva())"> <span class="oi oi-plus"> Agregar Alumno por Carg.Masiva</span></button>
     </div>
     <div class="row justify-content-between bg-dark rounded-lg navbar">
         <div class="btn-group" role="group">
@@ -80,37 +80,47 @@
                     <td>@Usuario.director.id</td>
                     <td>@Usuario.director.nombre</td>
                     <td>Director</td>
+                    <td>@Usuario.estado</td>
+                    <td>@Usuario.director.fechaActualizacion</td>
                 }
                 else if (Usuario.perfil == "DOCENTE")
                 {
                     <td>@Usuario.docente.id</td>
                     <td>@Usuario.docente.nombre</td>
                     <td>Docente</td>
+                    <td>@Usuario.estado</td>
+                    <td>@Usuario.docente.fechaActualizacion</td>
+                }
                 }
                 else if (Usuario.perfil == "COORDINADOR")
                 {
-                    <td>@Usuario.coordinador.id</td>
-                    <td>@Usuario.coordinador.nombre</td>
-                    <td>Coordinador</td>
+                <td>@Usuario.coordinador.id</td>
+                <td>@Usuario.coordinador.nombre</td>
+                <td>Coordinador</td>
+                <td>@Usuario.estado</td>
+                <td>@Usuario.coordinador.fechaActualizacion</td>
                 }
                 else if (Usuario.perfil == "ALUMNO")
                 {
-                    <td>@Usuario.alumno.id</td>
-                    <td>@Usuario.alumno.nombre</td>
-                    <td>Alumno</td>
+                <td>@Usuario.alumno.id</td>
+                <td>@Usuario.alumno.nombre</td>
+                <td>Alumno</td>
+                <td>@Usuario.estado</td>
+                <td>@Usuario.alumno.fechaActualizacion</td>
                 }
                 else if (Usuario.perfil == "PANOLERO")
                 {
-                    <td>@Usuario.panolero.id</td>
-                    <td>@Usuario.panolero.nombre</td>
-                    <td>Pañolero</td>
-                }
+                <td>@Usuario.panolero.id</td>
+                <td>@Usuario.panolero.nombre</td>
+                <td>Pañolero</td>
                 <td>@Usuario.estado</td>
-                <td>@Usuario.fechaActualizacion</td>
+                <td>@Usuario.panolero.fechaActualizacion</td>
+                }
+
                 <td>
 
                     <button class="btn btn-danger" @onclick="@(e => OpenModal(@Usuario.username, @Usuario.perfil))"><span class="oi oi-bolt"> Editar</span></button>
-                 
+
                 </td>
             </tr>
             }
@@ -124,8 +134,9 @@
 
 }
 <PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal></PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal>
+<PanolBlazor.Pages.Usuarios.Modals.CargaMasivaModal></PanolBlazor.Pages.Usuarios.Modals.CargaMasivaModal>
 @code {
-    
+
     private List<PanolBlazor.DataModel.UsuarioModel> UsuarioPerfil;
     private PanolBlazor.DataModel.UsuarioModel SeleccionadoUsuarioModel;
 
@@ -154,7 +165,7 @@
 
         }
     }
-  
+
 
     protected async Task RefreshEstado(String perfil)
     {
@@ -225,7 +236,7 @@
         Alumnos, Docentes, Cordinadores, Directores,
     }
 
-  
+
 
     private async Task OpenModal(String usu,string perfil)
     {
@@ -245,8 +256,15 @@
 
     private void OpenModalAgregar()
     {
-       
+
         Js.ShowModalStatic("AgregUsuarioModal");
+
+    }
+
+    private void OpenModalCargaMasiva()
+    {
+
+        Js.ShowModalStatic("CargaMasivModal");
 
     }
 }
