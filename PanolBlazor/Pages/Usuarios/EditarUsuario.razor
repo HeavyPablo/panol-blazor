@@ -91,32 +91,31 @@
                     <td>@Usuario.estado</td>
                     <td>@Usuario.docente.fechaActualizacion</td>
                 }
-                }
+
                 else if (Usuario.perfil == "COORDINADOR")
                 {
-                <td>@Usuario.coordinador.id</td>
-                <td>@Usuario.coordinador.nombre</td>
-                <td>Coordinador</td>
-                <td>@Usuario.estado</td>
-                <td>@Usuario.coordinador.fechaActualizacion</td>
+                    <td>@Usuario.coordinador.id</td>
+                    <td>@Usuario.coordinador.nombre</td>
+                    <td>Coordinador</td>
+                    <td>@Usuario.estado</td>
+                    <td>@Usuario.coordinador.fechaActualizacion</td>
                 }
                 else if (Usuario.perfil == "ALUMNO")
                 {
-                <td>@Usuario.alumno.id</td>
-                <td>@Usuario.alumno.nombre</td>
-                <td>Alumno</td>
-                <td>@Usuario.estado</td>
-                <td>@Usuario.alumno.fechaActualizacion</td>
+                    <td>@Usuario.alumno.id</td>
+                    <td>@Usuario.alumno.nombre</td>
+                    <td>Alumno</td>
+                    <td>@Usuario.estado</td>
+                    <td>@Usuario.alumno.fechaActualizacion</td>
                 }
                 else if (Usuario.perfil == "PANOLERO")
                 {
-                <td>@Usuario.panolero.id</td>
-                <td>@Usuario.panolero.nombre</td>
-                <td>Pañolero</td>
-                <td>@Usuario.estado</td>
-                <td>@Usuario.panolero.fechaActualizacion</td>
+                    <td>@Usuario.panolero.id</td>
+                    <td>@Usuario.panolero.nombre</td>
+                    <td>Pañolero</td>
+                    <td>@Usuario.estado</td>
+                    <td>@Usuario.panolero.fechaActualizacion</td>
                 }
-
                 <td>
 
                     <button class="btn btn-danger" @onclick="@(e => OpenModal(@Usuario.username, @Usuario.perfil))"><span class="oi oi-bolt"> Editar</span></button>
@@ -233,7 +232,7 @@
 
     public enum SolicitudesActions
     {
-        Alumnos, Docentes, Cordinadores, Directores,
+        Todos,Alumnos, Docentes, Cordinadores, Directores, Pañoleros
     }
 
 
