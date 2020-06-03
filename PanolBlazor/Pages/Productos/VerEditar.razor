@@ -62,23 +62,24 @@ else
                                 </div>
                             </div>
                             <EditForm Model="Producto" OnValidSubmit="@(e => EditProducto(Producto))">
-                                <div class="form-group">
-                                    <label>Nombre</label>
-                                    <input type="text" class="form-control" disabled="@IsDisabled" @bind-value="Producto.nombre" />
-                                </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-6 px-2">
-                                        <label>Cantidad</label>
-                                        <input type="number" class="form-control" disabled="@IsDisabled" @bind="CantidadProducto" />
+                                        <label>Nombre</label>
+                                        <input type="text" class="form-control" disabled="@IsDisabled" @bind-value="Producto.nombre" />
                                     </div>
 
                                     <div class="form-group col-6 px-2">
-                                        <label>Cantidad en uso</label>
-                                        <input type="number" class="form-control" disabled="@IsDisabled" @bind="CantidadEnUso" />
+                                        <label>Escuela</label>
+                                        <InputSelect class="form-control" @bind-Value="Producto.escuela.id" disabled="@IsDisabled">
+                                            @foreach (EscuelaModel escuela in Escuelas)
+                                                {
+                                                <option value="@escuela.id.ToString()">@escuela.nombre</option>
+                                                }
+                                        </InputSelect>
                                     </div>
                                 </div>
-
+                                
                                 <div class="form-row">
                                     <div class="form-group col-6 px-2">
                                         <label>Subcategoría</label>
@@ -116,7 +117,6 @@ else
                                         </div>
                                     </div>
                                 </div>
-                                
                             </EditForm>
                         </div>
                     </div>
@@ -132,9 +132,8 @@ else
     private ProductoModel Producto;
     private List<SubcategoriaModel> Subcategorias;
     private List<CategoriaModel> Categorias;
+    private List<EscuelaModel> Escuelas;
 
-    private int CantidadProducto = 0;
-    private int CantidadEnUso = 0;
     private bool IsDisabled = true;
     public string IsActived = "";
     public string ChangeIcon = "oi-pencil";
@@ -145,12 +144,10 @@ else
         if (Id != null)
         {
             Producto = await Http.GetJsonAsync<ProductoModel>("http://localhost:8080/producto/" + Id);
-            CantidadProducto = int.Parse(Producto.cantidad);
-            CantidadEnUso = int.Parse(Producto.cantidadEnUso);
             Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
             Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+            Escuelas = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
         }
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

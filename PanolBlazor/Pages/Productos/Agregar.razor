@@ -52,6 +52,7 @@
                                     <div class="form-group col-6 px-2">
                                         <label>Subcategoría <span class="texte-muted">*</span></label>
                                         <InputSelect class="form-control" @bind-Value="subcategoriaSelected">
+                                            <option class="text-muted" value="">-- Seleccionar subcategoria --</option>
                                             @foreach (SubcategoriaModel Subcategoria in Subcategorias)
                                             {
                                                 <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
@@ -59,8 +60,14 @@
                                         </InputSelect>
                                     </div>
                                     <div class="form-group col-6 px-2">
-                                        <label>Cantidad <span class="texte-muted">*</span></label>
-                                        <input type="number" class="form-control" @bind="Producto.cantidad" />
+                                        <label>Escuela <span class="texte-muted">*</span></label>
+                                        <InputSelect class="form-control" @bind-Value="escuelaSelected">
+                                            <option class="text-muted" value="">-- Seleccionar escuela --</option>
+                                            @foreach (EscuelaModel escuela in Escuelas)
+                                            {
+                                                <option value="@escuela.id.ToString()">@escuela.nombre</option>
+                                            }
+                                        </InputSelect>
                                     </div>
                                 </div>
 
@@ -84,17 +91,20 @@
 @code {
     public ProductoModel Producto = new ProductoModel();
     public List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
+    public List<EscuelaModel> Escuelas = new List<EscuelaModel>();
     public List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
     private string subcategoriaSelected = "";
+    private string escuelaSelected = "";
 
     protected override async Task OnInitializedAsync()
     {
         Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+        Escuelas = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
     }
 
     private async Task validateProducto(ProductoModel producto)
     {
-        if (producto.nombre == null || subcategoriaSelected == null || producto.cantidad == null)
+        if (producto.nombre == null || subcategoriaSelected == null || escuelaSelected == null || subcategoriaSelected == "" || escuelaSelected == "")
         {
             await Js.MostrarMensaje("Faltan datos!", "Debe llenar todos los campos obligatorios.", TipoMensajeSweetAlert.error);
             return;
@@ -107,6 +117,7 @@
         } else
         {
             producto.subcategoria = Subcategorias.Find(s => s.id == int.Parse(subcategoriaSelected));
+            producto.escuela = Escuelas.Find(e => e.id == int.Parse(escuelaSelected));
 
             IFileListEntry file = selectedFiles.FirstOrDefault();
             Console.WriteLine(file.Name);
@@ -119,19 +130,27 @@
     {
         try
         {
+            // Boundary es como el separador de contenido
             var boundary = "Upload----" + DateTime.Now.Ticks.ToString();
             Console.WriteLine(file.Data);
+
+            // se debe crear un StreamContent (contenido) a partir de un Stream o MemoryStream .. en este caso file.Data contiene el Stream de la imagen
             var fileContent = new StreamContent(file.Data)
             {
+                // Se agregan headers para identificar el tipo de archivo que se eenvia y su tamaño (el tamaño no es obligatorio)
                 Headers = {
                    ContentLength = file.Size,
+                   // file.Type retorna = "imagen/png", "image/jpg", etc.. dependiendo del tipo de dato que sea la imagen
                    ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
                 }
             };
 
+            // Se crea el multipart/formData
             using (var content = new MultipartFormDataContent(boundary))
             {
+                // Se añade contenido.. los parametros son ("el StreamContent que creamos", "El nombre que va a tener(key)", "El nombre del archivo")
                 content.Add(fileContent, "file", file.Name);
+                // se añado el siguiente contenido (body).. este es el texto plano qe sera convertido en JSON desde la api
                 content.Add(new StringContent(producto), "body");
 
                 var response = await Http.PostAsync("http://localhost:8080/producto", content);

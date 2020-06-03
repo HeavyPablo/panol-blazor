@@ -7,19 +7,11 @@
 
 
 
-@if (Subcategorias == null || Categorias == null)
+@if (Subcategorias == null || Categorias == null || Subcategorias.Count == 0 || Categorias.Count == 0)
 {
     <div class="col-12">
         <div class="row justify-content-center">
             <img src="images/loading.svg" alt="Cargando" />
-        </div>
-    </div>
-}
-else if (Subcategorias.Count == 0 || Categorias.Count == 0)
-{
-    <div class="col-12">
-        <div class="row justify-content-center">
-            <p class="text-muted">Al parecer no hay ninguna categoria o subcategoria.</p>
         </div>
     </div>
 }
@@ -47,7 +39,7 @@ else
                                 <option class="text-muted" value="">--Seleccione subcategoria--</option>
                                 @foreach (SubcategoriaModel Subcategoria in Subcategorias)
                                     {
-                                    <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
+                                        <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
                                     }
                                 /**/
                             </InputSelect>
@@ -58,7 +50,7 @@ else
                                 <option class="text-muted" value="">--Seleccione categoria--</option>
                                 @foreach (CategoriaModel Categoria in Categorias)
                                     {
-                                    <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
+                                        <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
                                     }
                                 /**/
                             </InputSelect>
@@ -93,8 +85,7 @@ else
                                     {
                                         <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
                                     }
-                                    <p class="card-text">Cantidad: @Producto.cantidad</p>
-                                    <p class="card-text">Cantidad en uso: @Producto.cantidadEnUso</p>
+                                    <p class="card-text">Escuela: @Producto.escuela.nombre</p>
                                     <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
                                 </div>
                                 <div class="row">
@@ -150,7 +141,7 @@ else
     private async Task FilterProductos()
     {
         Productos = null;
-        List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/" + Titulo.Replace(" ", String.Empty).ToLower());
 
         if (FiltrosModel.Categoria != null && FiltrosModel.Categoria != "")
         {

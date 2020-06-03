@@ -11,10 +11,9 @@ namespace PanolBlazor.DataModel
         public string nombre { get; set; }
         public string estado { get; set; }
         public string descripcion { get; set; }
-        public string cantidad { get; set; }
-        public string cantidadEnUso { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
+        public EscuelaModel escuela { get; set; }
         public SubcategoriaModel subcategoria { get; set; }
         public ImagenProductoModel imagenProducto { get; set; }
 
@@ -23,8 +22,7 @@ namespace PanolBlazor.DataModel
             string json = "{" +
                                 @"""nombre"":""" + Producto.nombre + @"""," +
                                 @"""descripcion"":""" + Producto.descripcion + @"""," +
-                                @"""cantidad"":""" + Producto.cantidad + @"""," +
-                                @"""cantidadEnUso"":""" + Producto.cantidadEnUso + @"""," +
+                                @"""escuela"":""" + Producto.escuela.id.ToString() + @"""," +
                                 @"""subcategoria"":""" + Producto.subcategoria.id.ToString() + @"""," +
                                 @"""estado"":""" + Producto.estado + @"""" +
                             "}";
@@ -37,7 +35,7 @@ namespace PanolBlazor.DataModel
             string json =   "{" +
                                 @"""nombre"":""" + producto.nombre + @"""," +
                                 @"""descripcion"":""" + producto.descripcion + @"""," +
-                                @"""cantidad"":""" + producto.cantidad + @"""," +
+                                @"""escuela"":""" + producto.escuela.id.ToString() + @"""," +
                                 @"""subcategoria"":""" + producto.subcategoria.id.ToString() + @"""" +
                             "}";
 

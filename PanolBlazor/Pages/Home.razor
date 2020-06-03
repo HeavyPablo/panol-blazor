@@ -438,7 +438,7 @@
         string fragmentJson = "";
         foreach (ProductoModel producto in productosToParseChart)
         {
-            fragmentJson += @"{""cantidad"": """ + producto.cantidad + @""", ""categoria"":""" + producto.subcategoria.categoria.nombre + @"""},";
+            fragmentJson += @"{""cantidad"": """ + 1 + @""", ""categoria"":""" + producto.subcategoria.categoria.nombre + @"""},";
         }
         fragmentJson = fragmentJson.TrimEnd(',');
         Console.WriteLine(fragmentJson);

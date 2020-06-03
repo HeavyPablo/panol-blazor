@@ -79,9 +79,9 @@
                                         <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
                                         <div class="card-body">
                                             <h5 class="card-title">@Producto.nombre</h5>
-                                            <p class="card-text">Disponibles: @(int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso))</p>
+                                            <p class="card-text">Escuela: @Producto.escuela.nombre</p>
                                             <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
-                                            @if ((int.Parse(Producto.cantidad) - int.Parse(Producto.cantidadEnUso)) >= 1)
+                                            @if (!Solicitud.productos.Contains(Producto))
                                             {
                                                 <button class="col-12 btn btn-primary" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
                                             }
@@ -106,7 +106,7 @@
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Subcategoria</th>
                                         <th scope="col">Categoria</th>
-                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Escuela</th>
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
@@ -120,7 +120,7 @@
                                                 <td>@Producto.nombre</td>
                                                 <td>@Producto.subcategoria.nombre</td>
                                                 <td>@Producto.subcategoria.categoria.nombre</td>
-                                                <td>@Producto.cantidad</td>
+                                                <td>@Producto.escuela.nombre</td>
                                                 <td>
                                                     <button class="btn btn-danger" @onclick="@(e => RemoveProductoOfSolicitud(Producto))"><span class="oi oi-trash"></span></button>
                                                 </td>
@@ -185,23 +185,7 @@
 
     private void AddProductoToSolicitud(ProductoModel producto)
     {
-
-        List<ProductoModel> productosRepetidos = ProductosSolicitud.FindAll(s => s.id.Equals(producto.id));
-
-        int cantidadEnSolicitud = productosRepetidos.Count;
-        int cantidad = int.Parse(producto.cantidad);
-        int cantidadEnUso = int.Parse(producto.cantidadEnUso);
-        int disponibles = cantidad - cantidadEnUso;
-
-        if (disponibles > 0 && disponibles > cantidadEnSolicitud)
-        {
-            ProductosSolicitud.Add(producto);
-        }
-        else
-        {
-            Js.MostrarMensaje("Imposible!", "Al parecer ya no quedan productos disponibles.", TipoMensajeSweetAlert.warning);
-        }
-
+        ProductosSolicitud.Add(producto);
     }
 
     private void RemoveProductoOfSolicitud(ProductoModel producto)
