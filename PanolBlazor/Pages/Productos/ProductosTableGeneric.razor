@@ -25,7 +25,7 @@ else
                     <div class="col-12">
                         <div class="row justify-content-between">
                             <h4>Filtros <a class="text-muted"><span class="oi oi-loop-circular" @onclick="OnInitializedAsync" style="vertical-align: text-bottom"></span></a></h4>
-                            <button type="submit" class="btn btn-primary" @onclick="FilterProductos"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
+                            <button type="submit" class="btn btn-primary" disabled="@aplicandoFiltros" @onclick="FilterProductos"><span class="oi oi-magnifying-glass"></span> Aplicar</button>
                         </div>
                     </div>
                     <div class="row justify-content-between">
@@ -62,48 +62,86 @@ else
     </div>
 }
 
+<div class="co-12" style="height: 20px">
+    @if (aplicandoFiltros)
+    {
+        <div class="d-flex justify-content-center">
+            <img class="text-center" src="images/loading.svg" alt="Cargando" style="height: 20px"/>
+        </div>
+    }
+    @if (filtrosAplicados)
+    {
+        <div class="d-flex justify-content-center">
+            <p class="text-muted">Filtros aplicados</p>
+        </div>
+    }
+</div>
+
 <div class="py-3 col-12">
-    <div class="shadow card">
-        <div class="card-body">
-            <div class="col-12">
-                <div class="row">
-                    @foreach (ProductoModel Producto in Productos)
-                    {
-                        <div class="px-2">
-                            <div class="card" style="width: 15rem;">
-                                <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
-                                <div class="card-body">
-                                    @if (Producto.estado == "nuevo")
+    <div class="accordion shadow" id="accordionProductos">
+        @foreach (EscuelaModel escuela in Escuelas)
+        {
+            <div class="card">
+                <div class="card-header" id="@("Heading" + escuela.nombre.Replace(" ", string.Empty))" style="background-image: url(@("images/images-core/Heading" + escuela.nombre.Replace(" ", string.Empty) + ".png")); background-size: cover; background-position: 0% 100%">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-light text-left font-weight-bold text-decoration-none" type="button" data-toggle="collapse" data-target="@("#" + escuela.id)" aria-expanded="true" aria-controls="@(escuela.id)" @onclick="@(e => ShowCollapse(escuela.id.ToString()))">
+                            @escuela.nombre
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="@(escuela.id)" class="collapse" aria-labelledby="@("Heading" + escuela.nombre.Replace(" ", string.Empty))" data-parent="#accordionProductos">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="row d-flex flex-wrap">
+                                @if (Productos != null)
+                                {
+                                    @foreach (ProductoModel Producto in Productos)
                                     {
-                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
+                                        @if (Producto.escuela.id == escuela.id)
+                                        {
+                                            <div class="px-2 align-self-stretch">
+                                                <div class="card" style="width: 15rem; height: 100%">
+                                                    <img id="@Producto.id.ToString()" src="@("data:" + Producto.imagenProducto.tipo + ";base64," + Producto.imagenProducto.imagen)" class="card-img-top border-bottom" style="height: 10rem;">
+                                                    <div class="card-body">
+                                                        @if (Producto.estado == "disponible")
+                                                        {
+                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
+                                                        }
+                                                        @if (Producto.estado == "enuso")
+                                                        {
+                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-secondary">@Producto.estado</span></h5>
+                                                        }
+                                                        @if (Producto.estado == "debaja")
+                                                        {
+                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
+                                                        }
+                                                        <p class="card-text">
+                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.categoria.nombre</span>
+                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.nombre</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="btn-group col-12" role="group">
+                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
+                                                                <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
+                                                            </button>
+                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto.id))">
+                                                                <span class="oi oi-trash"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     }
-                                    @if (Producto.estado == "usado")
-                                    {
-                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-warning">@Producto.estado</span></h5>
-                                    }
-                                    @if (Producto.estado == "dañado")
-                                    {
-                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
-                                    }
-                                    <p class="card-text">Escuela: @Producto.escuela.nombre</p>
-                                    <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
-                                </div>
-                                <div class="row">
-                                    <div class="btn-group col-12" role="group">
-                                        <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
-                                            <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto.id))">
-                                            <span class="oi oi-trash"></span>
-                                        </button>
-                                    </div>
-                                </div>
+                                }
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -114,17 +152,39 @@ else
     private FiltrosProductoModel FiltrosModel = new FiltrosProductoModel();
     private List<CategoriaModel> Categorias = new List<CategoriaModel>();
     private List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
+    private List<EscuelaModel> Escuelas = new List<EscuelaModel>();
+    private bool selectedEscuela = false;
+    private bool aplicandoFiltros = false;
+    private bool filtrosAplicados = false;
 
     protected override async Task OnInitializedAsync()
     {
-        Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
-        Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+        filtrosAplicados = false;
+        aplicandoFiltros = true;
+        Productos = null;
+        Productos = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/" + Titulo.Replace(" ", String.Empty).ToLower());
+        if (Categorias == null || Categorias.Count <= 0)
+        {
+            Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
+        }
+
+        if (Escuelas == null || Escuelas.Count <= 0)
+        {
+            Escuelas = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
+        }
+
+        if (Subcategorias == null || Subcategorias.Count <= 0)
+        {
+            Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
+        }
+
         FiltrosModel = new FiltrosProductoModel();
+        aplicandoFiltros = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Productos != null && Productos.Count > 0)
+        if (Productos != null && Productos.Count > 0 && !firstRender)
         {
             foreach (ProductoModel producto in Productos)
             {
@@ -140,6 +200,9 @@ else
 
     private async Task FilterProductos()
     {
+        filtrosAplicados = false;
+        aplicandoFiltros = true;
+        await Task.Delay(1000);
         Productos = null;
         List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/" + Titulo.Replace(" ", String.Empty).ToLower());
 
@@ -177,6 +240,18 @@ else
         }
 
         Productos = ProductosToFilter;
+        aplicandoFiltros = false;
+        filtrosAplicados = true;
+    }
+
+    private async Task ShowCollapse(string id)
+    {
+        await Js.ShowCollapse(id);
+    }
+
+    private async Task LoadImage(ProductoModel producto)
+    {
+        await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
     }
 
 

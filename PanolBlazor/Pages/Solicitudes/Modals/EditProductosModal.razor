@@ -81,13 +81,13 @@
                                             <h5 class="card-title">@Producto.nombre</h5>
                                             <p class="card-text">Escuela: @Producto.escuela.nombre</p>
                                             <p class="card-text">Subcategoria: @Producto.subcategoria.nombre</p>
-                                            @if (!Solicitud.productos.Contains(Producto))
+                                            @if (ProductosSolicitudAux.Find(p => p.id == Producto.id) != null)
                                             {
-                                                <button class="col-12 btn btn-primary" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
+                                                <button class="col-12 btn btn-secondary" disabled>Agregado</button>
                                             }
                                             else
                                             {
-                                                <button class="col-12 btn btn-secondary" disabled>Sin disponibilidad</button>
+                                                <button class="col-12 btn btn-primary" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
                                             }
                                         </div>
                                     </div>
@@ -111,9 +111,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (ProductosSolicitud != null)
+                                    @if (ProductosSolicitudAux != null)
                                     {
-                                        @foreach (ProductoModel Producto in ProductosSolicitud)
+                                        @foreach (ProductoModel Producto in ProductosSolicitudAux)
                                         {
                                             <tr>
                                                 <th scope="row">@Producto.id</th>
@@ -134,7 +134,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" @onclick="CloseThisModal">Cerrar</button>
                 <button type="button" class="btn btn-primary" @onclick="SaveChangeProductosSolicitud">Guardar Cambios</button>
             </div>
         </div>
@@ -150,13 +150,16 @@
     private List<CategoriaModel> Categorias = new List<CategoriaModel>();
     private List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
     private FiltrosProductoModel FiltrosModel = new FiltrosProductoModel();
+    private List<ProductoModel> ProductosSolicitudAux = new List<ProductoModel>();
+    private bool HandlerConfirmation = false;
 
     // este metodo se ejecuta cuando se inicializa la pagina (antes de cargar el DOM) .. 
     //normalmente se ejecuta 1 vez pero puede llamarlo las veces que quieras manualmente.
     protected override async Task OnInitializedAsync()
     {
         ProductosSA = null;
-        ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/disponible");
+        ProductosSolicitudAux.AddRange(ProductosSolicitud);
         if (Categorias == null || Categorias.Count <= 0)
         {
             Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
@@ -181,16 +184,36 @@
                 await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
             }
         }
+
+        if (HandlerConfirmation)
+        {
+            foreach (ProductoModel producto in ProductosSolicitud)
+            {
+                if (ProductosSolicitudAux.Find(p => p.id == producto.id) != null)
+                {
+                    continue;
+                }
+                ProductosSolicitudAux.Add(producto);
+            }
+
+            HandlerConfirmation = false;
+        }
     }
 
     private void AddProductoToSolicitud(ProductoModel producto)
     {
-        ProductosSolicitud.Add(producto);
+        ProductosSolicitudAux.Add(producto);
     }
 
     private void RemoveProductoOfSolicitud(ProductoModel producto)
     {
-        ProductosSolicitud.Remove(producto);
+        ProductosSolicitudAux.Remove(producto);
+    }
+
+    private async Task CloseThisModal()
+    {
+        await Js.CloseModal("AddProductosModal");
+        HandlerConfirmation = true;
     }
 
 
@@ -199,8 +222,8 @@
     {
         // Primero se deja nulo los productos (para que se vea el svg de loading)
         ProductosSA = null;
-        // capturo todos los productos de la bd.
-        List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto");
+        // capturo todos los productos disponibles de la bd.
+        List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/disponible");
 
         // aplico primero el filtro de categoria .. si este campo no esta vacio.
         if (FiltrosModel.Categoria != null && FiltrosModel.Categoria != "")
@@ -244,12 +267,19 @@
 
     private async Task SaveChangeProductosSolicitud()
     {
-
+        Console.WriteLine(ProductosSolicitudAux.Count);
         var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar se editará la solicitud.", TipoMensajeSweetAlert.question);
 
         if (response)
         {
-            Solicitud.productos = ProductosSolicitud;
+            if (ProductosSolicitudAux.Count == 0)
+            {
+                await Js.MostrarMensaje("Ups! Sin productos!", "No puede dejar la solicitud sin productos.", TipoMensajeSweetAlert.error);
+                return;
+            }
+
+            ProductosSolicitud.RemoveRange(0, ProductosSolicitud.Count);
+            ProductosSolicitud.AddRange(ProductosSolicitudAux);
 
             if (Solicitud.id != 0)
             {
@@ -258,7 +288,7 @@
                     Method = new HttpMethod("POST"),
                     RequestUri = new Uri("http://localhost:8080/solicitud/" + Solicitud.id.ToString()),
                     Content = new StringContent(
-                                        Solicitud.EditFormatJson(Solicitud, Solicitud.usuario.username, Solicitud.panolero.rut, Solicitud.productos)
+                                        Solicitud.EditFormatJson(Solicitud, Solicitud.usuario.username, Solicitud.panolero.rut, ProductosSolicitudAux)
                                     )
                 };
 

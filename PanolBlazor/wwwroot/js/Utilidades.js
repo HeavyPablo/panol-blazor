@@ -31,9 +31,7 @@
         $('#' + idModal).modal('dispose');
     },
     RenderImagen: function (idImagenDom, tipoImagen, imagenBase64) {
-        new Promise(() => {
-            document.getElementById(idImagenDom).src = "data:" + tipoImagen + ";base64," + imagenBase64;
-        });
+        document.getElementById(idImagenDom).src = "data:" + tipoImagen + ";base64," + imagenBase64;
     },
     GenerateChart: function (idChart, tipo, dataJson) {
 
@@ -326,5 +324,8 @@
                 }
             });
         });
+    },
+    ShowCollapse: function (idCollapsible) {
+        $('#' + idCollapsible).collapse('toggle');
     }
 }

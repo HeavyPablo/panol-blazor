@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using PanolBlazor.DataModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,6 +87,11 @@ namespace PanolBlazor.Helpers
         public static ValueTask SaveAs(this IJSRuntime js, string id)
         {
             return js.InvokeVoidAsync("methods.SaveAsFile", id);
+        }
+
+        public static ValueTask ShowCollapse(this IJSRuntime js, string idCollapsible)
+        {
+            return js.InvokeVoidAsync("methods.ShowCollapse", idCollapsible);
         }
     }
 
