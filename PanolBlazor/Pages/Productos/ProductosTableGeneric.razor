@@ -126,9 +126,18 @@ else
                                                             <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
                                                                 <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
                                                             </button>
-                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto.id))">
-                                                                <span class="oi oi-trash"></span>
-                                                            </button>
+                                                            @if (Producto.estado.Equals("debaja"))
+                                                            {
+                                                                <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" disabled>
+                                                                    <span class="oi oi-ban"></span>
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto))">
+                                                                    <span class="oi oi-trash"></span>
+                                                                </button>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
@@ -255,8 +264,23 @@ else
     }
 
 
-    private async Task BorrarProducto(int id)
+    private async Task BorrarProducto(ProductoModel producto)
     {
-        await Http.GetStringAsync("http://localhost:8080/producto/borrar/" + id);
+        bool response = await Js.Confirm("¿Estás seguro/a?", "Al aceptar se eliminara el producto.", TipoMensajeSweetAlert.question);
+
+        if (response)
+        {
+            try
+            {
+                await Http.GetStringAsync("http://localhost:8080/producto/borrar/" + producto.id);
+                await Js.MostrarMensaje("Eliminado!", "Se ha eliminado el producto correctamente.", TipoMensajeSweetAlert.success);
+            } catch
+            {
+                await Js.MostrarMensaje("Ups!", "No se puede eliminar un producto en uso.", TipoMensajeSweetAlert.success);
+            }
+
+
+        }
+
     }
 }
