@@ -48,11 +48,15 @@ app {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(180deg, rgb(0,38,62) 0%, rgb(0,38,62) 70%);
+    /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
+    /*background-color: rgba(0,38,62,1.00);*/
+    /*donde estan todos los botones*/
 }
 
     .sidebar .top-row {
-        background-color: rgba(0,0,0,0.4);
+        /*background-color: rgba(0,0,0,0.4); color anterio en la parte superior de los botones*/
+        background-color: rgb(0,38,62);
     }
 
     .sidebar .navbar-brand {
@@ -104,6 +108,7 @@ app {
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
+    
 }
 
 .valid.modified:not([type=checkbox]) {
