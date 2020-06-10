@@ -15,6 +15,7 @@ namespace PanolBlazor.DataModel
         public string comentario { get; set; }
         public string tipoSolicitud { get; set; }
         public string estado { get; set; }
+        public string logResponsable { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
         public UsuarioModel  usuario { get; set; }
@@ -39,6 +40,7 @@ namespace PanolBlazor.DataModel
                                         "{" +
                                             @"""comentario"":""" + Solicitud.comentario + @"""," +
                                             @"""estado"":""" + Solicitud.estado + @"""," +
+                                            @"""logResponsable"":""" + Solicitud.logResponsable + @"""," +
                                             @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
                                             @"""solicitante"":""" + UsernameUsuario + @"""," +
                                             @"""responsable"":""" + RutResponsable + @"""" +
@@ -69,6 +71,7 @@ namespace PanolBlazor.DataModel
                             "{" +
                                 @"""comentario"":""" + Solicitud.comentario + @"""," +
                                 @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
+                                @"""logResponsable"":""" + Solicitud.logResponsable + @"""," +
                                 @"""solicitante"":""" + Solicitud.usuario.username + @"""," +
                                 @"""responsable"":""" + Solicitud.panolero.rut + @"""" +
                             "}" +
@@ -78,6 +81,11 @@ namespace PanolBlazor.DataModel
                         "]" +
                 "}";
             return json;
+        }
+
+        public string DeleteFormatJson(SolicitudModel solicitud)
+        {
+            return @"{""logResponsable"":""" + solicitud.logResponsable + @"""}";
         }
     }
 }

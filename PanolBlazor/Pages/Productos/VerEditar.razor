@@ -186,6 +186,9 @@ else
 
         if (response)
         {
+            string username = await Js.GetFromLocalStorage("username");
+            UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+            Producto.logResponsable = usuario.id.ToString();
             await EditProducto(Producto);
             await Js.MostrarMensaje("Editado!", "El producto se ha editado correctamente.", TipoMensajeSweetAlert.success);
         }

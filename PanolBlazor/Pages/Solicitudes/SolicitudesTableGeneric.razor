@@ -267,14 +267,28 @@ else
 
         if (response)
         {
-            var username = await Js.GetFromLocalStorage("username");
+
+            string username = await Js.GetFromLocalStorage("username");
             UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+            solicitud.logResponsable = usuario.id.ToString();
 
             if (usuario.panolero != null)
             {
                 solicitud.panolero = usuario.panolero;
 
-                SolicitudModel solicitudDeleted = await Http.GetJsonAsync<SolicitudModel>("http://localhost:8080/solicitud/borrar/" + solicitud.id);
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/solicitud/borrar/" + solicitud.id.ToString()),
+                    Content = new StringContent(
+                        solicitud.DeleteFormatJson(solicitud)
+                    )
+                };
+
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var solicitudDeleted = await Http.SendAsync(requestMessage);
 
                 if (solicitudDeleted != null)
                 {

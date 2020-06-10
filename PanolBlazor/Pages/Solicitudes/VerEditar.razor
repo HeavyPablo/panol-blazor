@@ -388,6 +388,10 @@ else
                 break;
         }
 
+        string username = await Js.GetFromLocalStorage("username");
+        UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+        solicitud.logResponsable = usuario.id.ToString();
+
         await EditSolicitud(solicitud);
         await Js.MostrarMensaje(titulo, mensaje, TipoMensajeSweetAlert.success);
     }

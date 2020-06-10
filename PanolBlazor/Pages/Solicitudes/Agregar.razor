@@ -216,13 +216,17 @@
 
                 if (response)
                 {
+                    string username = await Js.GetFromLocalStorage("username");
+                    UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+                    Solicitud.logResponsable = usuario.id.ToString();
+
                     var requestMessage = new HttpRequestMessage()
                     {
                         Method = new HttpMethod("POST"),
                         RequestUri = new Uri("http://localhost:8080/solicitud"),
                         Content = new StringContent(
-                            Solicitud.CreateFormatJson(Solicitud)
-                        )
+                        Solicitud.CreateFormatJson(Solicitud)
+                    )
                     };
 
                     requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");

@@ -270,9 +270,25 @@ else
 
         if (response)
         {
+            string username = await Js.GetFromLocalStorage("username");
+            UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+            producto.logResponsable = usuario.id.ToString();
+
             try
             {
-                await Http.GetStringAsync("http://localhost:8080/producto/borrar/" + producto.id);
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/producto/borrar/" + producto.id.ToString()),
+                    Content = new StringContent(
+                        producto.DeleteFormatJson(producto)
+                    )
+                };
+
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
                 await Js.MostrarMensaje("Eliminado!", "Se ha eliminado el producto correctamente.", TipoMensajeSweetAlert.success);
             } catch
             {
