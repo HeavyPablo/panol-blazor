@@ -15,6 +15,7 @@ namespace PanolBlazor.DataModel
         public string comentario { get; set; }
         public string tipoSolicitud { get; set; }
         public string estado { get; set; }
+        public string diasSolicitados { get; set; }
         public string logResponsable { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }
@@ -40,6 +41,7 @@ namespace PanolBlazor.DataModel
                                         "{" +
                                             @"""comentario"":""" + Solicitud.comentario + @"""," +
                                             @"""estado"":""" + Solicitud.estado + @"""," +
+                                            @"""diasSolicitados"":""" + Solicitud.diasSolicitados + @"""," +
                                             @"""logResponsable"":""" + Solicitud.logResponsable + @"""," +
                                             @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
                                             @"""solicitante"":""" + UsernameUsuario + @"""," +
@@ -71,6 +73,7 @@ namespace PanolBlazor.DataModel
                             "{" +
                                 @"""comentario"":""" + Solicitud.comentario + @"""," +
                                 @"""tipo"":""" + Solicitud.tipoSolicitud + @"""," +
+                                @"""diasSolicitados"":""" + Solicitud.diasSolicitados + @"""," +
                                 @"""logResponsable"":""" + Solicitud.logResponsable + @"""," +
                                 @"""solicitante"":""" + Solicitud.usuario.username + @"""," +
                                 @"""responsable"":""" + Solicitud.panolero.rut + @"""" +
