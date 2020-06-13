@@ -164,7 +164,11 @@
     {
         ProductosSA = null;
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/disponible");
-        ProductosSolicitudAux.AddRange(ProductosSolicitud);
+        if (ProductosSA != null && ProductosSA.Count != 0)
+        {
+            ProductosSolicitudAux.AddRange(ProductosSolicitud);
+        }
+
         if (Categorias == null || Categorias.Count <= 0)
         {
             Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
