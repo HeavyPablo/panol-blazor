@@ -84,7 +84,7 @@ namespace PanolBlazor.Helpers
             return js.InvokeVoidAsync("methods.GenerateChart", idChart, tipoChart.ToString(), data);
         }
 
-        public static ValueTask SaveAs(this IJSRuntime js, string id)
+        public static ValueTask SaveAs(this IJSRuntime js, SolicitudModel id)
         {
             return js.InvokeVoidAsync("methods.SaveAsFile", id);
         }

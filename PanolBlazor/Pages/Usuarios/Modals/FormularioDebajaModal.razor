@@ -1,0 +1,553 @@
+﻿@inject IJSRuntime Js
+@inject HttpClient Http
+
+@using System.Net.Http
+@using DataModel
+@using FormModel
+
+
+<div class="modal fade" id="FormuBajaModal" tabindex="-1" aria-labelledby="FormuBajaModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dar de baja a Usuario</h5>
+                <button type="button" class="close" @onclick="@(e => OpenModalCerrar())" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12">
+
+                    @if (ModeloUsuario != null)
+                    {
+
+                        @if (ModeloUsuario.perfil == "ALUMNO")
+                        {
+
+                            <div class="form-group">
+                                <label for="username">Nombre:</label>
+                                <input type="text" id="username" disabled class="form-control" @bind=@ModeloUsuario.alumno.nombre />
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appaterno">Apellido Paterno:</label>
+                                <input type="text" id="appaterno" disabled class="form-control" @bind=@ModeloUsuario.alumno.apellidoPaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apmaterno">Apellido Materno:</label>
+                                <input type="text" id="apmaterno" disabled class="form-control" @bind=@ModeloUsuario.alumno.apellidoMaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="escuela">Escuela:</label>
+                                <input type="text" id="escuela" disabled class="form-control" @bind=@ModeloUsuario.alumno.carrera.escuela.nombre />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="carrera">Carrera:</label>
+                                <input type="text" id="carrera" disabled class="form-control" @bind=@ModeloUsuario.alumno.carrera.nombre />
+
+                            </div>
+
+                        }
+                        else if (ModeloUsuario.perfil == "DOCENTE")
+                        {
+                            <div class="form-group">
+                                <label for="username">Nombre:</label>
+                                <input type="text" id="username" disabled class="form-control" @bind=@ModeloUsuario.docente.nombre />
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appaterno">Apellido Paterno:</label>
+                                <input type="text" id="appaterno" disabled class="form-control" @bind=@ModeloUsuario.docente.apellidoPaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apmaterno">Apellido Materno:</label>
+                                <input type="text" id="apmaterno" disabled class="form-control" @bind=@ModeloUsuario.docente.apellidoMaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="escuela">Escuela:</label>
+                                <input type="text" id="escuela" disabled class="form-control" @bind=@ModeloUsuario.docente.escuela.nombre />
+
+                            </div>
+                        }
+                        else if (ModeloUsuario.perfil == "DIRECTOR")
+                        {
+                            <div class="form-group">
+                                <label for="username">Nombre:</label>
+                                <input type="text" id="username" disabled class="form-control" @bind=@ModeloUsuario.director.nombre />
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appaterno">Apellido Paterno:</label>
+                                <input type="text" id="appaterno" disabled class="form-control" @bind=@ModeloUsuario.director.apellidoPaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apmaterno">Apellido Materno:</label>
+                                <input type="text" id="apmaterno" disabled class="form-control" @bind=@ModeloUsuario.director.apellidoMaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="escuela">Escuela:</label>
+                                <input type="text" id="escuela" disabled class="form-control" @bind=@ModeloUsuario.director.escuela.nombre />
+
+                            </div>
+                        }
+                        else if (ModeloUsuario.perfil == "COORDINADOR")
+                        {
+                            <div class="form-group">
+                                <label for="username">Nombre:</label>
+                                <input type="text" id="username" disabled class="form-control" @bind=@ModeloUsuario.coordinador.nombre />
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appaterno">Apellido Paterno:</label>
+                                <input type="text" id="appaterno" disabled class="form-control" @bind=@ModeloUsuario.coordinador.apellidoPaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apmaterno">Apellido Materno:</label>
+                                <input type="text" id="apmaterno" disabled class="form-control" @bind=@ModeloUsuario.coordinador.apellidoMaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="escuela">Escuela:</label>
+                                <input type="text" id="escuela" disabled class="form-control" @bind=@ModeloUsuario.coordinador.escuela.nombre />
+
+                            </div>
+                        }
+                        else if (ModeloUsuario.perfil == "PANOLERO")
+                        {
+                            <div class="form-group">
+                                <label for="username">Nombre:</label>
+                                <input type="text" id="username" disabled class="form-control" @bind=@ModeloUsuario.panolero.nombre />
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appaterno">Apellido Paterno:</label>
+                                <input type="text" id="appaterno" disabled class="form-control" @bind=@ModeloUsuario.panolero.apellidoPaterno />
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apmaterno">Apellido Materno:</label>
+                                <input type="text" id="apmaterno" disabled class="form-control" @bind=@ModeloUsuario.panolero.apellidoMaterno />
+
+                            </div>
+
+
+                        }
+
+                        <EditForm Model="@NuevoUsuarioBloqueadoModel" OnValidSubmit="HandleSubmit">
+                            <DataAnnotationsValidator />
+                            @*<ValidationSummary />*@
+
+
+                            <div class="form-group">
+                                <label for="razon">Razon para darlo de baja:</label>
+                                <textarea class="form-control" rows="1" @bind="NuevoUsuarioBloqueadoModel.Razon"></textarea>
+                                <ValidationMessage For="@(() => NuevoUsuarioBloqueadoModel.Razon)" />
+                            </div>
+
+                            <button type="submit" class="btn btn-success" value="Save">Confirmar Bloqueo</button>
+                            @*<button type="reset" class="btn btn-success borrar">Borrar Datos</button>*@
+                        </EditForm>
+
+
+                    }
+                    else
+                    {
+                        <div class="row justify-content-center">
+                            <img src="images/loading.svg" alt="Cargando" />
+                            <p> Cargando perfil</p>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="@(e => OpenModalCerrar())" data-dismiss="modal">Salir</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    [Parameter] public UsuarioModel ModeloUsuario { get; set; }
+
+    private PanolBlazor.FormModel.NuevoFormularioBloqueoModel NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+
+
+
+    string selectedOpc;
+
+    string SelectedOpc
+    {
+        get => selectedOpc;
+        set
+        {
+            selectedOpc = value;
+
+        }
+    }
+
+    List<Perfil> PerfilList = new List<Perfil>() { new Perfil ("ALUMNO", "Alumno"),
+                                                      new Perfil ("DOCENTE", "Docente"),
+                                                      new Perfil ("COORDINADOR", "Coordinador"),
+                                                      new Perfil ("DIRECTOR", "Director"),
+                                                      new Perfil ("PANOLERO", "Pañolero")
+                                                                                };
+
+    public class Perfil
+    {
+
+        public Perfil(string code, string name)
+        {
+            Code = code;
+            Name = name;
+        }
+        public string Code { get; set; }
+        public string Name { get; set; }
+
+    }
+
+    // Seleccionar opciones de escuela
+
+    string selectedEsc;
+
+    string SelectedEsc
+    {
+        get => selectedEsc;
+        set
+        {
+            selectedEsc = value;
+
+        }
+    }
+
+    List<Escuela> EscList = new List<Escuela>() { new Escuela ("1", "Escuela de Ingeniería"),
+                                                      new Escuela ("2", "Escuela de Informática y Telecomunicaciones"),
+                                                      new Escuela ("3", "Escuela de Construcción"),
+                                                      new Escuela ("4", "Escuela de Administración y Negocios")  };
+
+    public class Escuela
+    {
+
+        public Escuela(string code, string name)
+        {
+            Code = code;
+            Name = name;
+        }
+        public string Code { get; set; }
+        public string Name { get; set; }
+
+    }
+    // Seleccionar opciones de Carrera
+
+    string selectedCar;
+
+    string SelectedCar
+    {
+        get => selectedCar;
+        set
+        {
+            selectedCar = value;
+
+        }
+    }
+
+    List<Carrera> CarList = new List<Carrera>() {     new Carrera ("1", "Técnico en Mecánica Automotriz y Autotrónica"),
+                                                      new Carrera ("2", "Ingeniería en Mecánica Automotriz y Autotrónica"),
+                                                      new Carrera ("3", "Administración de Redes y Telecomunicaciones"),
+                                                      new Carrera ("4", "Analista Programador Computacional"),
+                                                      new Carrera ("5", "Ingeniería en Conectividad y Redes"),
+                                                      new Carrera ("6", "Ingeniería en Informática"),
+                                                      new Carrera ("7", "Técnico en Construcción"),
+                                                      new Carrera ("8", "Ingeniería en Construcción"),
+                                                      new Carrera ("9", "Ingeniería en Prevención de Riesgos"),
+                                                      new Carrera ("10", "Técnico en Marketing"),
+                                                      new Carrera ("11", "Técnico en Gestión de Personas"),
+                                                      new Carrera ("12", "Contabilidad General Mención Legislación Tributaria"),
+                                                      new Carrera ("13", "Auditoría"),
+                                                      new Carrera ("14", "Ingeniería en Administración Mención Gestión de Personas"),
+                                                      new Carrera ("15", "Ingeniería en Gestión Logística"),
+                                                      new Carrera ("16", "Ingeniería en Administración Mención Marketing"),
+                                                      new Carrera ("17", "Ingeniería en Administración Mención Finanzas")
+
+    };
+
+    public class Carrera
+    {
+
+        public Carrera(string code, string name)
+        {
+            Code = code;
+            Name = name;
+        }
+        public string Code { get; set; }
+        public string Name { get; set; }
+
+    }
+
+    // Proceso de guardado
+
+    private async Task HandleSubmit()
+    {
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar quieres dar de baja a este usuario.", TipoMensajeSweetAlert.question);
+        //string IdEditar = "";
+        if (response)
+        {
+            if (ModeloUsuario.perfil == "ALUMNO")
+            {
+                var UsernameBloqueador = await Js.GetFromLocalStorage("username");
+                var UsuarioBloqueadorModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + UsernameBloqueador);
+
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/regdebaja"),
+                    Content = new StringContent(
+                      @"{
+                       ""idUsuarioRD"": """ + ModeloUsuario.id + @""",
+                       ""nomUsuarioRD"": """ + ModeloUsuario.alumno.nombre + " " + ModeloUsuario.alumno.apellidoPaterno + @""",
+                       ""perfilRD"": """ + ModeloUsuario.perfil + @""",
+                       ""idResponsableRD"": """ + UsuarioBloqueadorModel.id + @""",
+                       ""nomResponsableRD"": """ + UsuarioBloqueadorModel.username + @""",
+                        ""perfilResponsableRD"": """ + UsuarioBloqueadorModel.perfil + @""",
+                        ""escuelaRD"": """ + ModeloUsuario.alumno.carrera.escuela.nombre + @""",
+                        ""fechaCreacionUsuarioRD"": """ + ModeloUsuario.fechaCreacion + @""",
+                        ""carreraBloqueado"": """ + ModeloUsuario.alumno.carrera.nombre + @""",
+                       ""razon"": """ + NuevoUsuarioBloqueadoModel.Razon
+
+                  + @"""}"
+                )
+
+
+
+                };
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
+
+
+                NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+
+            }
+            else if (ModeloUsuario.perfil == "DIRECTOR")
+            {
+
+                var UsernameBloqueador = await Js.GetFromLocalStorage("username");
+                var UsuarioBloqueadorModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + UsernameBloqueador);
+
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/regdebaja"),
+                    Content = new StringContent(
+                      @"{
+                       ""idUsuarioRD"": """ + ModeloUsuario.id + @""",
+                       ""nomUsuarioRD"": """ + ModeloUsuario.director.nombre + " " + ModeloUsuario.director.apellidoPaterno + @""",
+                       ""perfilRD"": """ + ModeloUsuario.perfil + @""",
+                       ""idResponsableRD"": """ + UsuarioBloqueadorModel.id + @""",
+                       ""nomResponsableRD"": """ + UsuarioBloqueadorModel.username + @""",
+                        ""perfilResponsableRD"": """ + UsuarioBloqueadorModel.perfil + @""",
+                        ""escuelaRD"": """ + ModeloUsuario.director.escuela.nombre + @""",
+                        ""fechaCreacionUsuarioRD"": """ + ModeloUsuario.fechaCreacion + @""",
+                        ""carreraBloqueado"": """ + " " + @""",
+                       ""razon"": """ + NuevoUsuarioBloqueadoModel.Razon
+
+                  + @"""}"
+                )
+
+
+
+                };
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
+
+
+                NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+
+
+            }
+            else if (ModeloUsuario.perfil == "PANOLERO")
+            {
+                var UsernameBloqueador = await Js.GetFromLocalStorage("username");
+                var UsuarioBloqueadorModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + UsernameBloqueador);
+
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/regdebaja"),
+                    Content = new StringContent(
+                      @"{
+                       ""idUsuarioRD"": """ + ModeloUsuario.id + @""",
+                       ""nomUsuarioRD"": """ + ModeloUsuario.panolero.nombre + " " + ModeloUsuario.panolero.apellidoPaterno + @""",
+                       ""perfilRD"": """ + ModeloUsuario.perfil + @""",
+                       ""idResponsableRD"": """ + UsuarioBloqueadorModel.id + @""",
+                       ""nomResponsableRD"": """ + UsuarioBloqueadorModel.username + @""",
+                        ""perfilResponsableRD"": """ + UsuarioBloqueadorModel.perfil + @""",
+                        ""escuelaRD"": """ + " " + @""",
+                        ""fechaCreacionUsuarioRD"": """ + ModeloUsuario.fechaCreacion + @""",
+                        ""carreraBloqueado"": """ + " " + @""",
+                       ""razon"": """ + NuevoUsuarioBloqueadoModel.Razon
+
+                  + @"""}"
+                )
+
+
+
+                };
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
+
+
+                NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+            }
+            else if (ModeloUsuario.perfil == "COORDINADOR")
+            {
+                var UsernameBloqueador = await Js.GetFromLocalStorage("username");
+                var UsuarioBloqueadorModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + UsernameBloqueador);
+
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/regdebaja"),
+                    Content = new StringContent(
+                      @"{
+                       ""idUsuarioRD"": """ + ModeloUsuario.id + @""",
+                       ""nomUsuarioRD"": """ + ModeloUsuario.coordinador.nombre + " " + ModeloUsuario.coordinador.apellidoPaterno + @""",
+                       ""perfilRD"": """ + ModeloUsuario.perfil + @""",
+                       ""idResponsableRD"": """ + UsuarioBloqueadorModel.id + @""",
+                       ""nomResponsableRD"": """ + UsuarioBloqueadorModel.username + @""",
+                        ""perfilResponsableRD"": """ + UsuarioBloqueadorModel.perfil + @""",
+                        ""escuelaRD"": """ + ModeloUsuario.coordinador.escuela.nombre + @""",
+                        ""fechaCreacionUsuarioRD"": """ + ModeloUsuario.fechaCreacion + @""",
+                        ""carreraBloqueado"": """ + " " + @""",
+                       ""razon"": """ + NuevoUsuarioBloqueadoModel.Razon
+
+                  + @"""}"
+                )
+
+
+
+                };
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
+
+
+                NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+            }
+            else if (ModeloUsuario.perfil == "DOCENTE")
+            {
+                var UsernameBloqueador = await Js.GetFromLocalStorage("username");
+                var UsuarioBloqueadorModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + UsernameBloqueador);
+
+                var requestMessage = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("POST"),
+                    RequestUri = new Uri("http://localhost:8080/regdebaja"),
+                    Content = new StringContent(
+                      @"{
+                       ""idUsuarioRD"": """ + ModeloUsuario.id + @""",
+                       ""nomUsuarioRD"": """ + ModeloUsuario.docente.nombre + " " + ModeloUsuario.docente.apellidoPaterno + @""",
+                       ""perfilRD"": """ + ModeloUsuario.perfil + @""",
+                       ""idResponsableRD"": """ + UsuarioBloqueadorModel.id + @""",
+                       ""nomResponsableRD"": """ + UsuarioBloqueadorModel.username + @""",
+                        ""perfilResponsableRD"": """ + UsuarioBloqueadorModel.perfil + @""",
+                        ""escuelaRD"": """ + ModeloUsuario.docente.escuela.nombre + @""",
+                        ""fechaCreacionUsuarioRD"": """ + ModeloUsuario.fechaCreacion + @""",
+                        ""carreraBloqueado"": """ + " " + @""",
+                       ""razon"": """ + NuevoUsuarioBloqueadoModel.Razon
+
+                  + @"""}"
+                )
+
+
+
+                };
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+                var result = await Http.SendAsync(requestMessage);
+
+
+                NuevoUsuarioBloqueadoModel = new FormModel.NuevoFormularioBloqueoModel();
+            }
+
+
+            await CambioEstado(ModeloUsuario.username);
+
+            await Js.MostrarMensaje("De baja!", "Se ha dado de baja, correctamente al usuario.", TipoMensajeSweetAlert.success);
+
+            await Js.CloseModal("FormuBajaModal");
+
+        }
+
+        //await OnRefresh.InvokeAsync(true);
+
+    }
+
+
+    private async Task CambioEstado(string usuario)
+    {
+
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("POST"),
+            RequestUri = new Uri("http://localhost:8080/usuario/ActEst/" + usuario.ToString()),
+            Content = new StringContent(
+                    @"{""username"": """ + usuario + @""",
+        ""estado"": """ + "Dado de baja" + @"""}"
+                )
+        };
+
+        requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
+
+        var result = await Http.SendAsync(requestMessage);
+        //await OnInitializedAsync();// buscar forma de hacer más eficiente este proceso
+
+        Console.WriteLine(result);
+    }
+
+    private void OpenModalCerrar()
+    {
+        Js.CloseModal("FormuBajaModal");
+    }
+
+}

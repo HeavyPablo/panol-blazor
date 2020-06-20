@@ -1,4 +1,4 @@
-﻿@page "/usuarios/bloqueo"
+﻿@page "/usuarios/Debaja"
 @attribute [Authorize]
 @layout Layout.AdmUsuarioLayout
 @using System.Net.Http
@@ -7,7 +7,7 @@
 @inject HttpClient Http
 @using DataModel
 
-<h3>Bloqueo de Usuario</h3>
+<h3>Dar de Baja a Usuarios</h3>
 
 <div class="col-12 py-4">
     <br />
@@ -89,11 +89,13 @@
                     <td>
                         @if (@Usuario.estado == "activo")
                         {
-                            <button class="btn btn-danger" @onclick="@(e =>  OpenModalBloq(Usuario.username,Usuario.perfil))"><span class="oi oi-ban"> Bloquear</span></button>
+                            <button class="btn btn-danger" @onclick="@(e => OpenModalBloq(Usuario.username, Usuario.perfil))"><span class="oi oi-ban"> Dar de baja</span></button>
+                        } else if (@Usuario.estado == "bloqueado") { 
+                        
                         }
                         else
                         {
-                            <button class="btn btn-danger" @onclick="@(e =>   OpenModalActivar(Usuario.username,Usuario.perfil))"><span class="oi oi-star"> Desbloquear</span></button>
+                            <button class="btn btn-danger" @onclick="@(e => OpenModalActivar(Usuario.username, Usuario.perfil))"><span class="oi oi-star"> Desbloquear</span></button>
                         }
 
                     </td>
@@ -103,7 +105,7 @@
 
         </tbody>
     </table>
-    <PanolBlazor.Pages.Usuarios.Modals.FormularioBloqueoModal ModeloUsuario="SeleccionadoUsuarioModel"></PanolBlazor.Pages.Usuarios.Modals.FormularioBloqueoModal>
+    <PanolBlazor.Pages.Usuarios.Modals.FormularioDebajaModal ModeloUsuario="SeleccionadoUsuarioModel"></PanolBlazor.Pages.Usuarios.Modals.FormularioDebajaModal>
     <PanolBlazor.Pages.Usuarios.Modals.FormularioActivoModal ModeloUsuario="SeleccionadoUsuarioModel"></PanolBlazor.Pages.Usuarios.Modals.FormularioActivoModal>
 }
 
@@ -232,10 +234,10 @@
         SeleccionadoUsuarioModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + usuarioElegido);
         await Task.Delay(2000);
 
-        await Js.ShowModalStatic("FormuBloqModal");
+        await Js.ShowModalStatic("FormuBajaModal");
+        await RefreshEstado(PerfilElegido);
 
     }
-
 
     private async Task OpenModalActivar(String usu, string perfil)
     {
@@ -248,7 +250,7 @@
         await Task.Delay(2000);
 
         await Js.ShowModalStatic("FormuActivoModal");
-
+        await RefreshEstado(PerfilElegido);
     }
 
 }

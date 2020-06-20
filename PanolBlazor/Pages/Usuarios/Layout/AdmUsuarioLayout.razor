@@ -11,6 +11,12 @@
 
         </div>
         <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.Debaja))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Dar de baja Usuario
+            </button>
+
+        </div>
+        <div class="btn-group" role="group">
             <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.Editar))">
                 <span class="oi oi-clock" aria-hidden="true"></span> Editar y agregar usuario
             </button>
@@ -43,10 +49,10 @@
 
         var uri = Navigation.Uri;
 
-        //if (uri.Contains(SolicitudesActions.Agregar.ToString()))
-        //{
-        //    Active1 = "active";
-        //}
+        if (uri.Contains(SolicitudesActions.Debaja.ToString()))
+        {
+            Active1 = "active";
+        }
         if (uri.Contains(SolicitudesActions.Bloqueo.ToString()))
         {
             Active2 = "active";
@@ -60,6 +66,6 @@
 
     public enum SolicitudesActions
     {
-        Bloqueo, Editar, 
+        Bloqueo, Editar, Debaja
     }
 }

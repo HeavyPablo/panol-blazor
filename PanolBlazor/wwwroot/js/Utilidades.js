@@ -300,13 +300,38 @@
         }
     },
     SaveAsFile: function (id) {
-        var div = window.document.getElementById(id);
-        html2canvas(div).then(function (canvas) {
-            var img = canvas.toDataURL('image/png');
-            var doc = new jsPDF();
-            doc.addImage(img, 'JPEG', 1, 2, 207, 145);
-            doc.save('test.pdf');
-        });
+        //var div = window.document.getElementById(id);
+        //html2canvas(div).then(function (canvas) {
+        //    var img = canvas.toDataURL('image/png');
+        //    var doc = new jsPDF();
+        //    doc.addImage(img, 'JPEG', 1, 2, 207, 145);
+        //    doc.save('test.pdf');
+        //});
+        var aux = id;
+        var aux2 = aux.productos;
+        var tipo = aux.usuario.alumno != null ? aux.usuario.alumno : aux.usuario.docente;
+        var doc = new jsPDF();
+        doc.text(20, 10, 'Solicitud N°'+ aux.id);
+        doc.setLineWidth(0.5);
+        doc.line(20, 15, 180, 15);
+        doc.text(20, 20, 'Tipo de Solicitud: ' + aux.tipoSolicitud);
+        doc.text(20, 30, 'Estado: ' + aux.estado);
+        doc.text(20, 40, 'Fecha de creacion: ' + aux.fechaCreacion);
+        doc.text(20, 50, 'Fecha de ultima actualizacion: ' + aux.fechaActualizacion);
+        doc.setLineWidth(0.5);
+        doc.line(20, 55, 180, 55);
+        doc.text(20, 60, 'Solicitante: ' + tipo.nombre + ' ' + tipo.apellidoPaterno + ' ' + tipo.apellidoMaterno);
+        doc.text(20, 70, 'Pañolero : ' + aux.panolero.nombre + ' ' + aux.panolero.apellidoPaterno + ' ' + aux.panolero.apellidoMaterno);
+        doc.setLineWidth(0.5);
+        doc.line(20, 75, 180, 75);
+        doc.text(20, 90, '             Productos                   ');
+        doc.setLineWidth(0.5);
+        doc.line(20, 95, 180, 95);
+        for (var i = 0; i < aux2.length; i += 1) {
+            doc.text(20, 100 + i * 10, aux2[i].id + ' ' + aux2[i].nombre + ' ' + aux2[i].subcategoria.nombre);
+        }
+        doc.save('Solicitud '+aux.id +'.pdf');
+
     },
     GenerateDropZone: function (id) {
         $(document).ready(function () {
