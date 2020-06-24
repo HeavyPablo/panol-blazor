@@ -1,0 +1,212 @@
+﻿@page "/reportes/productos"
+@layout Layout.ReportesLayout
+@attribute [Authorize]
+
+@inject HttpClient http
+@inject IJSRuntime js
+@using DataModel;
+
+@if (escuelas == null || productos == null)
+{
+    <div class="col-12">
+        <div class="row justify-content-center">
+            <img src="images/loading.svg" alt="Cargando" />
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-12">
+        <div class="py-3">
+            <div class="shadow card">
+                <div class="card-header font-weight-bold" style="color: #343A40">
+                    Actividad de Productos
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <div id="chartProductos" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-4">
+                            <a class="stretched-link text-center text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white d-flex align-items-center justify-content-center">
+                                <div class="text-center">
+                                    Histórico Actividad de Productos
+                                    <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">Sacar reporte de todos los movimientos de los productos.</p>
+                                    <span class="pt-5 oi oi-data-transfer-download" style="font-size:200%"></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 row align-content-stretch flex-wrap">
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/reportes-producto-todos.jpg)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Total
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar reporte de todos los productos registrados en la base de datos.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/home-acciones-rapidas-recibir.jpg)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Solicitados
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar reporte de los productos solicitados durante un período de tiempo.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/reportes-producto-deshabilitados.png)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Deshabilitados
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar reporte de todos los productos dados de baja.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/reportes-producto-stock-normal.jpg)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a href="#" class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Stock Normal
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar Reporte de los productos con stock normal.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/reportes-producto-stock-bajo.jpg)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Stock Bajo
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar Reporte de los productos con bajo stock.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 pb-2">
+                <div class="shadow card h-100">
+                    <div class="card-body">
+                        <div class="w-100 h-100 py-1">
+                            <div class="row no-gutters position-relative bg-image h-100" style="background-image: url(images/images-core/reportes-producto-stock-critico.jpg)">
+                                <div class="col-6 position-static bg-dark">
+                                    <a class="stretched-link text-decoration-none btn p-2 btn-dark rounded-0 w-100 h-100 text-white">
+                                        Productos Stock Crítico
+                                        <p class="text-muted text-center pt-2 m-0" style="font-size: 90%">
+                                            Sacar Reportes de los productos con stock crítico.
+                                        </p>
+                                    </a>
+                                </div>
+                                <div class="col-6 align-self-center">
+                                    <p class="text-center" style="font-size:150%"><span class="pt-3 oi oi-data-transfer-download"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<EscuelaModel> escuelas = new List<EscuelaModel>();
+    private List<LogProductoModel> productos = new List<LogProductoModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = null;
+        escuelas = null;
+        await Task.Delay(1000);
+        productos = await http.GetJsonAsync<List<LogProductoModel>>("http://localhost:8080/log-producto/");
+        escuelas = await http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela/");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await js.GenerateChart("chartProductos", TipoChart.DateBasedData, DataToChartProductosSolicitados(productos));
+        }
+    }
+
+    private string DataToChartProductosSolicitados(List<LogProductoModel> productosToParseChart)
+    {
+        string fragmentJson = "";
+        foreach (LogProductoModel producto in productosToParseChart)
+        {
+            fragmentJson += @"{""fechaCreacion"": """ + producto.fecha.Remove(producto.fecha.IndexOf(' ')) + @""", ""id"":""" + producto.idProducto + @"""},";
+        }
+        fragmentJson = fragmentJson.TrimEnd(',');
+        Console.WriteLine(fragmentJson);
+        return "[" + fragmentJson + "]";
+    }
+}
+

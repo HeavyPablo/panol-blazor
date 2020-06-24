@@ -1,0 +1,68 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@layout MainLayout
+
+<div class="col-12 py-4">
+    <div class="row justify-content-between bg-dark rounded-lg navbar">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.solicitudes))">
+                <span class="oi oi-inbox" aria-hidden="true"></span> Solicitudes
+            </button>
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.productos))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Productos
+            </button>
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.usuarios))">
+                <span class="oi oi-clock" aria-hidden="true"></span> Usuarios
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="col-12">
+    @Body
+</div>
+
+@code {
+
+    private string Active1, Active2, Active3 = "";
+
+    protected override void OnInitialized()
+    {
+        RefreshActive();
+    }
+
+    public async Task SolicitudesNavigate(SolicitudesActions action)
+    {
+
+        Navigation.NavigateTo("reportes/" + action.ToString());
+        RefreshActive();
+
+    }
+
+    private void RefreshActive()
+    {
+        Active1 = Active2 = Active3 = "";
+
+        var uri = Navigation.Uri;
+
+        if (uri.Contains(SolicitudesActions.solicitudes.ToString()))
+        {
+            Active1 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.productos.ToString()))
+        {
+            Active2 = "active";
+        }
+        if (uri.Contains(SolicitudesActions.usuarios.ToString()))
+        {
+            Active3 = "active";
+        }
+    }
+
+    public enum SolicitudesActions
+    {
+        productos, solicitudes, usuarios
+    }
+}
+
+
