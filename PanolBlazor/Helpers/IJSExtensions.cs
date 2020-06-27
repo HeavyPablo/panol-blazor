@@ -2,6 +2,7 @@
 using PanolBlazor.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,13 @@ namespace PanolBlazor.Helpers
         public static ValueTask<object> GuardarComo(this IJSRuntime js, string nombreArchivo, byte[] archivo)
         {
             return js.InvokeAsync<object>("saveAsFile",
+                nombreArchivo,
+                Convert.ToBase64String(archivo));
+        }
+
+        public static ValueTask<object> GuardarComoExcel(this IJSRuntime js, string nombreArchivo, byte[] archivo)
+        {
+            return js.InvokeAsync<object>("methods.saveAsFileExcel",
                 nombreArchivo,
                 Convert.ToBase64String(archivo));
         }
@@ -31,6 +39,11 @@ namespace PanolBlazor.Helpers
         public async static ValueTask<bool> Confirm(this IJSRuntime js, string titulo, string mensaje, TipoMensajeSweetAlert tipoMensajeSweetAlert)
         {
             return await js.InvokeAsync<bool>("methods.CustomConfirm", titulo, mensaje, tipoMensajeSweetAlert.ToString());
+        }
+
+        public async static ValueTask<string> SelectOption(this IJSRuntime js, string titulo, string opciones)
+        {
+            return await js.InvokeAsync<string>("methods.SelectOption", titulo, opciones);
         }
 
         // --- Metodos para los modals ---

@@ -8,6 +8,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             }).then((result) => {
                 if (result.value) {
@@ -17,6 +18,40 @@
                 }
             });
         });
+    },
+    SelectOption: async function (titulo, opciones) {
+        opciones = JSON.parse(opciones);
+
+        var options = {};
+        $.map(opciones,
+            function (o) {
+                options[o.id] = o.name;
+            });
+
+        const { value: opcion } = await Swal.fire({
+            title: titulo,
+            input: 'select',
+            inputOptions: options,
+            inputPlaceholder: 'Seleccione una opción',
+            showCancelButton: true,
+            confirmButtonText: 'Exportar',
+            cancelButtonText: 'Cancelar',
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value != null) {
+                        resolve()
+                    } else {
+                        resolve('Necesitas seleccionar una opción :)')
+                    }
+                })
+            }
+        });
+
+        if (opcion) {
+            return opcion;
+        }
+
+        return '';
     },
     ShowModal: function (idModal) {
         $('#' + idModal).modal('show');
@@ -298,6 +333,14 @@
             })
 
         }
+    },
+    saveAsFileExcel: function (filename, bytesBase64) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = "data:application/octet-stream;base64," + bytesBase64;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     },
     SaveAsFile: function (id) {
         //var div = window.document.getElementById(id);

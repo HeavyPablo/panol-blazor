@@ -90,5 +90,16 @@ namespace PanolBlazor.DataModel
         {
             return @"{""logResponsable"":""" + solicitud.logResponsable + @"""}";
         }
+
+        public static string TipoSolicitudFormatJson()
+        {
+            string json = "{" +
+                    @"""id"": ""NORMAL"", ""name"": ""Normal""" +
+                "}, {" +
+                    @"""id"": ""ESPECIAL"", ""name"": ""Especial""" +
+                "}";
+
+            return "[" + json + "]";
+        }
     }
 }

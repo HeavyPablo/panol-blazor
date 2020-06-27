@@ -11,9 +11,9 @@ namespace PanolBlazor.DataModel
         public string log { get; set; }
         public int idProducto { get; set; }
         public string operacion { get; set; }
-        public string estadoSolicitud { get; set; }
+        public string estado { get; set; }
         public int idEscuela { get; set; }
-        public int idReponsable { get; set; }
+        public int idResponsable { get; set; }
         public string fecha { get; set; }
     }
 }
