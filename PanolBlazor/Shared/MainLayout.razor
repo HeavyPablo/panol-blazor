@@ -2,14 +2,28 @@
 @inject PanolBlazor.Services.ILoginService LoginService
 @inject NavigationManager Navigation
 @inject IJSRuntime Js
+@using Blazored.Toast.Configuration
+@inject IToastService toastService
+@using System.Net.Http
 
 <AuthorizeView>
     <Authorized>
         <div class="sidebar">
             <NavMenu />
         </div>
+        <BlazoredToasts Position="ToastPosition.BottomLeft"
+                        Timeout="10"
+                        IconType="IconType.FontAwesome"
+                        SuccessClass="success-toast-override"
+                        ErrorIcon="fa fa-bug"
+                        SuccessIcon="fa fa-thumbs-up" />
+
+
     </Authorized>
+
+
 </AuthorizeView>
+
 
 
 <div class="main">
@@ -24,16 +38,16 @@
                                 <span class="oi oi-account-logout" aria-hidden="true"></span> Salir
                             </button>
                         </div>
-                        
+
                     </div>
-                    
+
                 </div>
             </Authorized>
         </AuthorizeView>
-        
+
     </div>
 
-    <div class="content px-4" >
+    <div class="content px-4">
         @Body
     </div>
 </div>

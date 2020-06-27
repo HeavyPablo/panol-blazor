@@ -1,8 +1,11 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject IToastService toastService
+@inject HttpClient Http
+
+<div class="top-row pl-4 navbar navbar-dark">
     @*<a class="navbar-brand" href=""> Pañol DuocUC </a>*@
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         @*<span class="navbar-toggler-icon"></span>*@
-        
+
     </button>
     <img class="navimg card-img-top" src="/images/logo_duoc_uc.svg" alt="card image cap">
 </div>
@@ -46,4 +49,51 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    //activar para las notificaciones
+
+    //private List<PanolBlazor.DataModel.AlarmaStockModel> UsuarioAlarma;
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender) {
+    //        await Task.Delay(10000);
+    //        Console.WriteLine("primer paso");
+    //    }
+    //    await Task.Delay(6000);
+    //    UsuarioAlarma = await Http.GetJsonAsync<List<PanolBlazor.DataModel.AlarmaStockModel>>("http://localhost:8080/alarm");
+    //    Console.WriteLine("esperanza paso");
+    //    if (UsuarioAlarma != null)
+    //    {
+    //        await Task.Delay(2000);
+    //        Console.WriteLine(" paso");
+    //        foreach (var item in UsuarioAlarma)
+    //        {
+    //            await Task.Delay(2000);
+    //            await OnShowHtml(item.subproductoAS, item.actualizacionSA, item.escuelaSA);
+    //        }
+
+    //        this.StateHasChanged();
+
+    //    }
+    //    else
+    //    {
+    //        await Task.Delay(10000);
+    //        this.StateHasChanged();
+
+    //    }
+
+
+    //}
+
+
+    private async Task OnShowHtml(string subproducto, string fecha, string escuela)
+    {
+        await Task.Delay(2000);
+        Console.WriteLine("segundo paso");
+        RenderFragment message =@<text>  Para la @escuela  <strong>, en  @fecha</strong> </text>;
+        toastService.ShowToast(ToastLevel.Info, message, "Falta stock de " + subproducto);
+}
+
+
 }

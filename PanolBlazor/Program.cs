@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.Authorization;
 using PanolBlazor.Auth;
 using PanolBlazor.Services;
+using Blazored.Toast;
 
 namespace PanolBlazor
 {
@@ -18,10 +19,10 @@ namespace PanolBlazor
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddBaseAddressHttpClient();
-
+            builder.Services.AddBlazoredToast();
             ConfigureCommonServices(builder.Services);
-
             await builder.Build().RunAsync();
+            
         }
 
         public static void ConfigureCommonServices(IServiceCollection services)
@@ -31,6 +32,7 @@ namespace PanolBlazor
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
             services.AddScoped<ILoginService, CustomAuthStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
             services.AddOptions();
+            
         }
     }
 }
