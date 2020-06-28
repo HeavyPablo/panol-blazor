@@ -190,6 +190,12 @@ else
 
     private void ExportExcel(List<LogSolicitudModel> solis, string filename)
     {
+        if (solis.Count == 0 || solis == null)
+        {
+            js.MostrarMensaje("Upps!", "Al parecer no hay datos sobre este indicador", TipoMensajeSweetAlert.warning);
+            return;
+        }
+
         using (var package = new ExcelPackage())
         {
             var worksheet = package.Workbook.Worksheets.Add(filename);

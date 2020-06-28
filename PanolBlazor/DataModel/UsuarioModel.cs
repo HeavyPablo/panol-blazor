@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,6 @@ namespace PanolBlazor.DataModel
         public int id { get; set; }
         public string username { get; set; }
         public string perfil { get; set; }
-
         public string estado { get; set; }
         public string fechaCreacion { get; set; }
         public string fechaActualizacion { get; set; }

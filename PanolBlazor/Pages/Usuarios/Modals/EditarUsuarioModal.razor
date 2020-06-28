@@ -474,9 +474,9 @@
 
 @code {
 
- 
+
     [Parameter] public UsuarioModel ModeloUsuario { get; set; }
-  
+
     string selectedOpc;
 
     string SelectedOpc
@@ -595,6 +595,9 @@
         string IdEditar = "";
         if (response)
         {
+            string username = await Js.GetFromLocalStorage("username");
+            UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+
             if (ModeloUsuario.perfil == "PANOLERO")
             {
                 IdEditar = (ModeloUsuario.panolero.id).ToString();
@@ -608,6 +611,7 @@
                    ""apellidoPaterno"": """ + ModeloUsuario.panolero.apellidoPaterno + @""",
                    ""apellidoMaterno"": """ + ModeloUsuario.panolero.apellidoMaterno + @""",
                    ""nombre"": """ + ModeloUsuario.panolero.nombre + @""",
+                   ""logResponsable"": """ + usuario.id + @""",
                    ""telefono"": """ + ModeloUsuario.panolero.telefono + @""",
                    ""correoPanolero"": """ + ModeloUsuario.panolero.correoPanolero + @"""}"
                 )
@@ -630,6 +634,7 @@
                    ""apellidoPaterno"": """ + ModeloUsuario.alumno.apellidoPaterno + @""",
                    ""apellidoMaterno"": """ + ModeloUsuario.alumno.apellidoMaterno + @""",
                    ""nombre"": """ + ModeloUsuario.alumno.nombre + @""",
+                   ""logResponsable"": """ + usuario.id + @""",
                    ""telefono"": """ + ModeloUsuario.alumno.telefono + @""",
                    ""correoAlumno"": """ + ModeloUsuario.alumno.correoAlumno + @""",
                    ""carrera"": """ + ModeloUsuario.alumno.carrera.id + @"""}"
@@ -654,6 +659,7 @@
                    ""apellidoPaterno"": """ + ModeloUsuario.docente.apellidoPaterno + @""",
                    ""apellidoMaterno"": """ + ModeloUsuario.docente.apellidoMaterno + @""",
                    ""nombre"": """ + ModeloUsuario.docente.nombre + @""",
+                   ""logResponsable"": """ + usuario.id + @""",
                    ""telefono"": """ + ModeloUsuario.docente.telefono + @""",
                    ""correoDocente"": """ + ModeloUsuario.docente.correoDocente + @""",
                    ""escuela"": """ + ModeloUsuario.docente.escuela.id + @"""}"
@@ -678,6 +684,7 @@
                    ""apellidoPaterno"": """ + ModeloUsuario.coordinador.apellidoPaterno + @""",
                    ""apellidoMaterno"": """ + ModeloUsuario.coordinador.apellidoMaterno + @""",
                    ""nombre"": """ + ModeloUsuario.coordinador.nombre + @""",
+                   ""logResponsable"": """ + usuario.id + @""",
                    ""telefono"": """ + ModeloUsuario.coordinador.telefono + @""",
                    ""correoCoordinador"": """ + ModeloUsuario.coordinador.correoCoordinador + @""",
                    ""escuela"": """ + ModeloUsuario.coordinador.escuela.id + @"""}"
@@ -702,6 +709,7 @@
                    ""apellidoPaterno"": """ + ModeloUsuario.director.apellidoPaterno + @""",
                    ""apellidoMaterno"": """ + ModeloUsuario.director.apellidoMaterno + @""",
                    ""nombre"": """ + ModeloUsuario.director.nombre + @""",
+                   ""logResponsable"": """ + usuario.id + @""",
                    ""telefono"": """ + ModeloUsuario.director.telefono + @""",
                    ""correoDirector"": """ + ModeloUsuario.director.correoDirector + @""",
                    ""escuela"": """ + ModeloUsuario.director.escuela.id + @"""}"
@@ -730,14 +738,14 @@
     }
 
 
-  
+
 
     //modal cerrar
 
     private void OpenModalCerrar()
     {
-        
-        
+
+
         ModeloUsuario = null;
 
         Js.CloseModal("EditUsuarioModal");

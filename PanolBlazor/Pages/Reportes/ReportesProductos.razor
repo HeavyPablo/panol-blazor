@@ -311,6 +311,12 @@ else
 
     private void ExportExcel(List<LogProductoModel> products, string filename)
     {
+        if (products.Count == 0 || products == null)
+        {
+            js.MostrarMensaje("Upps!", "Al parecer no hay datos sobre este indicador", TipoMensajeSweetAlert.warning);
+            return;
+        }
+
         using (var package = new ExcelPackage())
         {
             var worksheet = package.Workbook.Worksheets.Add(filename);
@@ -345,6 +351,12 @@ else
 
     private void ExportExcelProducto(List<ProductoModel> products, string filename)
     {
+        if (products.Count == 0 || products == null)
+        {
+            js.MostrarMensaje("Upps!", "Al parecer no hay datos sobre este indicador", TipoMensajeSweetAlert.warning);
+            return;
+        }
+
         using (var package = new ExcelPackage())
         {
             var worksheet = package.Workbook.Worksheets.Add(filename);

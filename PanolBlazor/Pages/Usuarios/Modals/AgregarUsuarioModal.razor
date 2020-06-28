@@ -255,24 +255,27 @@
 
         if (response)
         {
+
+            string username = await Js.GetFromLocalStorage("username");
+            UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
             if (SelectedOpc == "PANOLERO")
             {
-
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
-                        @"{""username"": """ + NuevoUsuarioModel.Username + @""",
+                    @"{""username"": """ + NuevoUsuarioModel.Username + @""",
                        ""password"": """ + NuevoUsuarioModel.rut + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
                        ""apellidoMaterno"": """ + NuevoUsuarioModel.ApMaterno + @""",
                        ""nombre"": """ + NuevoUsuarioModel.Nombre + @""",
+                       ""logResponsable"": """ + usuario.id + @""",
                        ""telefono"": """ + NuevoUsuarioModel.Telefono + @""",
                        ""correoPanolero"": """ + NuevoUsuarioModel.Email + @"""}"
-                    )
+                )
                 };
                 requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
@@ -287,23 +290,23 @@
             }
             else if (SelectedOpc == "ALUMNO")
             {
-
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
-                        @"{""username"": """ + NuevoUsuarioModel.Username + @""",
+                    @"{""username"": """ + NuevoUsuarioModel.Username + @""",
                        ""password"": """ + NuevoUsuarioModel.rut + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
                        ""apellidoMaterno"": """ + NuevoUsuarioModel.ApMaterno + @""",
                        ""nombre"": """ + NuevoUsuarioModel.Nombre + @""",
+                       ""logResponsable"": """ + usuario.id + @""",
                        ""telefono"": """ + NuevoUsuarioModel.Telefono + @""",
                        ""correoAlumno"": """ + NuevoUsuarioModel.Email + @""",
                        ""carrera"": """ + SelectedCar + @"""}"
-                    )
+                )
                 };
                 requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
@@ -329,6 +332,7 @@
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
                        ""apellidoMaterno"": """ + NuevoUsuarioModel.ApMaterno + @""",
                        ""nombre"": """ + NuevoUsuarioModel.Nombre + @""",
+                       ""logResponsable"": """ + usuario.id + @""",
                        ""telefono"": """ + NuevoUsuarioModel.Telefono + @""",
                        ""correoDocente"": """ + NuevoUsuarioModel.Email + @""",
                        ""escuela"": """ + SelectedEsc + @"""}"
@@ -359,6 +363,7 @@
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
                        ""apellidoMaterno"": """ + NuevoUsuarioModel.ApMaterno + @""",
                        ""nombre"": """ + NuevoUsuarioModel.Nombre + @""",
+                       ""logResponsable"": """ + usuario.id + @""",
                        ""telefono"": """ + NuevoUsuarioModel.Telefono + @""",
                        ""correoCoordinador"": """ + NuevoUsuarioModel.Email + @""",
                        ""escuela"": """ + SelectedEsc + @"""}"
@@ -389,6 +394,7 @@
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
                        ""apellidoMaterno"": """ + NuevoUsuarioModel.ApMaterno + @""",
                        ""nombre"": """ + NuevoUsuarioModel.Nombre + @""",
+                       ""logResponsable"": """ + usuario.id + @""",
                        ""telefono"": """ + NuevoUsuarioModel.Telefono + @""",
                        ""correoDirector"": """ + NuevoUsuarioModel.Email + @""",
                        ""escuela"": """ + SelectedEsc + @"""}"
@@ -405,11 +411,6 @@
 
                 Console.WriteLine(result);
             };
-
-
-
-
-
 
             await Js.MostrarMensaje("Guardado!", "Se ha creado correctamente el usuario.", TipoMensajeSweetAlert.success);
 
@@ -431,6 +432,4 @@
         Js.CloseModal("AgregUsuarioModal");
 
     }
-
-
 }
