@@ -288,18 +288,12 @@ else
                 requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
-                var solicitudDeleted = await Http.SendAsync(requestMessage);
+                Http.SendAsync(requestMessage);
 
-                if (solicitudDeleted != null)
-                {
-                    await Js.MostrarMensaje("Anulada!", "Se ha anulado la solicitud correctamente.", TipoMensajeSweetAlert.success);
+                Js.MostrarMensaje("Anulada!", "Se ha anulado la solicitud correctamente.", TipoMensajeSweetAlert.success);
 
-                    var index = Solicitudes.FindIndex(s => s.id == solicitud.id);
-                    Solicitudes.RemoveAt(index);
-                } else
-                {
-                    await Js.MostrarMensaje("Error", "A ocurrido un error al anular la solicitud.", TipoMensajeSweetAlert.error);
-                }
+                var index = Solicitudes.FindIndex(s => s.id == solicitud.id);
+                Solicitudes.RemoveAt(index);
             } else
             {
                 await Js.MostrarMensaje("Sin Acceso", "Usted no tiene permisos para anular solicitudes.", TipoMensajeSweetAlert.error);
