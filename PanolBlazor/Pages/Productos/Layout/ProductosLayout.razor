@@ -8,11 +8,11 @@
             <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.en_uso))">
                 <span class="oi oi-inbox" aria-hidden="true"></span> En Uso
             </button>
-            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.poco_stock))">
-                <span class="oi oi-share-boxed" aria-hidden="true"></span> Poco Stock
+            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.stock_bajo))">
+                <span class="oi oi-share-boxed" aria-hidden="true"></span> Stock Bajo
             </button>
-            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.sin_stock))">
-                <span class="oi oi-clock" aria-hidden="true"></span> Sin Stock
+            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.stock_critico))">
+                <span class="oi oi-clock" aria-hidden="true"></span> Stock Crítico
             </button>
             <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => SolicitudesNavigate(SolicitudesActions.todos))">
                 <span class="oi oi-task" aria-hidden="true"></span> Todos
@@ -55,11 +55,11 @@
         {
             Active1 = "active";
         }
-        if (uri.Contains(SolicitudesActions.poco_stock.ToString()))
+        if (uri.Contains(SolicitudesActions.stock_bajo.ToString()))
         {
             Active2 = "active";
         }
-        if (uri.Contains(SolicitudesActions.sin_stock.ToString()))
+        if (uri.Contains(SolicitudesActions.stock_critico.ToString()))
         {
             Active3 = "active";
         }
@@ -71,7 +71,7 @@
 
     public enum SolicitudesActions
     {
-        en_uso, poco_stock, sin_stock, todos, agregar
+        en_uso, stock_bajo, stock_critico, todos, agregar
     }
 }
 

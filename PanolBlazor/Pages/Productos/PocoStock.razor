@@ -1,4 +1,4 @@
-﻿@page "/productos/poco_stock"
+﻿@page "/productos/stock_bajo"
 @layout Layout.ProductosLayout
 @attribute [Authorize]
 @using DataModel
@@ -16,7 +16,7 @@ else if (Productos.Count <= 0)
 }
 else
 {
-    <ProductosTableGeneric Productos="Productos" Titulo="Poco Stock"></ProductosTableGeneric>
+    <ProductosTableGeneric Productos="Productos" Titulo="Stock Bajo"></ProductosTableGeneric>
 }
 
 @code {
