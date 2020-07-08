@@ -253,7 +253,7 @@
                 await Js.MostrarMensaje("Error!", "Verifíque que todos los datos esten correctos y vuelva a intentarlo.", TipoMensajeSweetAlert.error);
             } else
             {
-                var response = await Js.Confirm("¿Estas seguro/a?", "Confirma para crear usuario.", TipoMensajeSweetAlert.question);
+                var response = await Js.Confirm("¿Estas seguro/a?", "Confirma la solicitud.", TipoMensajeSweetAlert.question);
 
                 if (response)
                 {
@@ -279,6 +279,9 @@
                     requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                     var result = await Http.SendAsync(requestMessage);
+
+                
+
 
                     await Js.MostrarMensaje("Agregada!", "Se ha agregado la solicitud correctamente", TipoMensajeSweetAlert.success);
                     ClearView();

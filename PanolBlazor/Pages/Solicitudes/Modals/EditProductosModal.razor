@@ -289,7 +289,7 @@
 
             ProductosSolicitud.RemoveRange(0, ProductosSolicitud.Count);
             ProductosSolicitud.AddRange(ProductosSolicitudAux);
-
+            
             if (Solicitud.id != 0)
             {
                 var requestMessage = new HttpRequestMessage()

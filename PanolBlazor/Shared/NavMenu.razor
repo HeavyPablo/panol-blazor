@@ -52,47 +52,63 @@
 
     //activar para las notificaciones
 
-    //private List<PanolBlazor.DataModel.AlarmaStockModel> UsuarioAlarma;
+    private List<PanolBlazor.DataModel.AlarmaStockModel> UsuarioAlarma;
 
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender) {
-    //        await Task.Delay(10000);
-    //        Console.WriteLine("primer paso");
-    //    }
-    //    await Task.Delay(6000);
-    //    UsuarioAlarma = await Http.GetJsonAsync<List<PanolBlazor.DataModel.AlarmaStockModel>>("http://localhost:8080/alarm");
-    //    Console.WriteLine("esperanza paso");
-    //    if (UsuarioAlarma != null)
-    //    {
-    //        await Task.Delay(2000);
-    //        Console.WriteLine(" paso");
-    //        foreach (var item in UsuarioAlarma)
-    //        {
-    //            await Task.Delay(2000);
-    //            await OnShowHtml(item.subproductoAS, item.actualizacionSA, item.escuelaSA);
-    //        }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(60000);
+            Console.WriteLine("primer paso");
+        }
+        await Task.Delay(6000);
+        UsuarioAlarma = await Http.GetJsonAsync<List<PanolBlazor.DataModel.AlarmaStockModel>>("http://localhost:8080/alarm/todos");
+        Console.WriteLine("esperanza paso");
+        //Console.WriteLine(UsuarioAlarma);
+        if (UsuarioAlarma.Count() != 0)
+        {
+            await Task.Delay(2000);
+            Console.WriteLine(" paso");
+            foreach (var item in UsuarioAlarma)
+            {
+                await Task.Delay(2000);
+                await OnShowHtml(item.subproductoAS, item.actualizacionSA, item.escuelaSA, item.stockTotal, item.stock);
+            }
 
-    //        this.StateHasChanged();
+            this.StateHasChanged();
 
-    //    }
-    //    else
-    //    {
-    //        await Task.Delay(10000);
-    //        this.StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine(" paso el nulo");
+            await Task.Delay(10000);
+            this.StateHasChanged();
 
-    //    }
-
-
-    //}
+        }
 
 
-    private async Task OnShowHtml(string subproducto, string fecha, string escuela)
+    }
+
+
+    private async Task OnShowHtml(string subproducto, string fecha, string escuela, int stockTotal, int stock)
     {
         await Task.Delay(2000);
-        Console.WriteLine("segundo paso");
-        RenderFragment message =@<text>  Para la @escuela  <strong>, en  @fecha</strong> </text>;
-        toastService.ShowToast(ToastLevel.Info, message, "Falta stock de " + subproducto);
+        double PorcentajeStock = stock / stockTotal;
+        Console.WriteLine(PorcentajeStock);
+        if (PorcentajeStock < 0.5 && PorcentajeStock >= 0.25)
+        {
+
+            RenderFragment message =@<text>  Para la @escuela  <strong>, en  @fecha quedan @stock cantidad</strong> </text>;
+            toastService.ShowToast(ToastLevel.Warning, message, "Falta stock de " + subproducto);
+
+            }
+            if (PorcentajeStock <= 0.25 && PorcentajeStock >= 0)
+            {
+
+            RenderFragment message =@<text>  Para la @escuela  <strong>, en  @fecha quedan @stock cantidad</strong> </text>;
+            toastService.ShowToast(ToastLevel.Error, message, "Falta critica stock de " + subproducto);
+
+            }
 }
 
 

@@ -19,5 +19,11 @@ namespace PanolBlazor.DataModel
 
 
         public int stock { get; set; }
+
+        public int idEscuelaSA { get; set; }
+
+        public int idProductoSA { get; set; }
+
+        public int stockTotal { get; set; }
     }
 }
