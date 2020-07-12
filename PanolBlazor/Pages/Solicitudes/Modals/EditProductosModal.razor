@@ -164,7 +164,7 @@
     {
         ProductosSA = null;
         ProductosSA = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/disponible");
-        if (ProductosSA != null && ProductosSA.Count != 0)
+        if (ProductosSA != null && ProductosSA.Count != 0  && ProductosSolicitud != null)
         {
             ProductosSolicitudAux.AddRange(ProductosSolicitud);
         }

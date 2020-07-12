@@ -426,7 +426,7 @@
         string fragmentJson = "";
         foreach (UsuarioModel user in usuariosToParseChart)
         {
-            fragmentJson += @"{""perfil"": """ + user.perfil + @""", ""id"":""" + user.id + @"""},";
+            fragmentJson += @"{""perfil"": """ + user.perfil + @""", ""id"":""" + user.id + @""", ""estado"": """ + user.estado  + @"""},";
         }
         fragmentJson = fragmentJson.TrimEnd(',');
         Console.WriteLine(fragmentJson);
