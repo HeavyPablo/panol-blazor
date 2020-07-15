@@ -9,11 +9,7 @@
 
 @if (Subcategorias == null || Categorias == null || Subcategorias.Count == 0 || Categorias.Count == 0)
 {
-    <div class="col-12">
-        <div class="row justify-content-center">
-            <img src="images/loading.svg" alt="Cargando" />
-        </div>
-    </div>
+    
 }
 else
 {
@@ -83,69 +79,65 @@ else
         {
             <div class="card">
                 <div class="card-header" id="@("Heading" + escuela.nombre.Replace(" ", string.Empty))" style="background-image: url(@("images/images-core/Heading" + escuela.nombre.Replace(" ", string.Empty) + ".png")); background-size: cover; background-position: 0% 100%">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-light text-left font-weight-bold text-decoration-none" type="button" data-toggle="collapse" data-target="@("#" + escuela.id)" aria-expanded="true" aria-controls="@(escuela.id)" @onclick="@(e => ShowCollapse(escuela.id.ToString()))">
-                            @escuela.nombre
-                        </button>
-                    </h2>
+                    <div class="mb-0 text-light text-left font-weight-bold">
+                        @escuela.nombre
+                    </div>
                 </div>
 
-                <div id="@(escuela.id)" class="collapse" aria-labelledby="@("Heading" + escuela.nombre.Replace(" ", string.Empty))" data-parent="#accordionProductos">
-                    <div class="card-body">
-                        <div class="col-12">
-                            <div class="row d-flex flex-wrap">
-                                @if (Productos != null)
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="row d-flex flex-wrap">
+                            @if (Productos != null)
+                            {
+                                @foreach (ProductoModel Producto in Productos)
                                 {
-                                    @foreach (ProductoModel Producto in Productos)
+                                    @if (Producto.escuela.id == escuela.id)
                                     {
-                                        @if (Producto.escuela.id == escuela.id)
-                                        {
-                                            <div class="px-2 align-self-stretch">
-                                                <div class="card" style="width: 15rem; height: 100%">
-                                                    <img id="@Producto.id.ToString()" src="@("data:" + Producto.imagenProducto.tipo + ";base64," + Producto.imagenProducto.imagen)" class="card-img-top border-bottom" style="height: 10rem;">
-                                                    <div class="card-body">
-                                                        @if (Producto.estado == "disponible")
+                                        <div class="p-2 align-self-stretch">
+                                            <div class="card" style="width: 15rem; height: 100%">
+                                                <img id="@Producto.id.ToString()" src="@("data:" + Producto.imagenProducto.tipo + ";base64," + Producto.imagenProducto.imagen)" class="card-img-top border-bottom" style="height: 10rem;">
+                                                <div class="card-body">
+                                                    @if (Producto.estado == "disponible")
+                                                    {
+                                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
+                                                    }
+                                                    @if (Producto.estado == "enuso")
+                                                    {
+                                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-secondary">@Producto.estado</span></h5>
+                                                    }
+                                                    @if (Producto.estado == "debaja")
+                                                    {
+                                                        <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
+                                                    }
+                                                    <p class="card-text">
+                                                        <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.categoria.nombre</span>
+                                                        <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.nombre</span>
+                                                    </p>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="btn-group col-12" role="group">
+                                                        <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
+                                                            <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
+                                                        </button>
+                                                        @if (Producto.estado.Equals("debaja"))
                                                         {
-                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-success">@Producto.estado</span></h5>
-                                                        }
-                                                        @if (Producto.estado == "enuso")
-                                                        {
-                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-secondary">@Producto.estado</span></h5>
-                                                        }
-                                                        @if (Producto.estado == "debaja")
-                                                        {
-                                                            <h5 class="card-title">@Producto.nombre <span class="badge badge-pill badge-danger">@Producto.estado</span></h5>
-                                                        }
-                                                        <p class="card-text">
-                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.categoria.nombre</span>
-                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.nombre</span>
-                                                        </p>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="btn-group col-12" role="group">
-                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => ViewProducto(Producto.id))">
-                                                                <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
+                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" disabled>
+                                                                <span class="oi oi-ban"></span>
                                                             </button>
-                                                            @if (Producto.estado.Equals("debaja"))
-                                                            {
-                                                                <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" disabled>
-                                                                    <span class="oi oi-ban"></span>
-                                                                </button>
-                                                            }
-                                                            else
-                                                            {
-                                                                <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto))">
-                                                                    <span class="oi oi-trash"></span>
-                                                                </button>
-                                                            }
-                                                        </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="btn btn-secondary" style="border-top-left-radius: 0; border-top-right-radius: 0" @onclick="@(e => BorrarProducto(Producto))">
+                                                                <span class="oi oi-trash"></span>
+                                                            </button>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
+                                        </div>
                                     }
                                 }
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -191,17 +183,6 @@ else
         aplicandoFiltros = false;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (Productos != null && Productos.Count > 0 && !firstRender)
-        {
-            foreach (ProductoModel producto in Productos)
-            {
-                await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
-            }
-        }
-    }
-
     private void ViewProducto(int Id)
     {
         Navigation.NavigateTo("productos/" + Id.ToString());
@@ -211,7 +192,6 @@ else
     {
         filtrosAplicados = false;
         aplicandoFiltros = true;
-        await Task.Delay(1000);
         Productos = null;
         List<ProductoModel> ProductosToFilter = await Http.GetJsonAsync<List<ProductoModel>>("http://localhost:8080/producto/filtro/" + Titulo.Replace(" ", String.Empty).ToLower());
 
@@ -253,11 +233,6 @@ else
         filtrosAplicados = true;
     }
 
-    private async Task ShowCollapse(string id)
-    {
-        await Js.ShowCollapse(id);
-    }
-
     private async Task LoadImage(ProductoModel producto)
     {
         await Js.RenderImagen(producto.id.ToString(), producto.imagenProducto.tipo, producto.imagenProducto.imagen);
@@ -289,7 +264,10 @@ else
                 requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                 var result = await Http.SendAsync(requestMessage);
-                await Js.MostrarMensaje("Eliminado!", "Se ha eliminado el producto correctamente.", TipoMensajeSweetAlert.success);
+                Js.MostrarMensaje("Eliminado!", "Se ha eliminado el producto correctamente.", TipoMensajeSweetAlert.success);
+
+                var index = Productos.FindIndex(p => p.id == producto.id);
+                Productos[index].estado = "debaja";
             } catch
             {
                 await Js.MostrarMensaje("Ups!", "No se puede eliminar un producto en uso.", TipoMensajeSweetAlert.success);

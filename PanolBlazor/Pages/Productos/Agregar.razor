@@ -123,7 +123,6 @@
             producto.logResponsable = usuario.id.ToString();
 
             IFileListEntry file = selectedFiles.FirstOrDefault();
-            Console.WriteLine(file.Name);
             await AddProducto(file, producto.CreateFormatJson(producto));
         }
 
@@ -133,33 +132,25 @@
     {
         try
         {
-            // Boundary es como el separador de contenido
             var boundary = "Upload----" + DateTime.Now.Ticks.ToString();
-            Console.WriteLine(file.Data);
-
-            // se debe crear un StreamContent (contenido) a partir de un Stream o MemoryStream .. en este caso file.Data contiene el Stream de la imagen
             var fileContent = new StreamContent(file.Data)
             {
-                // Se agregan headers para identificar el tipo de archivo que se eenvia y su tamaño (el tamaño no es obligatorio)
                 Headers = {
                    ContentLength = file.Size,
-                   // file.Type retorna = "imagen/png", "image/jpg", etc.. dependiendo del tipo de dato que sea la imagen
                    ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
                 }
             };
 
-            // Se crea el multipart/formData
             using (var content = new MultipartFormDataContent(boundary))
             {
-                // Se añade contenido.. los parametros son ("el StreamContent que creamos", "El nombre que va a tener(key)", "El nombre del archivo")
                 content.Add(fileContent, "file", file.Name);
-                // se añado el siguiente contenido (body).. este es el texto plano qe sera convertido en JSON desde la api
                 content.Add(new StringContent(producto), "body");
 
                 var response = await Http.PostAsync("http://localhost:8080/producto", content);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     await Js.MostrarMensaje("Agregado!", "Se ha agregado el producto correctamente.", TipoMensajeSweetAlert.success);
+                    this.CleanForm();
                     return true;
                 }
                 await Js.MostrarMensaje("Ups!", "Al parecer hay problemas internos para agregar productos.", TipoMensajeSweetAlert.error);
@@ -171,5 +162,13 @@
             await Js.MostrarMensaje("Ups!", "Ha ocurrido un error:" + ex, TipoMensajeSweetAlert.error);
             return false;
         }
+    }
+
+    private void CleanForm()
+    {
+        this.Producto = new ProductoModel();
+        this.subcategoriaSelected = "";
+        this.escuelaSelected = "";
+        this.selectedFiles = new List<IFileListEntry>();
     }
 }

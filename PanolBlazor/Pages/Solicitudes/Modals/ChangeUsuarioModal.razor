@@ -228,7 +228,6 @@
         if (response)
         {
             Solicitud.usuario = Solicitante;
-            Console.WriteLine(Solicitante.username);
             await OnRefresh.InvokeAsync(true);
             await Js.MostrarMensaje("Añadido!", "Usuario agregado a la solicitud correctamente.", TipoMensajeSweetAlert.success);
             await Js.CloseModal("ChangeUsuarioModal");

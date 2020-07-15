@@ -55,14 +55,14 @@
 @code {
     string Username = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        Username = await Js.GetFromLocalStorage("username");
+    }
+
     private async Task HandlerLogout()
     {
         await LoginService.Logout();
         Navigation.NavigateTo("/login");
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Username = await Js.GetFromLocalStorage("username");
     }
 }

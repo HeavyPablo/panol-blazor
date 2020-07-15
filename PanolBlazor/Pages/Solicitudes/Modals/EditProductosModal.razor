@@ -72,32 +72,58 @@
                         }
                         else
                         {
-                            @foreach (var Producto in ProductosSA)
-                            {
-                                <div class="px-2 align-self-stretch">
-                                    <div class="card" style="width: 15rem; height: 100%;">
-                                        <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@Producto.nombre</h5>
-                                            <span class="badge badge-pill badge-info text-wrap">@Producto.escuela.nombre</span>
-                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.categoria.nombre</span>
-                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.nombre</span>
+                            <div class="accordion shadow">
+                                @foreach (var escuela in Escuelas)
+                                {
+                                    <div class="card">
+                                        <div class="card-header"  id="@("Heading" + escuela.nombre.Replace(" ", string.Empty))" style="background-image: url(@("images/images-core/Heading" + escuela.nombre.Replace(" ", string.Empty) + ".png")); background-size: cover; background-position: 0% 100%">
+                                            <div class="mb-0 text-light text-left font-weight-bold">
+                                                @escuela.nombre
+                                            </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="card-body">
                                             <div class="col-12">
-                                                @if (ProductosSolicitudAux.Find(p => p.id == Producto.id) != null)
-                                                {
-                                                    <button class="col-12 btn btn-secondary mt-3" disabled>Agregado</button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="col-12 btn btn-primary mt-3" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
-                                                }
+                                                <div class="row d-flex flex-wrap">
+                                                    @if (ProductosSA != null)
+                                                    {
+                                                        @foreach (var Producto in ProductosSA)
+                                                        {
+                                                            @if (Producto.escuela.nombre == escuela.nombre)
+                                                            {
+                                                                <div class="p-2 align-self-stretch">
+                                                                    <div class="card" style="width: 15rem; height: 100%;">
+                                                                        <img id="@Producto.id.ToString()" src="" class="card-img-top border-bottom" style="height: 10rem;">
+                                                                        <div class="card-body">
+                                                                            <h5 class="card-title">@Producto.nombre</h5>
+                                                                            <span class="badge badge-pill badge-info text-wrap">@Producto.escuela.nombre</span>
+                                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.categoria.nombre</span>
+                                                                            <span class="badge badge-pill badge-light text-wrap text-muted">@Producto.subcategoria.nombre</span>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-12">
+                                                                                @if (ProductosSolicitudAux.Find(p => p.id == Producto.id) != null)
+                                                                                {
+                                                                                    <button class="col-12 btn btn-secondary mt-3" disabled>Agregado</button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <button class="col-12 btn btn-primary mt-3" @onclick="@(e => AddProductoToSolicitud(Producto))"><span class="oi oi-plus"></span> Agregar</button>
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            }
+
+                                    
+                                }
+                            </div>
                         }
                     </div>
                     <hr />
@@ -150,10 +176,12 @@
     [Parameter] public List<ProductoModel> ProductosSolicitud { get; set; }
     [Parameter] public SolicitudModel Solicitud { get; set; }
     [Parameter] public EventCallback<Boolean> OnRefresh { get; set; }
+    [Parameter] public bool ClickOnMe { get; set; }
 
     private List<ProductoModel> ProductosSA = new List<ProductoModel>();
     private List<CategoriaModel> Categorias = new List<CategoriaModel>();
     private List<SubcategoriaModel> Subcategorias = new List<SubcategoriaModel>();
+    private List<EscuelaModel> Escuelas = new List<EscuelaModel>();
     private FiltrosProductoModel FiltrosModel = new FiltrosProductoModel();
     private List<ProductoModel> ProductosSolicitudAux = new List<ProductoModel>();
     private bool HandlerConfirmation = false;
@@ -177,6 +205,10 @@
         {
             Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
         }
+        if (Escuelas == null || Escuelas.Count <= 0)
+        {
+            Escuelas = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
+        }
 
         FiltrosModel = new FiltrosProductoModel();
     }
@@ -186,7 +218,7 @@
     // pero si lo quiere usar .. debes ponerlo dentro de un if ej. " if (firstRender) { ... } "
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (ProductosSA != null && ProductosSA.Count > 0)
+        if (ProductosSA != null && ProductosSA.Count > 0 && ClickOnMe)
         {
             foreach (ProductoModel producto in ProductosSA)
             {
@@ -289,7 +321,7 @@
 
             ProductosSolicitud.RemoveRange(0, ProductosSolicitud.Count);
             ProductosSolicitud.AddRange(ProductosSolicitudAux);
-            
+
             if (Solicitud.id != 0)
             {
                 var requestMessage = new HttpRequestMessage()

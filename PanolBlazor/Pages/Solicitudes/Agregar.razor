@@ -85,6 +85,11 @@
                                     <input type="text" class="form-control" disabled @bind="PerfilSolicitante" />
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label>Escuela solicitante</label>
+                                <input type="text" class="form-control" disabled @bind="EscuelaSolicitante" />
+                            </div>
                             <hr />
                             <div class="form-group">
                                 <label>Nombre panolero responsable</label>
@@ -104,7 +109,15 @@
                         <div class="col-12">
                             <div class="row justify-content-between">
                                 <h4>Productos</h4>
-                                <button type="button" class="btn btn-outline-primary" @onclick="@(e => OpenModal("AddProductosModal"))"><span class="oi oi-plus"></span></button>
+                                @if (EscuelaSolicitante != "")
+                                {
+                                    <button type="button" class="btn btn-outline-primary" @onclick="@(e => OpenModal("AddProductosModal"))"><span class="oi oi-plus"></span></button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn font-italic" disabled>Seleccione usuario antes de ver los materiales <span class="oi oi-plus"></span></button>
+                                }
+
                             </div>
                         </div>
                         <div class="py-3">
@@ -146,7 +159,7 @@
         </div>
     </div>
 
-<PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Productos" Solicitud="Solicitud" OnRefresh="RefreshProductos"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
+<PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal ProductosSolicitud="Productos" Solicitud="Solicitud" OnRefresh="RefreshProductos" ClickOnMe="clickToModalProductos"></PanolBlazor.Pages.Solicitudes.Modals.EditProductosModal>
 <PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal Solicitante="Usuario" Solicitud="Solicitud" OnRefresh="RefreshSolicitante"></PanolBlazor.Pages.Solicitudes.Modals.ChangeUsuarioModal>
 
 @code {
@@ -154,6 +167,7 @@
     string NombreSolicitante = "";
     string RutSolicitante = "";
     string PerfilSolicitante = "";
+    string EscuelaSolicitante = "";
     string NombrePanolero = "";
     string DiasSolicitados = "0";
     string FechaDeEntrega = "Ingrese dias";
@@ -170,6 +184,7 @@
             getFechaDevolucion();
         }
     }
+    public bool clickToModalProductos = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -192,16 +207,20 @@
         }
     }
 
-
-
     private void getFechaDevolucion()
     {
         FechaDeEntrega = DateTime.Now.AddDays(int.Parse(DiasSolicitados)).ToString("dd/MM/yyyy");
     }
 
-    private void OpenModal(string Tittle)
+    private async Task OpenModal(string Tittle)
     {
-        Js.ShowModal(Tittle);
+        if (Tittle == "AddProductosModal")
+        {
+            clickToModalProductos = true;
+        }
+        await Js.ShowModal(Tittle);
+
+        clickToModalProductos = false;
     }
 
     private void RefreshProductos()
@@ -212,18 +231,19 @@
     private void RefreshSolicitante()
     {
         Usuario = Solicitud.usuario;
-        Console.WriteLine(Solicitud.usuario.username);
         if (Usuario.alumno != null)
         {
             NombreSolicitante = Usuario.alumno.nombre + " " + Usuario.alumno.apellidoPaterno + " " + Usuario.alumno.apellidoMaterno;
             RutSolicitante = Usuario.alumno.rut;
             PerfilSolicitante = Usuario.perfil;
+            EscuelaSolicitante = Usuario.alumno.carrera.escuela.nombre;
         }
         if (Usuario.docente != null)
         {
             NombreSolicitante = Usuario.docente.nombre + " " + Usuario.docente.apellidoPaterno + " " + Usuario.docente.apellidoMaterno;
             RutSolicitante = Usuario.docente.rut;
             PerfilSolicitante = Usuario.perfil;
+            EscuelaSolicitante = Usuario.docente.escuela.nombre;
         }
     }
 
@@ -279,9 +299,6 @@
                     requestMessage.Content.Headers.TryAddWithoutValidation("x-custom-header", "value");
 
                     var result = await Http.SendAsync(requestMessage);
-
-                
-
 
                     await Js.MostrarMensaje("Agregada!", "Se ha agregado la solicitud correctamente", TipoMensajeSweetAlert.success);
                     ClearView();

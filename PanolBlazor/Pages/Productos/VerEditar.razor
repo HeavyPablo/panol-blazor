@@ -71,10 +71,10 @@ else
 
                                     <div class="form-group col-6 px-2">
                                         <label>Escuela</label>
-                                        <InputSelect class="form-control" @bind-Value="Producto.escuela.id" disabled="@IsDisabled">
+                                        <InputSelect class="form-control" @bind-Value="escuelaSelected" disabled="@IsDisabled">
                                             @foreach (EscuelaModel escuela in Escuelas)
                                                 {
-                                                <option value="@escuela.id.ToString()">@escuela.nombre</option>
+                                                <option value="@escuela.id">@escuela.nombre</option>
                                                 }
                                         </InputSelect>
                                     </div>
@@ -83,7 +83,7 @@ else
                                 <div class="form-row">
                                     <div class="form-group col-6 px-2">
                                         <label>Subcategoría</label>
-                                        <InputSelect class="form-control" @bind-Value="Producto.subcategoria.id" disabled="@IsDisabled">
+                                        <InputSelect class="form-control" @bind-Value="subcategoriaSelected" disabled="@IsDisabled">
                                             @foreach (SubcategoriaModel Subcategoria in Subcategorias)
                                                 {
                                                 <option value="@Subcategoria.id.ToString()">@Subcategoria.nombre</option>
@@ -92,10 +92,10 @@ else
                                     </div>
                                     <div class="form-group col-6 px-2">
                                         <label>Categoría</label>
-                                        <InputSelect class="form-control" @bind-Value="Producto.subcategoria.categoria.id" disabled="@IsDisabled">
+                                        <InputSelect class="form-control" @bind-Value="Producto.subcategoria.categoria.id" disabled>
                                             @foreach (CategoriaModel Categoria in Categorias)
                                                 {
-                                                <option value="@Categoria.id.ToString()">@Categoria.nombre</option>
+                                                <option value="@Categoria.id">@Categoria.nombre</option>
                                                 }
                                         </InputSelect>
                                     </div>
@@ -133,6 +133,8 @@ else
     private List<SubcategoriaModel> Subcategorias;
     private List<CategoriaModel> Categorias;
     private List<EscuelaModel> Escuelas;
+    private string subcategoriaSelected = "";
+    private string escuelaSelected = "";
 
     private bool IsDisabled = true;
     public string IsActived = "";
@@ -147,6 +149,8 @@ else
             Subcategorias = await Http.GetJsonAsync<List<SubcategoriaModel>>("http://localhost:8080/subcategoria");
             Categorias = await Http.GetJsonAsync<List<CategoriaModel>>("http://localhost:8080/categoria");
             Escuelas = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
+            subcategoriaSelected = Producto.subcategoria.id.ToString();
+            escuelaSelected = Producto.escuela.id.ToString();
         }
     }
 
@@ -186,6 +190,8 @@ else
 
         if (response)
         {
+            Producto.subcategoria = Subcategorias.Find(s => s.id == int.Parse(subcategoriaSelected));
+            Producto.escuela = Escuelas.Find(e => e.id == int.Parse(escuelaSelected));
             string username = await Js.GetFromLocalStorage("username");
             UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
             Producto.logResponsable = usuario.id.ToString();
