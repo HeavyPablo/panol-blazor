@@ -11,47 +11,85 @@
 @using DataModel
 @using Modals
 
-<h3>Agregar y editar usuario</h3>
-
 
 <div class="col-12 py-4">
-   
-    <div class="row justify-content-between  rounded-lg navbar">
-    <button class="btn btn-danger" @onclick="@(e =>  OpenModalAgregar())" ><span class="oi oi-plus"> Agregar Usuario</span></button>
-    <button class="btn btn-danger" @onclick="@(e =>  OpenModalCargaMasiva())"> <span class="oi oi-plus"> Agregar Alumno por Carg.Masiva</span></button>
+
+    <div class="shadow card">
+        <div class="card-body">
+            <div class="col-12">
+                <div class="row justify-content-between">
+                    <div class="d-flex">
+                        <div class="px-2">
+                            <h3>Agregar y editar usuario</h3>
+                        </div>
+
+                    </div>
+                    <div class="row justify-content-end ">
+
+
+
+                        <button type="button" class="btn" @onclick="@(e =>  OpenModalAgregar())">
+
+                            <span class="oi oi-plus"></span>
+                            Agregar Usuario
+
+                        </button>
+
+
+                        <button type="button" class="btn " @onclick="@(e =>  OpenModalCargaMasiva())">
+
+                            <span class="oi oi-monitor"> </span>
+                            Agregar Alumno por Excel
+
+                        </button>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row justify-content-between bg-dark rounded-lg navbar">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => RefreshEstado("TODOS"))">
-                <span class="oi oi-inbox" aria-hidden="true"></span> Todos los Perfiles
-            </button>
-            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => RefreshEstado("ALUMNO"))">
-                <span class="oi oi-inbox" aria-hidden="true"></span> Alumnos
-            </button>
-            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => RefreshEstado("DIRECTOR"))">
-                <span class="oi oi-share-boxed" aria-hidden="true"></span> Director
-            </button>
-            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => RefreshEstado("DOCENTE"))">
-                <span class="oi oi-share-boxed" aria-hidden="true"></span> Docentes
-            </button>
-            <button type="button" class="btn btn-secondary @Active5" @onclick="@(e => RefreshEstado("COORDINADOR"))">
-                <span class="oi oi-clock" aria-hidden="true"></span> Cordinador
-            </button>
-            <button type="button" class="btn btn-secondary @Active6" @onclick="@(e => RefreshEstado("PANOLERO"))">
-                <span class="oi oi-task" aria-hidden="true"></span> Pañoleros
-            </button>
+
+    <div class="py-3">
+
+        <div class="col-12">
+            <div class="row justify-content-center ">
+                <div class="d-flex">
+
+
+                    <div class="row justify-content-center  bg-dark rounded-lg navbar">
+                        <div class="btn-group" role="group">
+
+                            <button type="button" class="btn btn-secondary @Active1" @onclick="@(e => RefreshEstado("TODOS"))">
+                                <span class="oi oi-people" aria-hidden="true"></span> Todos
+                            </button>
+                            <button type="button" class="btn btn-secondary @Active2" @onclick="@(e => RefreshEstado("ALUMNO"))">
+                                <span class="oi oi-person" aria-hidden="true"></span> Alumnos
+                            </button>
+                            <button type="button" class="btn btn-secondary @Active3" @onclick="@(e => RefreshEstado("DIRECTOR"))">
+                                <span class="oi oi-person" aria-hidden="true"></span> Director
+                            </button>
+                            <button type="button" class="btn btn-secondary @Active4" @onclick="@(e => RefreshEstado("DOCENTE"))">
+                                <span class="oi oi-person" aria-hidden="true"></span> Docentes
+                            </button>
+                            <button type="button" class="btn btn-secondary @Active5" @onclick="@(e => RefreshEstado("COORDINADOR"))">
+                                <span class="oi oi-person" aria-hidden="true"></span> Cordinador
+                            </button>
+                            <button type="button" class="btn btn-secondary @Active6" @onclick="@(e => RefreshEstado("PANOLERO"))">
+                                <span class="oi oi-person" aria-hidden="true"></span> Pañoleros
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="btn-group" role="group">
-            @*<button type="button" class="btn btn-secondary @Active5" @onclick="@(e => RefreshEstado("activo"))">
-                    <span class="oi oi-task" aria-hidden="true"></span> Activos
-                </button>
-                <button type="button" class="btn btn-secondary @Active6" @onclick="@(e => RefreshEstado("bloqueado"))">
-                    <span class="oi oi-task" aria-hidden="true"></span> Bloqueados
-                </button>*@
-        </div>
+
     </div>
 </div>
-
 
 @if (UsuarioPerfil != null)
 {
@@ -72,73 +110,82 @@
 
             @foreach (var Usuario in UsuarioPerfil)
             {
-            <tr>
-                <th scope="row">@Usuario.id</th>
-                <td>@Usuario.username</td>
-                @if (Usuario.perfil == "DIRECTOR")
-                {
-                    <td>@Usuario.director.id</td>
-                    <td>@Usuario.director.nombre</td>
-                    <td>Director</td>
-                    <td>@Usuario.estado</td>
-                    <td>@Usuario.director.fechaActualizacion</td>
-                }
-                else if (Usuario.perfil == "DOCENTE")
-                {
-                    <td>@Usuario.docente.id</td>
-                    <td>@Usuario.docente.nombre</td>
-                    <td>Docente</td>
-                    <td>@Usuario.estado</td>
-                    <td>@Usuario.docente.fechaActualizacion</td>
-                }
+                <tr>
+                    <th scope="row">@Usuario.id</th>
+                    <td>@Usuario.username</td>
+                    @if (Usuario.perfil == "DIRECTOR")
+                    {
+                        <td>@Usuario.director.id</td>
+                        <td>@Usuario.director.nombre</td>
+                        <td>Director</td>
+                        <td>@Usuario.estado</td>
+                        <td>@Usuario.director.fechaActualizacion</td>
+                    }
+                    else if (Usuario.perfil == "DOCENTE")
+                    {
+                        <td>@Usuario.docente.id</td>
+                        <td>@Usuario.docente.nombre</td>
+                        <td>Docente</td>
+                        <td>@Usuario.estado</td>
+                        <td>@Usuario.docente.fechaActualizacion</td>
+                    }
 
-                else if (Usuario.perfil == "COORDINADOR")
-                {
-                    <td>@Usuario.coordinador.id</td>
-                    <td>@Usuario.coordinador.nombre</td>
-                    <td>Coordinador</td>
-                    <td>@Usuario.estado</td>
-                    <td>@Usuario.coordinador.fechaActualizacion</td>
-                }
-                else if (Usuario.perfil == "ALUMNO")
-                {
-                    <td>@Usuario.alumno.id</td>
-                    <td>@Usuario.alumno.nombre</td>
-                    <td>Alumno</td>
-                    <td>@Usuario.estado</td>
-                    <td>@Usuario.alumno.fechaActualizacion</td>
-                }
-                else if (Usuario.perfil == "PANOLERO")
-                {
-                    <td>@Usuario.panolero.id</td>
-                    <td>@Usuario.panolero.nombre</td>
-                    <td>Pañolero</td>
-                    <td>@Usuario.estado</td>
-                    <td>@Usuario.panolero.fechaActualizacion</td>
-                }
-                <td>
+                    else if (Usuario.perfil == "COORDINADOR")
+                    {
+                        <td>@Usuario.coordinador.id</td>
+                        <td>@Usuario.coordinador.nombre</td>
+                        <td>Coordinador</td>
+                        <td>@Usuario.estado</td>
+                        <td>@Usuario.coordinador.fechaActualizacion</td>
+                    }
+                    else if (Usuario.perfil == "ALUMNO")
+                    {
+                        <td>@Usuario.alumno.id</td>
+                        <td>@Usuario.alumno.nombre</td>
+                        <td>Alumno</td>
+                        <td>@Usuario.estado</td>
+                        <td>@Usuario.alumno.fechaActualizacion</td>
+                    }
+                    else if (Usuario.perfil == "PANOLERO")
+                    {
+                        <td>@Usuario.panolero.id</td>
+                        <td>@Usuario.panolero.nombre</td>
+                        <td>Pañolero</td>
+                        <td>@Usuario.estado</td>
+                        <td>@Usuario.panolero.fechaActualizacion</td>
+                    }
+                    <td>
 
-                    <button class="btn btn-danger" @onclick="@(e => OpenModal(@Usuario.username, @Usuario.perfil))"><span class="oi oi-bolt"> Editar</span></button>
+                        <button class="btn btn-danger" @onclick="@(e => OpenModal(@Usuario.username, @Usuario.perfil))"><span class="oi oi-bolt"> Editar</span></button>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
             }
 
         </tbody>
     </table>
 
 
-<PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal   ModeloUsuario="SeleccionadoUsuarioModel"  ></PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal>
-@*<PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal Username="UsuarioElegido" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal>*@
+    <PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal ModeloUsuario="SeleccionadoUsuarioModel" ModeloCarrera="CarreraParaSeleccionar" ModeloEscuela="EscuelaParaSeleccionar"></PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal>
+    @*<PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal Username="UsuarioElegido" OnRefresh="OnInitializedAsync"></PanolBlazor.Pages.Usuarios.Modals.EditarUsuarioModal>*@
 
+
+    @if (UsuarioPerfil.Count() == 0)
+    {
+        <br>
+        <p>No existen registros.</p>
+    }
 }
-<PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal></PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal>
+
+<PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal ModeloCarrera="CarreraParaSeleccionar" ModeloEscuela="EscuelaParaSeleccionar"></PanolBlazor.Pages.Usuarios.Modals.AgregarUsuarioModal>
 <PanolBlazor.Pages.Usuarios.Modals.CargaMasivaModal></PanolBlazor.Pages.Usuarios.Modals.CargaMasivaModal>
 @code {
 
     private List<PanolBlazor.DataModel.UsuarioModel> UsuarioPerfil;
     private PanolBlazor.DataModel.UsuarioModel SeleccionadoUsuarioModel;
-
+    //para selecionar escuela y carrera en el apartado modal de agregar y editar
+    public List<EscuelaModel> EscuelaParaSeleccionar = new List<EscuelaModel>();
+    public List<CarreraModel> CarreraParaSeleccionar = new List<CarreraModel>();
 
 
     string usuarioElegido;
@@ -166,21 +213,40 @@
     }
 
 
+    string perfilVista;
+
+    string PerfilVista
+    {
+        get => perfilVista;
+        set
+        {
+            perfilVista = value;
+
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PerfilVista = null;
+    }
+
     protected async Task RefreshEstado(String perfil)
     {
         RefreshActive(perfil);
         if (perfil == "ALUMNO" || perfil == "DOCENTE" || perfil == "PANOLERO" || perfil == "COORDINADOR" || perfil == "DIRECTOR")
         {
-
+            PerfilVista = perfil;
             await Task.Delay(2000);
             UsuarioPerfil = await Http.GetJsonAsync<List<PanolBlazor.DataModel.UsuarioModel>>("http://localhost:8080/usuario/perfil/" + perfil);
             Console.WriteLine(UsuarioPerfil);
 
-        } else if(perfil == "TODOS")
+        }
+        else if (perfil == "TODOS")
         {
 
             await Task.Delay(2000);
             UsuarioPerfil = await Http.GetJsonAsync<List<PanolBlazor.DataModel.UsuarioModel>>("http://localhost:8080/usuario/estado/" + "activo");
+
 
         }
         else
@@ -200,7 +266,7 @@
 
     private void RefreshActive(string perfil)
     {
-        Active1 = Active2 = Active3 = Active4 = Active5 = Active6 =  "";
+        Active1 = Active2 = Active3 = Active4 = Active5 = Active6 = "";
 
         //var uri = Navigation.Uri;
 
@@ -232,18 +298,20 @@
 
     public enum SolicitudesActions
     {
-        Todos,Alumnos, Docentes, Cordinadores, Directores, Pañoleros
+        Todos, Alumnos, Docentes, Cordinadores, Directores, Pañoleros
     }
 
 
 
-    private async Task OpenModal(String usu,string perfil)
+    private async Task OpenModal(String usu, string perfil)
     {
 
 
         UsuarioElegido = usu;
         PerfilElegido = perfil;
 
+        CarreraParaSeleccionar = await Http.GetJsonAsync<List<CarreraModel>>("http://localhost:8080/carrera");
+        EscuelaParaSeleccionar = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
         SeleccionadoUsuarioModel = await Http.GetJsonAsync<PanolBlazor.DataModel.UsuarioModel>("http://localhost:8080/usuario/username/" + usuarioElegido);
         await Task.Delay(2000);
 
@@ -253,10 +321,12 @@
 
 
 
-    private void OpenModalAgregar()
+    private async Task OpenModalAgregar()
     {
-
-        Js.ShowModalStatic("AgregUsuarioModal");
+        CarreraParaSeleccionar = await Http.GetJsonAsync<List<CarreraModel>>("http://localhost:8080/carrera");
+        EscuelaParaSeleccionar = await Http.GetJsonAsync<List<EscuelaModel>>("http://localhost:8080/escuela");
+        await Task.Delay(2000);
+        await Js.ShowModalStatic("AgregUsuarioModal");
 
     }
 

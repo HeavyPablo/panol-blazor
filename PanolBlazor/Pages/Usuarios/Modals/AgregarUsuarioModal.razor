@@ -16,110 +16,122 @@
                 </button>
             </div>
             <div class="modal-body">
-                
 
-                   
-                        <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleValidSubmit">
-                            <DataAnnotationsValidator />
-                            @*<ValidationSummary />*@
-                            <div class="form-group">
-                                <label for="username">Nombre de Usuario</label>
-                                <input type="text" id="username" class="form-control" @bind="NuevoUsuarioModel.Username" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.Username)" />
-                            </div>
-                            <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" id="name" class="form-control" @bind="NuevoUsuarioModel.Nombre" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.Nombre)" />
-                            </div>
-                            <div class="form-group">
-                                <label for="ApPaterno">Apellido Paterno</label>
-                                <input type="text" id="ApPaterno" class="form-control" @bind="NuevoUsuarioModel.ApPaterno" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.ApPaterno)" />
-                            </div>
-                            <div class="form-group">
-                                <label for="ApMaterno">Apellido Materno</label>
-                                <input type="text" id="ApMaterno" class="form-control" @bind="NuevoUsuarioModel.ApMaterno" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.ApMaterno)" />
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="text" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.Email)" />
-                            </div>
+                @if (ModeloEscuela != null && ModeloCarrera != null)
+                {
 
-                            <div class="form-group">
-                                <label for="phone">Teléfono</label>
-                                <input type="text" id="phone" class="form-control" @bind="NuevoUsuarioModel.Telefono" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.Telefono)" />
-                            </div>
+                    <EditForm Model="@NuevoUsuarioModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        @*<ValidationSummary />*@
+                        <div class="form-group">
+                            <label for="username">Nombre de Usuario</label>
+                            <input type="text" id="username" class="form-control" @bind="NuevoUsuarioModel.Username" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.Username)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" class="form-control" @bind="NuevoUsuarioModel.Nombre" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.Nombre)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="ApPaterno">Apellido Paterno</label>
+                            <input type="text" id="ApPaterno" class="form-control" @bind="NuevoUsuarioModel.ApPaterno" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.ApPaterno)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="ApMaterno">Apellido Materno</label>
+                            <input type="text" id="ApMaterno" class="form-control" @bind="NuevoUsuarioModel.ApMaterno" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.ApMaterno)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" id="email" class="form-control" @bind="NuevoUsuarioModel.Email" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.Email)" />
+                        </div>
 
-                            <div class="form-group">
-                                <label for="rut">Rut</label>
-                                <input type="text" id="rut" class="form-control" @bind="NuevoUsuarioModel.rut" />
-                                <ValidationMessage For="@(() => NuevoUsuarioModel.rut)" />
-                            </div>
-                          
-                            <div class="form-group">
-                                <label for="perfilSelect">Perfil</label>
-                                <select class="form-control" id="perfilSelect" @bind="@SelectedOpc">
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="text" id="phone" class="form-control" @bind="NuevoUsuarioModel.Telefono" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.Telefono)" />
+                        </div>
 
-                                    <option value="">--Eliga una opcion de perfil--</option>
-                                    @foreach (var perfil in PerfilList)
+                        <div class="form-group">
+                            <label for="rut">Rut</label>
+                            <input type="text" id="rut" class="form-control" @bind="NuevoUsuarioModel.rut" />
+                            <ValidationMessage For="@(() => NuevoUsuarioModel.rut)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="perfilSelect">Perfil</label>
+                            <select class="form-control" id="perfilSelect" @bind="@SelectedOpc">
+
+                                <option value="">--Eliga una opcion de perfil--</option>
+                                @foreach (var perfil in PerfilList)
+                                {
+                                    <option value="@perfil.Code"> @perfil.Name </option>
+                                }
+
+
+                            </select>
+
+                        </div>
+                        @if (@SelectedOpc == "ALUMNO")
+                        {
+                            <div class="form-group">
+                                <label for="escSelect">Carrera</label>
+                                <select class="form-control" id="escSelect" @bind="@SelectedCar">
+
+                                    <option value="">--Eliga una carrera--</option>
+                                    @foreach (CarreraModel carrera in ModeloCarrera)
                                     {
-                                        <option value="@perfil.Code"> @perfil.Name </option>
+                                        <option value="@carrera.id.ToString()"> @carrera.nombre </option>
                                     }
-                                    }
+
 
                                 </select>
 
                             </div>
-                            @if (@SelectedOpc == "ALUMNO")
-                            {
-                                <div class="form-group">
-                                    <label for="escSelect">Carrera</label>
-                                    <select class="form-control" id="escSelect" @bind="@SelectedCar">
-
-                                        <option value="">--Eliga una carrera--</option>
-                                        @foreach (var carrera in CarList)
-                                        {
-                                            <option value="@carrera.Code"> @carrera.Name </option>
-                                        }
-                                        }
-
-                                    </select>
-
-                                </div>
 
 
-                            }
-                            else if (@SelectedOpc == "DOCENTE" || @SelectedOpc == "COORDINADOR" || @SelectedOpc == "DIRECTOR")
-                            {
-                                <div class="form-group">
-                                    <label for="carSelect">Escuela</label>
-                                    <select class="form-control" id="carSelect" @bind="@SelectedEsc">
+                        }
+                        else if (@SelectedOpc == "DOCENTE" || @SelectedOpc == "COORDINADOR" || @SelectedOpc == "DIRECTOR")
+                        {
+                            <div class="form-group">
+                                <label for="carSelect">Escuela</label>
+                                <select class="form-control" id="carSelect" @bind="@SelectedEsc">
 
-                                        <option value="">--Eliga una escuela--</option>
-                                        @foreach (var escuela in EscList)
-                                        {
-                                            <option value="@escuela.Code"> @escuela.Name </option>
-                                        }
-                                        }
+                                    <option value="">--Eliga una escuela--</option>
+                                    @foreach (EscuelaModel escuela in ModeloEscuela)
+                                    {
+                                        <option value="@escuela.id.ToString()"> @escuela.nombre </option>
+                                    }
 
-                                    </select>
 
-                                </div>
+                                </select>
 
-                            }
+                            </div>
+
+                        }
                         <div class="justify-content-center">
                             <button type="submit" class="btn btn-success" value="Save">Guardar Usuario</button>
                             <button type="reset" class="btn btn-success borrar">Borrar Datos</button>
                         </div>
-                            
-                        </EditForm>
 
-                    
-               
+                    </EditForm>
+
+                }
+                else
+                {
+
+
+                    <div class="row justify-content-center">
+                        <img src="images/loading.svg" alt="Cargando" />
+                        <p> Cargando </p>
+                    </div>
+
+
+                }
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"  @onclick="@(e =>  OpenModalCerrar())" data-dismiss="modal">Salir</button>
@@ -132,7 +144,8 @@
 
 @code {
     //falta validaciones en el Agregar ==> verificar Rut, email , ver si el usuario se puede repetir.
-
+    [Parameter] public List<EscuelaModel> ModeloEscuela { get; set; }
+    [Parameter] public List<CarreraModel> ModeloCarrera { get; set; }
 
     private PanolBlazor.FormModel.NuevoUsuarioModel NuevoUsuarioModel = new FormModel.NuevoUsuarioModel();
 
@@ -183,23 +196,7 @@
         }
     }
 
-    List<Escuela> EscList = new List<Escuela>() { new Escuela ("1", "Escuela de Ingeniería"),
-                                                      new Escuela ("2", "Escuela de Informática y Telecomunicaciones"),
-                                                      new Escuela ("3", "Escuela de Construcción"),
-                                                      new Escuela ("4", "Escuela de Administración y Negocios")  };
 
-    public class Escuela
-    {
-
-        public Escuela(string code, string name)
-        {
-            Code = code;
-            Name = name;
-        }
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
     // Seleccionar opciones de Carrera
 
     string selectedCar;
@@ -214,38 +211,7 @@
         }
     }
 
-    List<Carrera> CarList = new List<Carrera>() {     new Carrera ("1", "Técnico en Mecánica Automotriz y Autotrónica"),
-                                                      new Carrera ("2", "Ingeniería en Mecánica Automotriz y Autotrónica"),
-                                                      new Carrera ("3", "Administración de Redes y Telecomunicaciones"),
-                                                      new Carrera ("4", "Analista Programador Computacional"),
-                                                      new Carrera ("5", "Ingeniería en Conectividad y Redes"),
-                                                      new Carrera ("6", "Ingeniería en Informática"),
-                                                      new Carrera ("7", "Técnico en Construcción"),
-                                                      new Carrera ("8", "Ingeniería en Construcción"),
-                                                      new Carrera ("9", "Ingeniería en Prevención de Riesgos"),
-                                                      new Carrera ("10", "Técnico en Marketing"),
-                                                      new Carrera ("11", "Técnico en Gestión de Personas"),
-                                                      new Carrera ("12", "Contabilidad General Mención Legislación Tributaria"),
-                                                      new Carrera ("13", "Auditoría"),
-                                                      new Carrera ("14", "Ingeniería en Administración Mención Gestión de Personas"),
-                                                      new Carrera ("15", "Ingeniería en Gestión Logística"),
-                                                      new Carrera ("16", "Ingeniería en Administración Mención Marketing"),
-                                                      new Carrera ("17", "Ingeniería en Administración Mención Finanzas")
 
-    };
-
-    public class Carrera
-    {
-
-        public Carrera(string code, string name)
-        {
-            Code = code;
-            Name = name;
-        }
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
 
     // Proceso de guardado
 
@@ -426,6 +392,8 @@
     private void OpenModalCerrar()
     {
         NuevoUsuarioModel = new NuevoUsuarioModel();
+        List<EscuelaModel> EscuelaParaSeleccionar = null;
+        List<CarreraModel> CarreraParaSeleccionar = null;
         SelectedOpc = "";
         SelectedCar = "";
         StateHasChanged();

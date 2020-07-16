@@ -28,7 +28,7 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="usuarios">
+            <NavLink class="nav-link" href="usuarios/editar">
                 <span class="oi oi-people" aria-hidden="true"></span> Usuarios
             </NavLink>
         </li>
@@ -59,16 +59,16 @@
         if (firstRender)
         {
             await Task.Delay(60000);
-            Console.WriteLine("primer paso");
+            //Console.WriteLine("primer paso");
         }
         await Task.Delay(6000);
         UsuarioAlarma = await Http.GetJsonAsync<List<PanolBlazor.DataModel.AlarmaStockModel>>("http://localhost:8080/alarm/todos");
-        Console.WriteLine("esperanza paso");
+        //Console.WriteLine("esperanza paso");
         //Console.WriteLine(UsuarioAlarma);
         if (UsuarioAlarma.Count() != 0)
         {
             await Task.Delay(2000);
-            Console.WriteLine(" paso");
+            //Console.WriteLine(" paso");
             foreach (var item in UsuarioAlarma)
             {
                 await Task.Delay(2000);
@@ -80,7 +80,7 @@
         }
         else
         {
-            Console.WriteLine(" paso el nulo");
+           // Console.WriteLine(" paso el nulo");
             await Task.Delay(10000);
             this.StateHasChanged();
 

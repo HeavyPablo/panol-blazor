@@ -16,9 +16,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="col-12">
-                   
-                    <div class="row">
+                
                         @if (ModeloUsuario != null)
                         {
 
@@ -84,9 +82,9 @@
                                             <select class="form-control" id="escSelect" @bind="ModeloUsuario.alumno.carrera.id">
 
                                                 <option value="">--Eliga una carrera--</option>
-                                                @foreach (var carrera in CarList)
+                                                @foreach (CarreraModel carrera in ModeloCarrera)
                                                 {
-                                                    <option value="@carrera.Code"> @carrera.Name </option>
+                                                    <option value="@carrera.id.ToString()"> @carrera.nombre </option>
                                                 }
 
 
@@ -184,9 +182,9 @@
                                             <select class="form-control" id="escSelect" @bind="ModeloUsuario.director.escuela.id">
 
                                                 <option value="">--Eliga una escuela--</option>
-                                                @foreach (var escuela in EscList)
+                                                @foreach (EscuelaModel escuela in ModeloEscuela)
                                                 {
-                                                    <option value="@escuela.Code"> @escuela.Name </option>
+                                                    <option value="@escuela.id.ToString()"> @escuela.nombre </option>
                                                 }
 
 
@@ -265,10 +263,9 @@
                                             <select class="form-control" id="escSelect" @bind="ModeloUsuario.coordinador.escuela.id">
 
                                                 <option value="">--Eliga una escuela--</option>
-                                                @foreach (var escuela in EscList)
+                                                @foreach (EscuelaModel escuela in ModeloEscuela)
                                                 {
-                                                    <option value="@escuela.Code"> @escuela.Name </option>
-                                                }
+                                                    <option value="@escuela.id.ToString()"> @escuela.nombre </option>
                                                 }
 
                                             </select>
@@ -346,11 +343,11 @@
                                             <select class="form-control" id="escSelect" @bind="ModeloUsuario.docente.escuela.id">
 
                                                 <option value="">--Eliga una escuela--</option>
-                                                @foreach (var escuela in EscList)
+                                                @foreach (EscuelaModel escuela in ModeloEscuela)
                                                 {
-                                                    <option value="@escuela.Code"> @escuela.Name </option>
+                                                    <option value="@escuela.id.ToString()"> @escuela.nombre </option>
                                                 }
-                                                }
+
 
                                             </select>
 
@@ -418,27 +415,6 @@
                                     </div>
 
 
-
-
-                                    @*@if (NuevoUsuarioModel.perfil == "DOCENTE" || NuevoUsuarioModel.perfil == "COORDINADOR" || NuevoUsuarioModel.perfil == "DIRECTOR")
-                    {
-                        <div class="form-group">
-                            <label for="escSelect">Escuela</label>
-                            <select class="form-control" id="escSelect" @bind="NuevoUsuarioModel.director.escuela.id">
-
-                                <option value="">--Eliga una escuela--</option>
-                                @foreach (var escuela in EscList)
-                                {
-                                    <option value="@escuela.Code"> @escuela.Name </option>
-                                }
-                                }
-
-                            </select>
-
-                        </div>
-
-                    }*@
-
                                     <button type="submit" class="btn btn-success" value="Save">Guardar Usuario</button>
                                     <button type="reset" class="btn btn-success borrar">Borrar Datos</button>
                                 </EditForm>
@@ -461,8 +437,7 @@
                         }
 
                     </div>
-                </div>
-            </div>
+               
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"  @onclick="@(e =>  OpenModalCerrar())" data-dismiss="modal">Salir</button>
 
@@ -476,6 +451,9 @@
 
 
     [Parameter] public UsuarioModel ModeloUsuario { get; set; }
+
+    [Parameter] public List<EscuelaModel> ModeloEscuela { get; set; }
+    [Parameter] public List<CarreraModel> ModeloCarrera { get; set; }
 
     string selectedOpc;
 
@@ -523,24 +501,7 @@
         }
     }
 
-    List<Escuela> EscList = new List<Escuela>() { new Escuela ("1", "Escuela de Ingeniería"),
-                                                      new Escuela ("2", "Escuela de Informática y Telecomunicaciones"),
-                                                      new Escuela ("3", "Escuela de Construcción"),
-                                                      new Escuela ("4", "Escuela de Administración y Negocios")  };
-
-    public class Escuela
-    {
-
-        public Escuela(string code, string name)
-        {
-            Code = code;
-            Name = name;
-        }
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
-    // Seleccionar opciones de Carrera
+    
 
     string selectedCar;
 
@@ -554,38 +515,6 @@
         }
     }
 
-    List<Carrera> CarList = new List<Carrera>() {     new Carrera ("1", "Técnico en Mecánica Automotriz y Autotrónica"),
-                                                      new Carrera ("2", "Ingeniería en Mecánica Automotriz y Autotrónica"),
-                                                      new Carrera ("3", "Administración de Redes y Telecomunicaciones"),
-                                                      new Carrera ("4", "Analista Programador Computacional"),
-                                                      new Carrera ("5", "Ingeniería en Conectividad y Redes"),
-                                                      new Carrera ("6", "Ingeniería en Informática"),
-                                                      new Carrera ("7", "Técnico en Construcción"),
-                                                      new Carrera ("8", "Ingeniería en Construcción"),
-                                                      new Carrera ("9", "Ingeniería en Prevención de Riesgos"),
-                                                      new Carrera ("10", "Técnico en Marketing"),
-                                                      new Carrera ("11", "Técnico en Gestión de Personas"),
-                                                      new Carrera ("12", "Contabilidad General Mención Legislación Tributaria"),
-                                                      new Carrera ("13", "Auditoría"),
-                                                      new Carrera ("14", "Ingeniería en Administración Mención Gestión de Personas"),
-                                                      new Carrera ("15", "Ingeniería en Gestión Logística"),
-                                                      new Carrera ("16", "Ingeniería en Administración Mención Marketing"),
-                                                      new Carrera ("17", "Ingeniería en Administración Mención Finanzas")
-
-    };
-
-    public class Carrera
-    {
-
-        public Carrera(string code, string name)
-        {
-            Code = code;
-            Name = name;
-        }
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
 
     // Proceso de guardado
 
@@ -747,7 +676,8 @@
 
 
         ModeloUsuario = null;
-
+        List<EscuelaModel> EscuelaParaSeleccionar = null;
+        List<CarreraModel> CarreraParaSeleccionar = null;
         Js.CloseModal("EditUsuarioModal");
 
     }
