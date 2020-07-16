@@ -9,8 +9,7 @@
 
 @using BlazorInputFile
 @inject IJSRuntime jsRuntime
-@inject IJSRuntime Js;
-
+@inject IJSRuntime js
 
 
 <div class="modal fade" id="CargaMasivModal" tabindex="-1" aria-labelledby="CargaMasivModal" aria-hidden="true">
@@ -18,71 +17,85 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Agregar Alumnos por Carga Masiva</h5>
+
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                            <div class="py-3">
 
-                <div class="col-12 p-0">
-                    <div class="dropzone @dropClass rounded" style="height: 300px">
-                        <InputFile id="fileInput" title=""
-                                   OnChange="HandleFileInputChange"
-                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                   @ondragenter="HandleDragEnter"
-                                   @ondragleave="HandleDragLeave" />
-                        <div>
-                            <p class="text-center">Subir archivo Excel</p>
-                            <small class="text-muted text-center">(suelte aquí el archivo excel o haga "click")</small>
+                                <div class="col-12">
+                                    <div class="row justify-content-center ">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-outline-secondary" @onclick="@(e => BajarPlanilla())">
+                                                <span class="oi oi-cloud-download">Bajar Planilla Excel</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="py-3">
+                                <div class="col-12 p-0">
+                                    <div class="dropzone @dropClass rounded" style="height: 300px">
+                                        <InputFile id="fileInput" title=""
+                                                   OnChange="HandleFileInputChange"
+                                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                   @ondragenter="HandleDragEnter"
+                                                   @ondragleave="HandleDragLeave" />
+                                        <div>
+                                            <p class="text-center">Subir archivo Excel</p>
+                                            <small class="text-muted text-center">(suelte aquí el archivo excel o haga "click")</small>
+                                        </div>
+                                    </div>
+                                    @if ((fileTypeError || fileSizeError))
+                                    {
+                                        <ul class="validation-errors mb-0">
+                                            @if (fileTypeError)
+                                            {
+                                                <li class="validation-message">Solo se permiten archivo excel del tipo xlsx. </li>
+                                            }
+                                            @if (fileSizeError)
+                                            {
+                                                <li class="validation-message">El tamaño maximo permitido es de @MaxFileSizeMB MB.</li>
+                                            }
+                                        </ul>
+                                    }
+                                    @if (selectedFiles != null && selectedFiles.Count > 0)
+                                    {
+                                        <div class="col-12">
+                                            <ul>
+                                                @foreach (var file in selectedFiles)
+                                                {
+                                                    <li>
+                                                        @file.Name
+                                                        <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                                                @onclick="@(e => RemoveFile(file))">
+                                                            <small class="align-text-bottom"><span class="oi oi-x"></span></small>
+                                                        </button>
+                                                        <div class="py-3">
+                                                            <button class="btn btn-success btn-lg btn-block" type="submit" @onclick="@(e => validateArchivo())"><span class="oi oi-check"></span> Enviar</button>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+
                         </div>
                     </div>
-                    @if ((fileTypeError || fileSizeError))
-                    {
-                        <ul class="validation-errors mb-0">
-                            @if (fileTypeError)
-                            {
-                                <li class="validation-message">Solo se permiten archivo excel del tipo xlsx. </li>
-                            }
-                            @if (fileSizeError)
-                            {
-                                <li class="validation-message">El tamaño maximo permitido es de @MaxFileSizeMB MB.</li>
-                            }
-                        </ul>
-                    }
-                    @if (selectedFiles != null && selectedFiles.Count > 0)
-                    {
-                        <div class="col-12">
-                            <ul>
-                                @foreach (var file in selectedFiles)
-                                {
-                                    <li>
-                                        @file.Name
-                                        <button class="btn btn-link text-danger p-0 pl-1" type="button"
-                                                @onclick="@(e => RemoveFile(file))">
-                                            <small class="align-text-bottom"><span class="oi oi-x"></span></small>
-                                        </button>
-                                        <div class="py-3">
-                                            <button class="btn btn-success btn-lg btn-block" type="submit" @onclick="@(e => validateArchivo())"><span class="oi oi-check"></span> Enviar</button>
-                                        </div>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
                 </div>
-
-
-
-
-
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
-
-            </div>
-        </div>
-    </div>
-</div>
 @code {
 
     const int MaxFileSizeMB = 20;
@@ -172,9 +185,9 @@
             var fileContent = new StreamContent(file.Data)
             {
                 Headers = {
-               ContentLength = file.Size,
-               ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
-            }
+           ContentLength = file.Size,
+           ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.Type)
+        }
             };
 
             using (var content = new MultipartFormDataContent(boundary))
@@ -200,6 +213,21 @@
         }
     }
 
+    public void BajarPlanilla()
+    {
+        using (var package = new ExcelPackage())
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Planilla");
+            worksheet.Cells["A1"].Value = "Rut";
+            worksheet.Cells["B1"].Value = "Apellido Paterno";
+            worksheet.Cells["C1"].Value = "Apellido Materno";
+            worksheet.Cells["D1"].Value = "Nombre";
+            worksheet.Cells["E1"].Value = "Carrera";
+            worksheet.Cells["F1"].Value = "Teléfono";
+            worksheet.Cells["G1"].Value = "Correo Alumno";
 
+            js.GuardarComoExcel("Planilla.xlsx", package.GetAsByteArray());
+        }
 
+    }
 }
