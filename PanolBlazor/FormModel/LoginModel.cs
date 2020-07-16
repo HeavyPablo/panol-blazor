@@ -8,10 +8,10 @@ namespace PanolBlazor.FormModel
 {
     public class LoginModel
     {
-        [Required]
+        [Required (ErrorMessage = "Se necesita el rut de usuario para ingresar al sistema")]
         public string username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Se necesita el password para ingresar al sistema")]
         public string password { get; set; }
 
         

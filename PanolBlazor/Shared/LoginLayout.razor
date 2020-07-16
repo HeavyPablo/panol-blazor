@@ -1,9 +1,9 @@
 ﻿@inherits LayoutComponentBase
-@inject HttpClient Http;
+@inject HttpClient Http
 @inject NavigationManager Navigation
 @inject PanolBlazor.Services.ILoginService LoginService
 @page "/login"
-
+@using BlazorInputMask
 
 <div class="row justify-content-center">
     <div class="col-sm-4 container-fluid border rounded" style="background-color: #ffff">
@@ -21,9 +21,11 @@
                 <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
+                   
                     <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" class="form-control" @bind="loginModel.username">
+                        <label>Rut del Usuario</label>
+                        <InputMask @bind-Value="loginModel.username" class="form-control" data-mask="00.000.000-0" />
+                        @*<input id="user" type="text" class="form-control" @bind="loginModel.username" />*@
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -39,14 +41,18 @@
 @code {
     private PanolBlazor.FormModel.LoginModel loginModel = new FormModel.LoginModel();
 
+
+
+
     private async Task HandleSubmit()
     {
+        var userRut = (loginModel.username).Replace(".","");
         var requestMessage = new HttpRequestMessage()
         {
             Method = new HttpMethod("POST"),
             RequestUri = new Uri("http://localhost:8080/login"),
             Content = new StringContent(
-                    @"{""username"": """ + loginModel.username + @""", ""password"": """ + loginModel.password + @"""}"
+                    @"{""username"": """ + userRut + @""", ""password"": """ + loginModel.password + @"""}"
                 )
         };
 
