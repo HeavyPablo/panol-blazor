@@ -59,47 +59,79 @@ else
                     <table class="table">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col">Código</th>
-                                <th scope="col">Solicitante</th>
-                                <th scope="col">Perfil Solicitante</th>
-                                <th scope="col">Panolero Responsable</th>
-                                <th scope="col">Fecha Ingreso</th>
-                                <th scope="col">Acciones</th>
+                                <th class="text-center" scope="col">Código</th>
+                                <th class="text-center" scope="col">Solicitante</th>
+                                <th class="text-center" scope="col">Perfil Solicitante</th>
+                                <th class="text-center" scope="col">Panolero Responsable</th>
+                                <th class="text-center" scope="col">Fecha Ingreso</th>
+                                <th class="text-center" scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var Solicitud in Solicitudes)
                             {
-                                <tr>
-                                    <th scope="row">@Solicitud.id</th>
-                                    @if (Solicitud.usuario.alumno != null)
-                                    {
-                                        <td>@(Solicitud.usuario.alumno.nombre + " " + Solicitud.usuario.alumno.apellidoPaterno)</td>
-                                    }
-                                    @if (Solicitud.usuario.docente != null)
-                                    {
-                                        <td>@(Solicitud.usuario.docente.nombre + " " + Solicitud.usuario.docente.apellidoPaterno)</td>
-                                    }
-                                    <td>@Solicitud.usuario.perfil</td>
-                                    @if (Solicitud.panolero != null)
-                                    {
-                                        <td>@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
-                                    } else
-                                    {
-                                        <td><span class="badge badge-pill badge-secondary" style="font-size:90%">SIN ASIGNAR</span></td>
-                                    }
-                                    <td><span class="badge badge-pill @(ChangeClassFromDate(Solicitud.fechaCreacion)) font-weight-normal" style="font-size: 95%">@(TransformDate(Solicitud.fechaCreacion))</span></td>
-                                    <td>
-                                        <div class="btn-group col-12" role="group" aria-label="Basic example">
-                                            <button type="button" class="btn btn-secondary" @onclick="@(e => ViewSolicitud(Solicitud.id))">
-                                                <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" @onclick=@(e => DeleteSolicitud(Solicitud))>
-                                                <span class="oi oi-trash"></span>
-                                            </button>
+                            <tr>
+                                <th class="text-center" scope="row">@Solicitud.id</th>
+                                @if (Solicitud.usuario.alumno != null)
+                                {
+                                    <td class="text-center">@(Solicitud.usuario.alumno.nombre + " " + Solicitud.usuario.alumno.apellidoPaterno)</td>
+                                }
+                                @if (Solicitud.usuario.docente != null)
+                                {
+                                    <td class="text-center">@(Solicitud.usuario.docente.nombre + " " + Solicitud.usuario.docente.apellidoPaterno)</td>
+                                }
+
+                                @if (Solicitud.usuario.perfil == "ALUMNO")
+                                {
+                                    <td class="text-center">
+                                        <div class="card rounded-pill bg-dark">
+                                            <div class="d-flex">
+                                                <div class="card rounded-pill bg-warning">
+                                                    <img src="images/images-core/alumno.png" alt="Alumno" style="max-height: 30px; width: auto;" />
+                                                </div>
+                                                <div class="px-3 text-light align-self-center m-auto">
+                                                    Alumno
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
-                                </tr>
+                                }
+                                else
+                                {
+                                    <td class="text-center">
+                                        <div class="card rounded-pill bg-info">
+                                            <div class="d-flex">
+                                                <div class="card rounded-pill bg-warning">
+                                                    <img src="images/images-core/docente.png" alt="Docente" style="max-height: 30px; width: auto;" />
+                                                </div>
+                                                <div class="px-3 text-light align-self-center m-auto">
+                                                    Docente
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                }
+
+                                @if (Solicitud.panolero != null)
+                                {
+                                    <td class="text-center">@(Solicitud.panolero.nombre + " " + Solicitud.panolero.apellidoPaterno)</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center"><span class="badge badge-pill badge-secondary" style="font-size:90%">SIN ASIGNAR</span></td>
+                                }
+                                <td class="text-center"><span class="badge badge-pill @(ChangeClassFromDate(Solicitud.fechaCreacion)) font-weight-normal" style="font-size: 95%">@(TransformDate(Solicitud.fechaCreacion))</span></td>
+                                <td class="text-center">
+                                    <div class="btn-group col-12" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-secondary" @onclick="@(e => ViewSolicitud(Solicitud.id))">
+                                            <span class="oi oi-eye"></span>  /  <span class="oi oi-pencil"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" @onclick=@(e => DeleteSolicitud(Solicitud))>
+                                            <span class="oi oi-trash"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             }
                         </tbody>
                     </table>
