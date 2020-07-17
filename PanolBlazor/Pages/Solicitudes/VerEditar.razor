@@ -321,7 +321,7 @@ else
                 UsuarioModel Responsable = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + Username);
                 Solicitud.panolero = Responsable.panolero;
             }
-            await EditSolicitud(Solicitud);
+            EditSolicitud(Solicitud);
             await Js.MostrarMensaje("Editado!", "La solicitud se ha editado correctamente.", TipoMensajeSweetAlert.success);
         }
 
