@@ -172,7 +172,7 @@
                                 <ValidationMessage For="@(() => NuevoUsuarioBloqueadoModel.Razon)" />
                             </div>
 
-                            <button type="submit" class="btn btn-success" value="Save">Confirmar Bloqueo</button>
+                            <button type="submit" class="btn btn-success" value="Save">Confirmar activacion</button>
                             @*<button type="reset" class="btn btn-success borrar">Borrar Datos</button>*@
                         </EditForm>
 
@@ -212,7 +212,7 @@
 
     private async Task HandleSubmit()
     {
-        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar quieres Bloquear a este usuario.", TipoMensajeSweetAlert.question);
+        var response = await Js.Confirm("¿Estás seguro/a?", "Al confirmar quieres activar a este usuario.", TipoMensajeSweetAlert.question);
         //string IdEditar = "";
         if (response)
         {

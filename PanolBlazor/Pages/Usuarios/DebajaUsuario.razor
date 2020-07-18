@@ -103,13 +103,9 @@
                         <td>@Usuario.estado</td>
                         <td>@Usuario.fechaActualizacion</td>
                         <td>
-                            @if (@Usuario.estado == "activo")
+                            @if (@Usuario.estado == "activo" || @Usuario.estado == "bloqueado")
                             {
                                 <button class="btn btn-danger" @onclick="@(e => OpenModalBloq(Usuario.username, Usuario.perfil))"><span class="oi oi-ban"> Dar de baja</span></button>
-                            }
-                            else if (@Usuario.estado == "bloqueado")
-                            {
-
                             }
                             else
                             {

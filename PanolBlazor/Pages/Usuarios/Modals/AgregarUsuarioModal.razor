@@ -224,6 +224,7 @@
 
             string username = await Js.GetFromLocalStorage("username");
             UsuarioModel usuario = await Http.GetJsonAsync<UsuarioModel>("http://localhost:8080/usuario/username/" + username);
+            string pass = (NuevoUsuarioModel.ApPaterno).Substring(0, 3) + (NuevoUsuarioModel.ApMaterno).Substring(0, 3);
             if (SelectedOpc == "PANOLERO")
             {
                 var requestMessage = new HttpRequestMessage()
@@ -232,7 +233,7 @@
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
                     @"{""username"": """ + NuevoUsuarioModel.Username + @""",
-                       ""password"": """ + NuevoUsuarioModel.rut + @""",
+                       ""password"": """ + pass + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
@@ -262,7 +263,7 @@
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
                     @"{""username"": """ + NuevoUsuarioModel.Username + @""",
-                       ""password"": """ + NuevoUsuarioModel.rut + @""",
+                       ""password"": """ + pass + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
@@ -292,7 +293,7 @@
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
                         @"{""username"": """ + NuevoUsuarioModel.Username + @""",
-                       ""password"": """ + NuevoUsuarioModel.rut + @""",
+                       ""password"": """ + pass + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
@@ -323,7 +324,7 @@
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
                         @"{""username"": """ + NuevoUsuarioModel.Username + @""",
-                       ""password"": """ + NuevoUsuarioModel.rut + @""",
+                       ""password"": """ + pass + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
@@ -354,7 +355,7 @@
                     RequestUri = new Uri("http://localhost:8080/usuario"),
                     Content = new StringContent(
                         @"{""username"": """ + NuevoUsuarioModel.Username + @""",
-                       ""password"": """ + NuevoUsuarioModel.rut + @""",
+                       ""password"": """ + pass + @""",
                        ""perfil"": """ + SelectedOpc + @""",
                        ""rut"": """ + NuevoUsuarioModel.rut + @""",
                        ""apellidoPaterno"": """ + NuevoUsuarioModel.ApPaterno + @""",
